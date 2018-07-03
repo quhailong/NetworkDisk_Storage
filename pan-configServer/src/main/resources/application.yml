@@ -1,0 +1,25 @@
+server: 
+  port: 9004
+  
+spring: 
+  application: 
+    name: config-server
+  profiles: 
+    active: native
+  cloud: 
+    config: 
+      server: 
+        native: 
+          searchLocations: classpath:/properties/
+    
+eureka: 
+  client: 
+    serviceUrl: 
+      defaultZone: http://admin:admin@eureka1:8888/eureka/,http://admin:admin@eureka2:8888/eureka/
+    healthcheck: 
+      enabled: true
+  instance: 
+    preferIpAddress: true
+    ipAddress:
+    leaseRenewalIntervalInSeconds: 10
+    leaseExpirationDurationInSeconds: 30

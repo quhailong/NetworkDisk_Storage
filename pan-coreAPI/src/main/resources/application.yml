@@ -1,0 +1,33 @@
+server:
+  port: 8066
+spring:
+  application:
+    name: coreAPI-service
+#xuyaorenzheng
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://admin:admin@eureka1:8888/eureka/,http://admin:admin@eureka2:8888/eureka/
+    healthcheck:
+      enabled: true
+  instance: 
+    preferIpAddress: true
+    ipAddress: 
+    leaseRenewalIntervalInSeconds: 10
+    leaseExpirationDurationInSeconds: 30
+ribbon:
+  ConnectTimeout: 6000
+  ReadTimeout: 6000
+  OkToRetryOnAllOperations: false
+  MaxAutoRetriesNextServer: 2
+  MaxAutoRetries: 1
+  NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+feign:
+  hystrix:
+    enabled: false
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false

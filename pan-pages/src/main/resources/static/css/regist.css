@@ -1,0 +1,173 @@
+
+body {
+    background: 0 0;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+}
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, fieldset, legend, button, input, textarea, th, td {
+    margin: 0;
+    padding: 0;
+}
+#wrapper {
+    width: 100%;
+}
+#head, #content, #foot {
+    width: 980px;
+    margin-left: auto;
+    margin-right: auto;
+}
+#head {
+    height: 75px;
+    z-index: 100;
+}
+#head .mod-header {
+    display: block;
+    width: 330px;
+}
+.mod-header {
+    display: inline;
+    font-size: 66px;
+}
+#head .mod-header a {
+    display: none;
+    width: 330px;
+    height: 76px;
+}
+a {
+    text-decoration: underline;
+    color: #00c;
+}
+#head .mod-header a img {
+    margin-top: 15px;
+}
+#nav .nav-2 {
+    height: 20px;
+    background: url(/images/regist/hr.png) no-repeat center top;
+}
+#nav {
+    width: 100%;
+    background: #fafafa;
+    z-index: 1;
+}
+#nav {
+    background: 0 0;
+}
+.clearfix {
+    zoom: 1;
+}
+.mod-reg {
+    position: relative;
+}
+.clearfix {
+    zoom: 1;
+}
+.tang-pass-reg {
+    position: relative;
+    width: 720px;
+    overflow: hidden;
+}
+.reg-content {
+    float: right;
+}
+.tang-pass-reg .pass-form-item {
+    position: relative;
+    clear: both;
+    margin-bottom: 20px;
+    zoom: 1;
+    height: 42px;
+}
+.tang-pass-reg .pass-form-item .pass-label {
+    display: block;
+    float: left;
+    height: 42px;
+    width: 65px;
+    margin-right: 10px;
+    line-height: 42px;
+    font-size: 14px;
+    color: #666;
+    font-weight: 700;
+    text-align: right;
+}
+.tang-pass-reg .pass-text-input {
+    display: block;
+    position: relative;
+    float: left;
+    height: 16px;
+    width: 328px;
+    padding: 11px 10px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    color: #666;
+    transition: .3s;
+}
+.tang-pass-reg .pass-form-item-password {
+    position: relative;
+    z-index: 19;
+}
+.mod-reg .tang-pass-reg .pass-button-submit {
+    background-color: #3f89ec;
+}
+.tang-pass-reg .pass-button-submit {
+	margin-left:76px;
+    width: 350px;
+}
+.tang-pass-reg .pass-button {
+    display: block;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #fff;
+    background-image: none;
+    border-radius: 3px;
+    border: 0;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    transition: .3s;
+    -moz-transition: .3s;
+    -o-transition: .3s;
+    -webkit-transition: .3s;
+}
+.tang-pass-reg .pass-text-input-verifyCode {
+    width: 156px;
+}
+.tang-pass-reg input.pass-button-verifyCodeSend {
+    border-radius: 0;
+    border: 1px solid #ddd;
+    height: 40px;
+    background: #f7f7f7;
+    color: #666;
+    font-weight: 400;
+    width: 160px;
+    float: left;
+    margin-right: 10px;
+    font-size: 14px;
+}
+.tang-pass-reg .pass-item-error {
+    float: left;
+    position: relative;
+    width: 250px;
+    top: 6px;
+    color: #fc4343;
+    height: 16px;
+    line-height: 14px;
+    padding-left: 2px;
+}
+#TANGRAM__PSP_3__verifyCodeSEError {
+    float: left;
+    position: absolute;
+    width: 100px;
+    top: 6px;
+    color: #fc4343;
+    height: 16px;
+    line-height: 14px;
+    margin-left: 345px;
+    margin-top: 26px;
+}
+.checkImg{
+	position:absolute;
+	margin-top: -4px;
+	margin-left: 12px;
+}

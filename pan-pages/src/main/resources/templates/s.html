@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>分享</title>
+<link rel="stylesheet" th:href="@{/assets2/css/context-all.css}" />
+<link rel="stylesheet" th:href="@{/assets2/css/home-all.css}" />
+<link rel="stylesheet" th:href="@{/assets2/css/uploader-all.css}" />
+<link rel="stylesheet" th:href="@{/assets2/css/amazeui.css}" />
+<link rel="stylesheet" th:href="@{/assets2/css/admin.css}" />
+<link rel="stylesheet" th:href="@{/assets2/css/icon.css}" />
+<link rel="stylesheet" th:href="@{/assets2/css/all_e491493.css}" />
+<link rel="stylesheet" th:href="@{/assets2/css/widget_dcfc73f.css}" />
+<script th:src="@{/js/jquery1.js}"></script>
+<script th:src="@{/assets2/js/shareerrorload.js}"></script>
+<script th:src="@{/assets2/js/shareerrorcore.js}"></script>
+<script th:src="@{/js/jquery.cookie.js}"></script>
+<script th:src="@{/assets2/js/amazeui.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jsencrypt.min.js}"></script>
+</head>
+<script th:inline="javascript">
+/*<![CDATA[ */
+	$(function(){
+		var message = [[${shareId}]];
+		$("#shareInfo").val(message);
+	});
+/*]]>*/
+</script>
+<body>
+	<div class="frame-all" id="layoutApp">
+		<div id="dynamicLayout_0" style="z-index: 41;">
+			<div class="module-header">
+				<div class="module-header-wrapper" style="height: 62px;">
+					<dl class="xtJbHcb">
+						<dt style="margin-top: 3px;margin-left: 16px" class="EHazOI">
+							<img width="145" height="45" th:src="@{/images/16new/logo727.png}" />
+						</dt>
+						<dd class="vyQHNyb">
+							<span class="cMEMEF wGMtMgb"> <a
+								href="//727pan.cn/disk/home" target="_self" title="网盘">网盘</a>
+								<span class="gICyHO"></span>
+							</span>
+						</dd>
+						<dd class="CDaavKb">
+							<span class="DIcOFyb"> <span class="user-photo-box">
+									<i class="user-photo"></i>
+							</span> <span class="user-name" th:text="${name}"></span>
+								<dl class="PvsOgyb">
+									<dt class="OMDFeH">
+										<i class="desc-arrow"></i> <i class="desc-layer"></i> <span
+											class="desc-header"> <span class="user-photo-box">
+												<i class="user-photo"></i>
+										</span> <span class="user-info"> <span th:text="${name}"
+												class="username"></span>
+										</span>
+										</span>
+									</dt>
+									<dd>
+										<ul class="QgxQAN">
+											<li class="cMEMEF"><a href="javascript:void(0)"
+												onclick="uploadPic()">上传头像</a></li>
+											<li class="cMEMEF"><a href="javascript:void(0)"
+												onclick="changePwd()">修改密码</a></li>
+											<li class="cMEMEF"><a href="javascript:void(0)"
+												onclick="exit()">退出</a></li>
+
+										</ul>
+									</dd>
+								</dl>
+							</span>
+						</dd>
+					</dl>
+				</div>
+			</div>
+		</div>
+		<div class="frame-main" id="layoutMain2">
+		<div class="module-share-manage-header-title">
+		<textarea id="shareInfo" hidden="true" rows="" cols=""></textarea>
+		<font size="5"><span th:text="${shareUser}"></span>给你分享了<span th:text="${shareName}"></span></font>
+			</div>
+			<div class="QDDOQB"
+				style="padding-left: 580px;position: absolute; top: 150px; padding-top: 11px; line-height: normal; width: 449px;">
+				<button id="downloadShare" style="display: inline-block;" type="button"
+					class="am-btn am-radius am-btn-sm am-btn-warning">下载</button>
+				<button id="copy" style="display: inline-block;" type="button"
+					class="am-btn am-radius am-btn-sm am-btn-warning">保存到网盘</button>
+			</div>
+		</div>
+
+	</div>
+	<div class="am-modal am-modal-confirm" tabindex="-1" id="my-confirm">
+		<div class="am-modal-dialog">
+			<div class="am-modal-hd">提示</div>
+			<div class="am-modal-bd">你确定要退出么？</div>
+			<div class="am-modal-footer">
+				<span class="am-modal-btn" data-am-modal-confirm>确定</span> <span
+					class="am-modal-btn" data-am-modal-cancel>取消</span>
+			</div>
+		</div>
+	</div>
+	<div class="am-modal am-modal-prompt" tabindex="-1" id="Lock">
+		<div class="am-modal-dialog">
+			<div class="am-modal-hd">请输入提取密码</div>
+			<div class="am-modal-bd">
+				<input id="LockPassword" name="LockPassword" style="width: 300px"
+					type="password" class="am-modal-prompt-input">
+			</div>
+			<div class="am-modal-footer">
+				<span class="am-modal-btn" data-am-modal-confirm>确定</span> <span
+					class="am-modal-btn" data-am-modal-cancel>取消</span>
+			</div>
+		</div>
+	</div>
+	<div class="am-modal am-modal-prompt" tabindex="-1" id="Lock1">
+		<div class="am-modal-dialog">
+			<div class="am-modal-hd">请输入提取密码</div>
+			<div class="am-modal-bd">
+				<input id="LockPassword" name="LockPassword1" style="width: 300px"
+					type="password" class="am-modal-prompt-input">
+			</div>
+			<div class="am-modal-footer">
+				<span class="am-modal-btn" data-am-modal-confirm>确定</span> <span
+					class="am-modal-btn" data-am-modal-cancel>取消</span>
+			</div>
+		</div>
+	</div>
+	<div class="am-modal am-modal-prompt" tabindex="-1" id="uploadPic">
+		<div class="am-modal-dialog">
+			<div class="am-modal-hd">上传头像</div>
+			<div class="am-modal-bd">
+				<input onchange="preImg(this.id,'photo');" id="pic"
+					style="width: 300px" type="file" class="am-modal-prompt-input">
+				<img style="display: none" id="photo" src="" width="100px;"
+					height="100px;">
+			</div>
+			<div class="am-modal-footer">
+				<span class="am-modal-btn" data-am-modal-confirm>上传头像</span> <span
+					class="am-modal-btn" data-am-modal-cancel>取消</span>
+			</div>
+		</div>
+	</div>
+	<div class="am-modal am-modal-prompt" tabindex="-1" id="changePwd">
+		<div class="am-modal-dialog">
+			<div class="am-modal-hd">修改密码</div>
+			<div class="am-modal-bd">
+				新密码:<input id="newPassword" name="newPassword" style="width: 300px"
+					type="password" class="am-modal-prompt-input"> 确认新密码:<input
+					name="repeatPassword" style="width: 300px" type="password"
+					class="am-modal-prompt-input">
+			</div>
+			<div class="am-modal-footer">
+				<span class="am-modal-btn" data-am-modal-confirm>修改密码</span> <span
+					class="am-modal-btn" data-am-modal-cancel>取消</span>
+			</div>
+		</div>
+	</div>
+	<textarea id="publicKey" hidden="true" rows="" cols=""></textarea>
+	<textarea id="RSAKey" hidden="true" rows="" cols=""></textarea>
+	<div class="dialog dialog-fileTreeDialog   dialog-gray"
+		id="fileTreeDialog"
+		style="width: 520px; top: 0px; bottom: auto; left: 423px; right: auto; display: none; visibility: visible; z-index: 52;">
+		<div class="dialog-header dialog-drag">
+			<h3>
+				<span class="dialog-header-title"> <em id="HEEWq"
+					class="select-text"></em>
+				</span>
+			</h3>
+			<div class="dialog-control">
+				<span class="dialog-icon dialog-close icon icon-close"> <span
+					class="sicon">×</span>
+				</span>
+			</div>
+		</div>
+		<div class="dialog-body">
+			<div class="file-tree-container">
+				<ul class="treeview treeview-content ">
+					<li>
+						<div class="treeview-node  treeview-root treeview-node-on _minus"
+							data-padding-left="0" style="padding-left: 0px">
+							<span class="treeview-node-handler"> <em
+								class="b-in-blk plus icon-operate minus"></em> <dfn
+									class="b-in-blk treeview-ic treeview-dir"></dfn> <span
+								class="treeview-txt" data-file-path="/">全部文件</span>
+							</span>
+						</div>
+						<ul class="treeview treeview-root-content treeview-content"
+							data-padding-left="15"></ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="dialog-footer g-clearfix">
+			<a class="g-button g-button-large" data-button-id="b77"
+				data-button-index="" href="javascript:;" title="取消"
+				style="float: right; padding-left: 50px;"> <span
+				class="g-button-right" style="padding-right: 50px;"> <span
+					class="text" style="width: auto;">取消</span>
+			</span>
+			</a> <a id="" class="g-button g-button-blue-large" data-button-id="b79"
+				data-button-index="" href="javascript:;" title="确定"
+				style="padding-left: 50px;"> <span class="g-button-right"
+				style="padding-right: 50px;"> <span class="text"
+					style="width: auto;">确定</span>
+			</span>
+			</a>
+		</div>
+	</div>
+	<div class="module-canvas"
+		style="position: fixed; left: 0px; top: 0px; z-index: 50; background: rgb(0, 0, 0); opacity: 0.5; width: 100%; height: 100%; display: none;"></div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+server: 
+  port: 80
+  
+spring: 
+  application: 
+    name: zuul-passport-server
+    
+eureka: 
+  client: 
+    serviceUrl: 
+      defaultZone: http://admin:admin@eureka1:8888/eureka/,http://admin:admin@eureka2:8888/eureka/
+    healthcheck: 
+      enabled: true
+  instance: 
+    preferIpAddress: true
+    ipAddress:  
+    leaseRenewalIntervalInSeconds: 10
+    leaseExpirationDurationInSeconds: 30
+      
+management: 
+  security: 
+    enabled: false
+    
+ribbon: 
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+  
+zuul: 
+  sensitiveHeaders: "*"
+  routes:
+    regist: 
+      path: /v2/*
+      serviceId: pan-regist
+      stripPrefix: false
+    regphone: 
+      path: /v2/api/regphone
+      serviceId: pan-regist
+      stripPrefix: false
+    uploadPic: 
+      path: /v2/api/uploadPic
+      serviceId: pan-regist
+      stripPrefix: false
+    loadPic: 
+      path: /v2/api/loadImg
+      serviceId: pan-regist
+      stripPrefix: false
+    changePwd: 
+      path: /v2/api/changePwd
+      serviceId: pan-regist
+      stripPrefix: false
+    login: 
+      path: /v2/api/**
+      serviceId: pan-login
+      stripPrefix: false
+    cgi: 
+      path: /cgi/**
+      serviceId: edge-service
+      stripPrefix: false
+    forget: 
+      path: /**
+      serviceId: pan-regist
+      stripPrefix: false 
