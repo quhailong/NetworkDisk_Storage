@@ -52,3 +52,5 @@ pan-zuul4---系统登录及主页面的路由网关
 ![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/6.png)  
 ![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/7.png)  
 ![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/8.png)
+## tips
+项目有些地方还不太完善，如果有什么问题请联系QQ：961584293 或联系邮箱:qhl961584293@163.com
