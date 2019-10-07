@@ -10,7 +10,6 @@ public class SmsResult {
 	private String uid;
 	public SmsResult() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	public String getCode() {
 		return code;

@@ -7,7 +7,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import top.quhailong.pan.pojo.Userinfo;
+import top.quhailong.pan.response.UserInfoDTO;
 import top.quhailong.pan.utils.CookieUtils;
 import top.quhailong.pan.utils.JSONUtils;
 import top.quhailong.pan.utils.JWTUtils;
@@ -94,8 +94,8 @@ public class PreFilter extends ZuulFilter {
             String token = CookieUtils.getCookie("token");
             Claims claims = JWTUtils.parseJWT(token, "nimadetou".getBytes());
             String subject = claims.getSubject();
-            Userinfo userinfo = JSONUtils.parseObject(subject, Userinfo.class);
-            log.info(userinfo.getUid());
+            UserInfoDTO userinfo = JSONUtils.parseObject(subject, UserInfoDTO.class);
+            log.info(userinfo.getUserId());
             ctx.setSendZuulResponse(true);
         } catch (Exception e) {
             ctx.setSendZuulResponse(false);
