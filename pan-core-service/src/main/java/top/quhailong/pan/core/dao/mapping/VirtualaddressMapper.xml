@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.quhailong.pan.core.dao.VirtualAddressDao">
+  <resultMap id="BaseResultMap" type="top.quhailong.pan.core.entity.VirtualAddressDO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="uuid" jdbcType="VARCHAR" property="uuid" />
+    <result column="file_id" jdbcType="VARCHAR" property="fileId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="addr_type" jdbcType="INTEGER" property="addrType" />
+    <result column="file_md5" jdbcType="VARCHAR" property="fileMd5" />
+    <result column="parent_path" jdbcType="VARCHAR" property="parentPath" />
+    <result column="file_size" jdbcType="INTEGER" property="fileSize" />
+    <result column="dir_whether" jdbcType="INTEGER" property="dirWhether" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, uuid, file_id, user_id, file_name, addr_type, file_md5, parent_path, file_size,
+    dir_whether, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from virtual_address
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from virtual_address
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="top.quhailong.pan.core.entity.VirtualAddressDO">
+    insert into virtual_address (id, uuid, file_id,
+      user_id, file_name, addr_type,
+      file_md5, parent_path, file_size,
+      dir_whether, create_time, update_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{uuid,jdbcType=VARCHAR}, #{fileId,jdbcType=VARCHAR},
+      #{userId,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, #{addrType,jdbcType=INTEGER},
+      #{fileMd5,jdbcType=VARCHAR}, #{parentPath,jdbcType=VARCHAR}, #{fileSize,jdbcType=INTEGER},
+      #{dirWhether,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="top.quhailong.pan.core.entity.VirtualAddressDO">
+    insert into virtual_address
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="fileId != null">
+        file_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="addrType != null">
+        addr_type,
+      </if>
+      <if test="fileMd5 != null">
+        file_md5,
+      </if>
+      <if test="parentPath != null">
+        parent_path,
+      </if>
+      <if test="fileSize != null">
+        file_size,
+      </if>
+      <if test="dirWhether != null">
+        dir_whether,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="fileId != null">
+        #{fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="addrType != null">
+        #{addrType,jdbcType=INTEGER},
+      </if>
+      <if test="fileMd5 != null">
+        #{fileMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="parentPath != null">
+        #{parentPath,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="dirWhether != null">
+        #{dirWhether,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.quhailong.pan.core.entity.VirtualAddressDO">
+    update virtual_address
+    <set>
+      <if test="uuid != null">
+        uuid = #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="fileId != null">
+        file_id = #{fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="addrType != null">
+        addr_type = #{addrType,jdbcType=INTEGER},
+      </if>
+      <if test="fileMd5 != null">
+        file_md5 = #{fileMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="parentPath != null">
+        parent_path = #{parentPath,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        file_size = #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="dirWhether != null">
+        dir_whether = #{dirWhether,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.quhailong.pan.core.entity.VirtualAddressDO">
+    update virtual_address
+    set uuid = #{uuid,jdbcType=VARCHAR},
+      file_id = #{fileId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      file_name = #{fileName,jdbcType=VARCHAR},
+      addr_type = #{addrType,jdbcType=INTEGER},
+      file_md5 = #{fileMd5,jdbcType=VARCHAR},
+      parent_path = #{parentPath,jdbcType=VARCHAR},
+      file_size = #{fileSize,jdbcType=INTEGER},
+      dir_whether = #{dirWhether,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- 自定义mapper -->
+
+  <select id="listVirtualAddress" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from virtual_address
+    where user_id = #{userId,jdbcType=VARCHAR}
+    <if test="parentPath != null">
+      and parent_path = #{parentPath,jdbcType=VARCHAR}
+    </if>
+    <if test="addrType != null">
+      and addr_type = #{addrType,jdbcType=INTEGER}
+    </if>
+  </select>
+
+  <select id="listVirtualAddressLikeFileName" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from virtual_address
+    where user_id = #{userId,jdbcType=VARCHAR}
+    <if test="fileName != null">
+      and file_name like CONCAT('%',#{fileName,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+
+  <select id="checkVirtualAddress" resultType="java.lang.Integer">
+    select
+    count(*)
+    from virtual_address
+    where user_id = #{userId,jdbcType=VARCHAR}
+    <if test="fileName != null">
+      and file_name = #{fileName,jdbcType=VARCHAR}
+    </if>
+    <if test="parentPath != null">
+      and parent_path = #{parentPath,jdbcType=VARCHAR}
+    </if>
+    <if test="addrType != null">
+      and addr_type = #{addrType,jdbcType=INTEGER}
+    </if>
+  </select>
+
+  <select id="getVirtualAddress" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from virtual_address
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+
+  <update id="updateVirtualAddress" parameterType="top.quhailong.pan.core.entity.VirtualAddressDO">
+    update virtual_address
+    <set>
+      <if test="uuid != null">
+        uuid = #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="fileId != null">
+        file_id = #{fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="addrType != null">
+        addr_type = #{addrType,jdbcType=INTEGER},
+      </if>
+      <if test="fileMd5 != null">
+        file_md5 = #{fileMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="parentPath != null">
+        parent_path = #{parentPath,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        file_size = #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="dirWhether != null">
+        dir_whether = #{dirWhether,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="listVirtualAddressLikeFilePath" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from virtual_address
+    where user_id = #{userId,jdbcType=VARCHAR}
+    <if test="parentPath != null">
+      and parent_path like CONCAT('',#{parentPath,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+
+  <delete id="removeVirtualAddress" parameterType="java.lang.String">
+    delete from virtual_address
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="saveVirtualAddress" parameterType="top.quhailong.pan.core.entity.VirtualAddressDO">
+    insert into virtual_address
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="fileId != null">
+        file_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="addrType != null">
+        addr_type,
+      </if>
+      <if test="fileMd5 != null">
+        file_md5,
+      </if>
+      <if test="parentPath != null">
+        parent_path,
+      </if>
+      <if test="fileSize != null">
+        file_size,
+      </if>
+      <if test="dirWhether != null">
+        dir_whether,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="fileId != null">
+        #{fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="addrType != null">
+        #{addrType,jdbcType=INTEGER},
+      </if>
+      <if test="fileMd5 != null">
+        #{fileMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="parentPath != null">
+        #{parentPath,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="dirWhether != null">
+        #{dirWhether,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

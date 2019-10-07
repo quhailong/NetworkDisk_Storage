@@ -53,7 +53,7 @@ public final class CookieUtils {
 			//String v = URLEncoder.encode(new Gson().toJson(object), "UTF-8");
 
 			Cookie cookie = new Cookie(name, v);
-			cookie.setDomain(".727pan.cn");
+			cookie.setDomain("localhost");
 			cookie.setPath("/");
 			cookie.setMaxAge(Integer.MAX_VALUE);// 设置保存cookie最大时长
 			saveCookie(cookie);
@@ -125,7 +125,7 @@ public final class CookieUtils {
 				if ((name).equalsIgnoreCase(cookies[i].getName())) {
 
 					Cookie cookie = new Cookie(name, "");
-					cookie.setDomain(".727pan.cn");
+					cookie.setDomain("localhost");
 					cookie.setPath("/");
 					cookie.setMaxAge(0);// 设置保存cookie最大时长为0，即使其失效
 					saveCookie(cookie);

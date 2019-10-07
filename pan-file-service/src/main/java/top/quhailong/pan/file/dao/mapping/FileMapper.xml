@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.quhailong.pan.file.dao.FileDao">
+  <resultMap id="BaseResultMap" type="top.quhailong.pan.file.entity.FileDO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="file_id" jdbcType="VARCHAR" property="fileId" />
+    <result column="original_name" jdbcType="VARCHAR" property="originalName" />
+    <result column="file_size" jdbcType="INTEGER" property="fileSize" />
+    <result column="file_type" jdbcType="INTEGER" property="fileType" />
+    <result column="file_location" jdbcType="VARCHAR" property="fileLocation" />
+    <result column="file_md5" jdbcType="VARCHAR" property="fileMd5" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, file_id, original_name, file_size, file_type, file_location, file_md5, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from file
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from file
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="top.quhailong.pan.file.entity.FileDO">
+    insert into file (id, file_id, original_name, 
+      file_size, file_type, file_location, 
+      file_md5, create_time)
+    values (#{id,jdbcType=INTEGER}, #{fileId,jdbcType=VARCHAR}, #{originalName,jdbcType=VARCHAR}, 
+      #{fileSize,jdbcType=INTEGER}, #{fileType,jdbcType=INTEGER}, #{fileLocation,jdbcType=VARCHAR}, 
+      #{fileMd5,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="top.quhailong.pan.file.entity.FileDO">
+    insert into file
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="fileId != null">
+        file_id,
+      </if>
+      <if test="originalName != null">
+        original_name,
+      </if>
+      <if test="fileSize != null">
+        file_size,
+      </if>
+      <if test="fileType != null">
+        file_type,
+      </if>
+      <if test="fileLocation != null">
+        file_location,
+      </if>
+      <if test="fileMd5 != null">
+        file_md5,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fileId != null">
+        #{fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="originalName != null">
+        #{originalName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="fileType != null">
+        #{fileType,jdbcType=INTEGER},
+      </if>
+      <if test="fileLocation != null">
+        #{fileLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="fileMd5 != null">
+        #{fileMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.quhailong.pan.file.entity.FileDO">
+    update file
+    <set>
+      <if test="fileId != null">
+        file_id = #{fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="originalName != null">
+        original_name = #{originalName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        file_size = #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="fileType != null">
+        file_type = #{fileType,jdbcType=INTEGER},
+      </if>
+      <if test="fileLocation != null">
+        file_location = #{fileLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="fileMd5 != null">
+        file_md5 = #{fileMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.quhailong.pan.file.entity.FileDO">
+    update file
+    set file_id = #{fileId,jdbcType=VARCHAR},
+      original_name = #{originalName,jdbcType=VARCHAR},
+      file_size = #{fileSize,jdbcType=INTEGER},
+      file_type = #{fileType,jdbcType=INTEGER},
+      file_location = #{fileLocation,jdbcType=VARCHAR},
+      file_md5 = #{fileMd5,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- 自定义Mapper -->
+
+  <select id="checkMd5Whether" resultType="java.lang.Integer">
+    select
+    count(*)
+    from file
+    where file_md5 = #{fileMd5,jdbcType=VARCHAR} limit 1
+  </select>
+
+  <select id="getFileByMd5" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from file
+    where file_md5 = #{fileMd5,jdbcType=VARCHAR}
+  </select>
+
+  <insert id="saveFile" parameterType="top.quhailong.pan.file.entity.FileDO">
+    insert into file
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="fileId != null">
+        file_id,
+      </if>
+      <if test="originalName != null">
+        original_name,
+      </if>
+      <if test="fileSize != null">
+        file_size,
+      </if>
+      <if test="fileType != null">
+        file_type,
+      </if>
+      <if test="fileLocation != null">
+        file_location,
+      </if>
+      <if test="fileMd5 != null">
+        file_md5,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fileId != null">
+        #{fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="originalName != null">
+        #{originalName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="fileType != null">
+        #{fileType,jdbcType=INTEGER},
+      </if>
+      <if test="fileLocation != null">
+        #{fileLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="fileMd5 != null">
+        #{fileMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="getFileByFid" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from file
+    where file_id = #{fileId,jdbcType=VARCHAR}
+  </select>
+</mapper>

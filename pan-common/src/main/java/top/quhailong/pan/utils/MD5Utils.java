@@ -95,9 +95,4 @@ public class MD5Utils {
             return null;
         }
     }
-    public static void main(String[] args) {
-    	
-		System.out.println(MD5Utils.verify("quhailong123", "7b852bbc08646ac6f1f3b29ed715dc6e228e84be865e3ca2"));
-	}
-
 }

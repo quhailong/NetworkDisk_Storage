@@ -1,0 +1,15 @@
+spring:
+  cloud: 
+    config: 
+      profile: config
+      discovery:
+        enabled: true
+        service-id: config-service
+      username: admin
+      password: admin123
+  application: 
+    name: share-service
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://admin:admin123@localhost:8888/eureka/

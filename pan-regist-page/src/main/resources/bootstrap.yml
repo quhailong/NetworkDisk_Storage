@@ -1,0 +1,16 @@
+spring:
+  cloud: 
+    config: 
+      #uri: http://localhost:9004
+      profile: config
+      discovery:
+        enabled: true
+        service-id: config-service
+      username: admin
+      password: admin123
+  application: 
+    name: regist-page
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin:admin123@localhost:8888/eureka/

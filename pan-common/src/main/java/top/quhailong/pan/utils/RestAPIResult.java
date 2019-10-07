@@ -1,6 +1,8 @@
 
 package top.quhailong.pan.utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +12,7 @@ import java.util.Map;
  * ClassName:RestAPIResulut <br/>
  * Function: REST API接口统一响应接口实体. <br/>
  * Date: 2017年8月16日 下午15:25:04 <br/>
- * 
+ *
  * @author guooo
  * @version
  * @since JDK 1.6
@@ -21,7 +23,7 @@ public class RestAPIResult<T> implements Serializable {
 
 	/**
 	 * serialVersionUID:
-	 * 
+	 *
 	 * @since JDK 1.6
 	 */
 	private static final long serialVersionUID = 1L;
@@ -32,7 +34,6 @@ public class RestAPIResult<T> implements Serializable {
 	// @ApiModelProperty(value = "respMsg : 如果code!=1,错误信息")
 	private String respMsg = "成功！";
 
-	@SuppressWarnings("unchecked")
 	// @ApiModelProperty(value = "respCode为1时返回结果")
 	private T respData = (T) new Object();
 
@@ -47,7 +48,6 @@ public class RestAPIResult<T> implements Serializable {
 
 	// @ApiModelProperty(value = "respData base64加密，用于客户端验证签名")
 	private String dataCode;
-
 	public int getRespCode() {
 		return respCode;
 	}
@@ -104,7 +104,6 @@ public class RestAPIResult<T> implements Serializable {
 		this.respMap = respMap;
 	}
 
-	@SuppressWarnings("unchecked")
 	public RestAPIResult(String errorMsg) {
 		this.respMsg = errorMsg;
 		this.respCode = 0;
@@ -112,9 +111,8 @@ public class RestAPIResult<T> implements Serializable {
 		this.respMap = new HashMap<String, Object>();
 	}
 
-	@SuppressWarnings("unchecked")
 	public RestAPIResult() {
-		this.respData = (T) new Object();
+		this.respData = (T) new String();
 		this.respMap = new HashMap<String, Object>();
 	}
 
@@ -125,7 +123,6 @@ public class RestAPIResult<T> implements Serializable {
 		this.respMap = new HashMap<String, Object>();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void error() {
 		this.respCode = 0;
 		this.respMsg = "0";
@@ -133,7 +130,6 @@ public class RestAPIResult<T> implements Serializable {
 		this.respMap = new HashMap<String, Object>();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void error(String message) {
 		this.respCode = 0;
 		this.respMsg = message;

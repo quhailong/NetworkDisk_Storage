@@ -89,7 +89,4 @@ public class JWTUtils {
 		Claims claims = Jwts.parser().setSigningKey(signKey).parseClaimsJws(jwt).getBody();
 		return claims;
 	}
-	public static void main(String[] args) {
-		JWTUtils.parseJWT("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJjZTY3MTkyZDA4MTM0YTMzYWNkODdjMzllNjBmNDY2ZiIsInN1YiI6IntcInVpZFwiOlwiY2UwMWUzYzhiNGZkNDE5OTg5MjZiMTlhZmJhNmQwMWZcIixcInVzZXJuYW1lXCI6XCJxdWhhaWxvbmcxMjNcIixcInBhc3N3b3JkXCI6XCJmNzVmYjM0ZDA5ZTg3OGRkZDkwNGI5M2Y4ODdlYTcwYzRmN2ZiNGZhNTJiMzk3MDlcIixcInBob25lXCI6XCIxODcxNDMwMjIzOVwiLFwic2FsdFwiOlwiN2JkZThkNDM4YWM3NDUzMFwiLFwicGljbG9jYXRpb25cIjpcIi9cIixcImNyZWF0ZXRpbWVcIjoxNTI0OTY0OTE5MDAwfSJ9.crOs1DC8GSxKTFxitPRt8isbs9aXb_APAee_DXa4gdw", "nimadetou".getBytes());
-	}
 }

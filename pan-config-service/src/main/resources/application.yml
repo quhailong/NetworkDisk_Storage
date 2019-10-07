@@ -1,0 +1,27 @@
+server: 
+  port: 8889
+  
+spring: 
+  application: 
+    name: config-service
+  security:
+    user:
+      name: admin
+      password: admin123
+  profiles: 
+    active: native
+  cloud: 
+    config: 
+      server: 
+        native: 
+          searchLocations: classpath:/properties/
+    
+eureka: 
+  client: 
+    serviceUrl: 
+      defaultZone: http://admin:admin123@localhost:8888/eureka/
+    healthcheck:
+      enabled: true
+  instance: 
+    leaseRenewalIntervalInSeconds: 10
+    leaseExpirationDurationInSeconds: 30

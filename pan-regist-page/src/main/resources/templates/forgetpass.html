@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>忘记密码</title>
+</head>
+<link th:href="@{/css/regist.css}" rel="stylesheet" type="text/css" />
+<link th:href="@{/css/jquery-ui.min.css}" rel="stylesheet"
+	type="text/css" />
+<script type="text/javascript" th:src="@{/js/jquery-3.2.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jsencrypt.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery-ui.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/forgetpass.js}"></script>
+<body>
+	<textarea id="publicKey" hidden="true" rows="" cols=""></textarea>
+	<textarea id="RSAKey" hidden="true" rows="" cols=""></textarea>
+	<div id="wrapper">
+		<div id="head">
+			<div class="mod-header">
+				<a href="http://727pan.cn" style="display: block;"><img style="width: 225px;height: 62px"
+					th:src="@{/images/16new/logo727.png}" alt="logo"></a>
+			</div>
+		</div>
+		<div id="nav">
+			<div class="nav-2">
+				<div class="mod-nav clearfix">
+					<h1 class="page-type-notab"></h1>
+					<input id="pid" hidden="true" type="text" th:value="${pid}"/>
+				</div>
+			</div>
+		</div>
+		<div id="content">
+			<div class="mod-reg clearfix">
+				<div class="reg-content tang-pass-reg">
+				<input id="vcodestr" hidden="true" type="text" value=""/>
+					<form id="registForm" method="post">
+						<p class="pass-form-item pass-form-item-userName">
+							<label class="pass-label pass-label-userName">用户名/手机号</label> <input
+								id="inputUsername" type="text" name="username"
+								class="pass-text-input pass-text-input-userName"
+								placeholder="请输入用户名/手机号" /> <span
+								id="TANGRAM__PSP_3__userNameError"
+								class="pass-item-error pass-item-error-userName"
+								style="display: inline;"></span>
+						</p>
+						<p class="pass-form-item pass-form-item-password">
+							<label class="pass-label pass-label-userName">新密码</label> <input
+								id="TANGRAM__PSP_4__password" type="password" name="password"
+								class="pass-text-input pass-text-input-userName"
+								placeholder="请设置新密码"/> <span
+								id="TANGRAM__PSP_3__passwordError"
+								class="pass-item-error pass-item-error-password"
+								style="display: inline;"></span>
+						</p>
+						<p class="pass-form-item pass-form-item-userName">
+							<label class="pass-label pass-label-userName">验证码</label> <input id="inputverifyCode"
+								type="text" name="verifyCode"
+								class="pass-text-input pass-text-input-verifyCode"
+								placeholder="请输入验证码 " /> <input
+								id="TANGRAM__PSP_3__verifyCodeSend" type="button"
+								value="获取短信验证码" class="pass-button pass-button-verifyCodeSend"
+								autocomplete="off"> <span
+								id="TANGRAM__PSP_3__verifyCodeError"
+								class="pass-item-error pass-item-error-verifyCodeSend"
+								style="display: inline;"></span>
+						</p>
+						<div id="dialog" title="安全验证">
+							请填写图中的验证码<br /> <input placeholder="验证码 " id="verfiCode"
+								maxlength="4" type="text" name="verfyCode" /> <img
+								class="checkImg" id="checkImg" src=""
+								title="点击更换验证码" onclick="change()"> <input
+								style="background-color: #3f89ec; margin-left: 76px; width: 70px; display: block; height: 33px; cursor: pointer; color: #fff; margin-top: 12px; border-radius: 3px; border: 0;"
+								id="regVerfiCode" type="submit" value="确定"> <span
+								id="TANGRAM__PSP_3__verifyCodeSEError" class="pass-item-error"
+								style="display: inline;"></span>
+						</div>
+						<input id="TANGRAM__PSP_3__submit" type="button" value="修改密码"
+							class="pass-button pass-button-submit">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

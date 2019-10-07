@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.quhailong.pan.share.dao.ShareMapDao">
+  <resultMap id="BaseResultMap" type="top.quhailong.pan.share.entity.ShareMapDO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="share_id" jdbcType="VARCHAR" property="shareId" />
+    <result column="virtual_address_id" jdbcType="VARCHAR" property="virtualAddressId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, share_id, virtual_address_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from share_map
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from share_map
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="top.quhailong.pan.share.entity.ShareMapDO">
+    insert into share_map (id, share_id, virtual_address_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{shareId,jdbcType=VARCHAR}, #{virtualAddressId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="top.quhailong.pan.share.entity.ShareMapDO">
+    insert into share_map
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="shareId != null">
+        share_id,
+      </if>
+      <if test="virtualAddressId != null">
+        virtual_address_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="shareId != null">
+        #{shareId,jdbcType=VARCHAR},
+      </if>
+      <if test="virtualAddressId != null">
+        #{virtualAddressId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.quhailong.pan.share.entity.ShareMapDO">
+    update share_map
+    <set>
+      <if test="shareId != null">
+        share_id = #{shareId,jdbcType=VARCHAR},
+      </if>
+      <if test="virtualAddressId != null">
+        virtual_address_id = #{virtualAddressId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.quhailong.pan.share.entity.ShareMapDO">
+    update share_map
+    set share_id = #{shareId,jdbcType=VARCHAR},
+      virtual_address_id = #{virtualAddressId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- 自定义mapper -->
+
+  <insert id="saveShareMap" parameterType="top.quhailong.pan.share.entity.ShareMapDO">
+    insert into share_map
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="shareId != null">
+        share_id,
+      </if>
+      <if test="virtualAddressId != null">
+        virtual_address_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="shareId != null">
+        #{shareId,jdbcType=VARCHAR},
+      </if>
+      <if test="virtualAddressId != null">
+        #{virtualAddressId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <delete id="removeShareMapByShareIdList" parameterType="java.lang.Integer">
+    delete from share_map
+    where share_id in
+    <foreach collection="shareIdList" item="shareId" index="index"
+             open="(" close=")" separator=",">
+      #{shareId}
+    </foreach>
+  </delete>
+
+  <select id="listShareMapByShareId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from share_map
+    where share_id = #{shareId,jdbcType=VARCHAR}
+  </select>
+</mapper>

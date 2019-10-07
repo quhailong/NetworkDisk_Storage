@@ -1,0 +1,48 @@
+server:
+  port: 8890
+
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+    leaseExpirationDurationInSeconds: 30
+
+spring:
+  security:
+    basic:
+      enable: true
+    user:
+      name: admin
+      password: admin123
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: ${databaseUrl}
+    username: ${databaseUsername}
+    password: ${databasePassword}
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    
+pagehelper:
+  helperDialect: mysql
+  supportMethodsArguments: true
+  params: count=countSql
+  reasonable: false
+mybatis:
+  mapper-locations: classpath:top/quhailong/pan/core/dao/mapping/*.xml
+  type-aliases-package: top.quhailong.pan.core.entity
+

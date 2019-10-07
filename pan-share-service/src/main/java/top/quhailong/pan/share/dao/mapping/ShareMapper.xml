@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.quhailong.pan.share.dao.ShareDao">
+  <resultMap id="BaseResultMap" type="top.quhailong.pan.share.entity.ShareDO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="share_id" jdbcType="VARCHAR" property="shareId" />
+    <result column="theme" jdbcType="VARCHAR" property="theme" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="lock_whether" jdbcType="INTEGER" property="lockWhether" />
+    <result column="share_password" jdbcType="VARCHAR" property="sharePassword" />
+    <result column="visit_count" jdbcType="INTEGER" property="visitCount" />
+    <result column="save_count" jdbcType="INTEGER" property="saveCount" />
+    <result column="download_count" jdbcType="INTEGER" property="downloadCount" />
+    <result column="multi_whether" jdbcType="INTEGER" property="multiWhether" />
+    <result column="expiration" jdbcType="TIMESTAMP" property="expiration" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, share_id, theme, user_id, lock_whether, share_password, visit_count, save_count, 
+    download_count, multi_whether, expiration, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from share
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from share
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="top.quhailong.pan.share.entity.ShareDO">
+    insert into share (id, share_id, theme, 
+      user_id, lock_whether, share_password, 
+      visit_count, save_count, download_count, 
+      multi_whether, expiration, create_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{shareId,jdbcType=VARCHAR}, #{theme,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR}, #{lockWhether,jdbcType=INTEGER}, #{sharePassword,jdbcType=VARCHAR}, 
+      #{visitCount,jdbcType=INTEGER}, #{saveCount,jdbcType=INTEGER}, #{downloadCount,jdbcType=INTEGER}, 
+      #{multiWhether,jdbcType=INTEGER}, #{expiration,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="top.quhailong.pan.share.entity.ShareDO">
+    insert into share
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="shareId != null">
+        share_id,
+      </if>
+      <if test="theme != null">
+        theme,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="lockWhether != null">
+        lock_whether,
+      </if>
+      <if test="sharePassword != null">
+        share_password,
+      </if>
+      <if test="visitCount != null">
+        visit_count,
+      </if>
+      <if test="saveCount != null">
+        save_count,
+      </if>
+      <if test="downloadCount != null">
+        download_count,
+      </if>
+      <if test="multiWhether != null">
+        multi_whether,
+      </if>
+      <if test="expiration != null">
+        expiration,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="shareId != null">
+        #{shareId,jdbcType=VARCHAR},
+      </if>
+      <if test="theme != null">
+        #{theme,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="lockWhether != null">
+        #{lockWhether,jdbcType=INTEGER},
+      </if>
+      <if test="sharePassword != null">
+        #{sharePassword,jdbcType=VARCHAR},
+      </if>
+      <if test="visitCount != null">
+        #{visitCount,jdbcType=INTEGER},
+      </if>
+      <if test="saveCount != null">
+        #{saveCount,jdbcType=INTEGER},
+      </if>
+      <if test="downloadCount != null">
+        #{downloadCount,jdbcType=INTEGER},
+      </if>
+      <if test="multiWhether != null">
+        #{multiWhether,jdbcType=INTEGER},
+      </if>
+      <if test="expiration != null">
+        #{expiration,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="top.quhailong.pan.share.entity.ShareDO">
+    update share
+    <set>
+      <if test="shareId != null">
+        share_id = #{shareId,jdbcType=VARCHAR},
+      </if>
+      <if test="theme != null">
+        theme = #{theme,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="lockWhether != null">
+        lock_whether = #{lockWhether,jdbcType=INTEGER},
+      </if>
+      <if test="sharePassword != null">
+        share_password = #{sharePassword,jdbcType=VARCHAR},
+      </if>
+      <if test="visitCount != null">
+        visit_count = #{visitCount,jdbcType=INTEGER},
+      </if>
+      <if test="saveCount != null">
+        save_count = #{saveCount,jdbcType=INTEGER},
+      </if>
+      <if test="downloadCount != null">
+        download_count = #{downloadCount,jdbcType=INTEGER},
+      </if>
+      <if test="multiWhether != null">
+        multi_whether = #{multiWhether,jdbcType=INTEGER},
+      </if>
+      <if test="expiration != null">
+        expiration = #{expiration,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.quhailong.pan.share.entity.ShareDO">
+    update share
+    set share_id = #{shareId,jdbcType=VARCHAR},
+      theme = #{theme,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      lock_whether = #{lockWhether,jdbcType=INTEGER},
+      share_password = #{sharePassword,jdbcType=VARCHAR},
+      visit_count = #{visitCount,jdbcType=INTEGER},
+      save_count = #{saveCount,jdbcType=INTEGER},
+      download_count = #{downloadCount,jdbcType=INTEGER},
+      multi_whether = #{multiWhether,jdbcType=INTEGER},
+      expiration = #{expiration,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- 自定义mapper -->
+
+  <insert id="saveShare" parameterType="top.quhailong.pan.share.entity.ShareDO">
+    insert into share
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="shareId != null">
+        share_id,
+      </if>
+      <if test="theme != null">
+        theme,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="lockWhether != null">
+        lock_whether,
+      </if>
+      <if test="sharePassword != null">
+        share_password,
+      </if>
+      <if test="visitCount != null">
+        visit_count,
+      </if>
+      <if test="saveCount != null">
+        save_count,
+      </if>
+      <if test="downloadCount != null">
+        download_count,
+      </if>
+      <if test="multiWhether != null">
+        multi_whether,
+      </if>
+      <if test="expiration != null">
+        expiration,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="shareId != null">
+        #{shareId,jdbcType=VARCHAR},
+      </if>
+      <if test="theme != null">
+        #{theme,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="lockWhether != null">
+        #{lockWhether,jdbcType=INTEGER},
+      </if>
+      <if test="sharePassword != null">
+        #{sharePassword,jdbcType=VARCHAR},
+      </if>
+      <if test="visitCount != null">
+        #{visitCount,jdbcType=INTEGER},
+      </if>
+      <if test="saveCount != null">
+        #{saveCount,jdbcType=INTEGER},
+      </if>
+      <if test="downloadCount != null">
+        #{downloadCount,jdbcType=INTEGER},
+      </if>
+      <if test="multiWhether != null">
+        #{multiWhether,jdbcType=INTEGER},
+      </if>
+      <if test="expiration != null">
+        #{expiration,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="listShareByUserId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from share
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="removeShareByShareIdList">
+    delete from share
+    where user_id = #{userId,jdbcType=VARCHAR} and share_id in
+    <foreach collection="shareIdList" item="shareId" index="index"
+             open="(" close=")" separator=",">
+      #{shareId}
+    </foreach>
+  </delete>
+
+  <select id="getShareByShareId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from share
+    where share_id = #{shareId,jdbcType=VARCHAR}
+  </select>
+
+  <update id="updateShare" parameterType="top.quhailong.pan.share.entity.ShareDO">
+    update share
+    <set>
+      <if test="shareId != null">
+        share_id = #{shareId,jdbcType=VARCHAR},
+      </if>
+      <if test="theme != null">
+        theme = #{theme,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="lockWhether != null">
+        lock_whether = #{lockWhether,jdbcType=INTEGER},
+      </if>
+      <if test="sharePassword != null">
+        share_password = #{sharePassword,jdbcType=VARCHAR},
+      </if>
+      <if test="visitCount != null">
+        visit_count = #{visitCount,jdbcType=INTEGER},
+      </if>
+      <if test="saveCount != null">
+        save_count = #{saveCount,jdbcType=INTEGER},
+      </if>
+      <if test="downloadCount != null">
+        download_count = #{downloadCount,jdbcType=INTEGER},
+      </if>
+      <if test="multiWhether != null">
+        multi_whether = #{multiWhether,jdbcType=INTEGER},
+      </if>
+      <if test="expiration != null">
+        expiration = #{expiration,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

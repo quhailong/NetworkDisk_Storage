@@ -1,0 +1,39 @@
+server: 
+  port: 8096
+  
+spring: 
+  application: 
+    name: file-zuul
+  servlet:
+    multipart:
+      maxFileSize: 800MB
+      maxRequestSize: 800MB
+    
+eureka: 
+  client: 
+    serviceUrl: 
+      defaultZone: http://admin:admin123@localhost:8888/eureka/
+    healthcheck: 
+      enabled: true
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+    leaseExpirationDurationInSeconds: 30
+hystrix: #hystrix配置
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 300000 
+ribbon: 
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+zuul: 
+  sensitiveHeaders:
+  host:
+    connectTimeoutMillis: 20000
+    socketTimeoutMillis: 20000
+  routes: 
+    file:
+      path: /api/file/**
+      serviceId: file-service
