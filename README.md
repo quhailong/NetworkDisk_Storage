@@ -1,10 +1,12 @@
 
 # NetworkDisk_Storage
 ---
+## 2019年10月07日改版
+修改原先模糊的微服务概念，修改项目结构，eureka中增加认证，微服务调用增加BasicAuth认证，规范代码规范（但不完整，后续会继续修改），删掉发送短信相关参数，需要使用的话请在云之讯申请账号或采用其它平台短信服务。
 ## 描述
 基于SpringBoot和SpringCloud的网盘系统，与百度网盘相似
 ## 采用技术
-本项目采用的SpringBoot和SpringCloud为最新版本（SpringBoot2.0.2和SpringCloud Finchley.RC2）  
+本项目采用的SpringBoot和SpringCloud为最新版本（SpringBoot2.1.7和SpringCloud Greenwich.SR2）  
 数据加密采用JWT技术  
 持久层框架采用Mybatis  
 数据连接池采用druid  
@@ -26,23 +28,19 @@
 10.用户修改密码及忘记密码  
 ## 项目模块划分
 pan-common---通用组件  
-pan-configServer---SpringCloud的配置中心  
-pan-coreAPI---系统核心api处理，微服务之间相互调用  
-pan-edgeServer---边缘系统（处理验证码，生成公钥，校验密码格式，发送短信）  
-pan-eureka-server---服务注册中心  
-pan-fastDFS---管理文件上传和下载到FastDFS集群中    
-pan-login---登录服务  
-pan-pages---系统登录及主要页面的展示服务  
+pan-config-service---SpringCloud的配置中心  
+pan-core-page---系统核心页面  
+pan-core-service---系统核心服务  
+pan-core-zuul---系统核心服务网关  
+pan-edge-service---边缘系统（处理验证码，生成公钥，校验密码格式，发送短信）  
+pan-eureka-service---服务注册中心  
+pan-file-service---系统文件服务  
+pan-file-zuul---系统文件服务网关 
 pan-parent---MAVEN项目的总jar包管理  
-pan-queryContent---系统数据查询服务  
-pan-regist---系统注册服务  
-pan-registPage---系统注册页面的展示服务  
-pan-share---文件分享服务  
-pan-updateContent---系统数据修改服务  
-pan-zuul---系统登录注册，修改密码，边缘服务，上传头像等功能的路由网关  
-pan-zuul2---系统核心功能的路由网关  
-pan-zuul3---系统注册页面跳转的路由网关  
-pan-zuul4---系统登录及主页面的路由网关  
+pan-service-api---系统微服务调用api管理 
+pan-regist-page---系统注册页面的展示服务  
+pan-share-service---文件分享服务  
+pan-user-service---系统用户服务  
 ## 系统部分截图
 ![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/1.png)  
 ![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/2.png)  
@@ -53,4 +51,8 @@ pan-zuul4---系统登录及主页面的路由网关
 ![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/7.png)  
 ![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/8.png)
 ## tips
-项目有些地方还不太完善，如果有什么问题请联系QQ：961584293 或联系邮箱:qhl961584293@163.com
+项目有些地方还不太完善，如果有什么问题请联系  
+QQ：961584293  
+WX: ququhailong  
+邮箱:qhl961584293@163.com  
+如果觉得还行，就请点个赞把
