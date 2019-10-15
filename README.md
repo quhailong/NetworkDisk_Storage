@@ -35,12 +35,15 @@ pan-core-zuul---系统核心服务网关
 pan-edge-service---边缘系统（处理验证码，生成公钥，校验密码格式，发送短信）  
 pan-eureka-service---服务注册中心  
 pan-file-service---系统文件服务  
-pan-file-zuul---系统文件服务网关 
+pan-file-zuul---系统文件服务网关  
 pan-parent---MAVEN项目的总jar包管理  
-pan-service-api---系统微服务调用api管理 
+pan-service-api---系统微服务调用api管理  
 pan-regist-page---系统注册页面的展示服务  
 pan-share-service---文件分享服务  
 pan-user-service---系统用户服务  
+## 项目运行顺序
+先启动pan-eureka-service，再启动pan-config-service，之后启动其他模块（无顺序），pan-common需要install  
+http://localhost:8097/为主界面，数据库sql脚本在工程根目录
 ## 系统部分截图
 ![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/1.png)  
 ![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/2.png)  
