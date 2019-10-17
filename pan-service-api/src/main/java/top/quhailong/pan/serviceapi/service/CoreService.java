@@ -14,7 +14,7 @@ public interface CoreService {
     @RequestMapping(value = "createdir", method = RequestMethod.POST)
     RestAPIResult<String> createDir(@RequestBody CreateDirRequest request);
 
-    @RequestMapping(value = "checkdirwhether", method = RequestMethod.GET)
+    @RequestMapping(value = "checkdirwhether",consumes="application/json", method = RequestMethod.GET)
     RestAPIResult<Integer> checkDirWhether(CheckDirWhetherRequest request);
 
     @RequestMapping(value = "createvirtualaddress", method = RequestMethod.POST)
