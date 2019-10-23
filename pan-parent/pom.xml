@@ -31,7 +31,7 @@
 		<spring-boot-starter-data-redis.version>2.1.7.RELEASE</spring-boot-starter-data-redis.version>
 		<bcprov-jdk16.version>1.45</bcprov-jdk16.version>
 		<mybatis-spring-boot-starter.version>2.0.1</mybatis-spring-boot-starter.version>
-		<fastjson.version>1.2.9</fastjson.version>
+		<fastjson.version>1.2.25</fastjson.version>
 		<druid.version>1.1.16</druid.version>
 		<jjwt.version>0.9.0</jjwt.version>
 		<fastdfs-client-java.version>1.27</fastdfs-client-java.version>
