@@ -43,7 +43,9 @@ pan-share-service---文件分享服务
 pan-user-service---系统用户服务  
 ## 项目运行顺序
 先启动pan-eureka-service，再启动pan-config-service，之后启动其他模块（无顺序），pan-common需要install  
-http://localhost:8097/为主界面，数据库sql脚本在工程根目录
+http://localhost:8097/为主界面，数据库sql脚本在工程根目录。  
+>注意：每个项目中的resources文件夹需要IDEA识别出来，否则不能读取配置文件  
+![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/9.png)
 ## 系统部分截图
 ![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/1.png)  
 ![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/2.png)  
