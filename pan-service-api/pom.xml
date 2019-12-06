@@ -6,7 +6,7 @@
         <groupId>top.quhailong.pan.parent</groupId>
         <artifactId>pan-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath></relativePath>
+        <relativePath>../pan-parent/pom.xml</relativePath>
     </parent>
 
     <groupId>top.quhailong.pan.serviceapi</groupId>
