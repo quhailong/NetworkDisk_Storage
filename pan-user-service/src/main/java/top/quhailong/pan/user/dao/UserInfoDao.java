@@ -1,23 +1,11 @@
 package top.quhailong.pan.user.dao;
 
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import top.quhailong.pan.user.entity.UserInfoDO;
 
-@Component
+@Repository
 public interface UserInfoDao {
-    int deleteByPrimaryKey(Integer id);
-
-    int insert(UserInfoDO record);
-
-    int insertSelective(UserInfoDO record);
-
-    UserInfoDO selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(UserInfoDO record);
-
-    int updateByPrimaryKey(UserInfoDO record);
-
     /**
      * 根据登录凭证获取用户信息
      *

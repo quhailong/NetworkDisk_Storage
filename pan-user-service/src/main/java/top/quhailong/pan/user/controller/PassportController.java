@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.quhailong.pan.response.UserInfoDTO;
-import top.quhailong.pan.user.provider.PassportProvider;
-import top.quhailong.pan.user.remote.CoreRemote;
+import top.quhailong.pan.user.service.PassportService;
 import top.quhailong.pan.utils.RestAPIResult;
 
 import javax.annotation.Resource;
@@ -22,24 +21,21 @@ public class PassportController {
     @Resource
     private HttpServletRequest httpServletRequest;
     @Autowired
-    private PassportProvider passportProvider;
-    @Autowired
-    private CoreRemote coreRemote;
+    private PassportService passportService;
 
     /**
-     * 登录
+     * 登录请求
      *
      * @author: quhailong
      * @date: 2019/9/25
      */
-    //@RequestMapping(value = "api/login", method = { RequestMethod.POST })
     @RequestMapping(value = "login", method = RequestMethod.POST)
     public RestAPIResult<String> login(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("RSAKey") String RSAKey) throws Exception {
         logger.info("登录请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("登录数据处理开始,username:{}", username);
-        RestAPIResult<String> result = passportProvider.loginHandle(username, password, RSAKey);
+        RestAPIResult<String> result = passportService.loginHandle(username, password, RSAKey);
         logger.info("登录数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("登录调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -52,14 +48,13 @@ public class PassportController {
      * @param token
      * @return
      */
-    //@RequestMapping(value = "api/logout", method = {RequestMethod.POST})
     @RequestMapping(value = "logout", method = RequestMethod.GET)
     public RestAPIResult<String> logout(@RequestParam("token") String token) {
         logger.info("退出请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("退出数据处理开始,token:{}", token);
-        RestAPIResult<String> result = passportProvider.logoutHandle(token);
+        RestAPIResult<String> result = passportService.logoutHandle(token);
         logger.info("退出数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("退出调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -78,7 +73,7 @@ public class PassportController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("根据用户ID获取用户信息数据处理开始,userId:{}", userId);
-        RestAPIResult<UserInfoDTO> result = passportProvider.getUserInfoHandle(userId);
+        RestAPIResult<UserInfoDTO> result = passportService.getUserInfoHandle(userId);
         logger.info("根据用户ID获取用户信息数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("根据用户ID获取用户信息调用时间,millies:{}", stopWatch.getTotalTimeMillis());

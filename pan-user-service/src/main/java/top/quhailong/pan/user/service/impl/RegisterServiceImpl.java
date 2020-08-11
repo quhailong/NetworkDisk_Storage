@@ -1,17 +1,18 @@
-package top.quhailong.pan.user.provider;
+package top.quhailong.pan.user.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import top.quhailong.pan.request.ChangePwdRequest;
 import top.quhailong.pan.request.RegPhoneSendRequest;
 import top.quhailong.pan.request.SendSmsRequest;
 import top.quhailong.pan.request.UserRegistRequest;
+import top.quhailong.pan.user.dao.UserInfoDao;
 import top.quhailong.pan.user.entity.UserInfoDO;
 import top.quhailong.pan.user.remote.CoreRemote;
 import top.quhailong.pan.user.remote.EdgeRemote;
 import top.quhailong.pan.user.remote.FileRemote;
-import top.quhailong.pan.user.service.UserInfoService;
+import top.quhailong.pan.user.service.RegisterService;
 import top.quhailong.pan.utils.*;
 
 import java.io.IOException;
@@ -20,16 +21,10 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-/**
- * 注册数据处理
- *
- * @author: quhailong
- * @date: 2019/9/25
- */
-@Component
-public class RegistProvider {
+@Service
+public class RegisterServiceImpl implements RegisterService {
     @Autowired
-    private UserInfoService userInfoService;
+    private UserInfoDao userInfoDao;
     @Autowired
     private JedisClusterUtil jedisClusterUtil;
     @Autowired
@@ -39,16 +34,11 @@ public class RegistProvider {
     @Autowired
     private FileRemote fileRemote;
 
-    /**
-     * 用户名查重数据处理
-     *
-     * @author: quhailong
-     * @date: 2019/9/25
-     */
+    @Override
     public RestAPIResult<String> checkUserNameHandle(String username) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         if (Pattern.compile("^[a-zA-Z0-9\u4E00-\u9FA5_]+$").matcher(username).matches() && !Pattern.compile("^[0-9]+$").matcher(username).matches()) {
-            UserInfoDO userInfoDO = userInfoService.getUserInfoByUserNameOrPhone(username, null);
+            UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserNameOrPhone(username, null);
             if (userInfoDO != null) {
                 panResult.error("用户名已经被使用了，请更换");
                 return panResult;
@@ -61,16 +51,11 @@ public class RegistProvider {
         }
     }
 
-    /**
-     * 手机号查重数据处理
-     *
-     * @author: quhailong
-     * @date: 2019/9/25
-     */
+    @Override
     public RestAPIResult<String> checkPhoneHandle(String phoneNum) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         if (Pattern.compile("^[1][3,4,5,7,8][0-9]{9}$").matcher(phoneNum).matches()) {
-            UserInfoDO userInfoDO = userInfoService.getUserInfoByUserNameOrPhone(null, phoneNum);
+            UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserNameOrPhone(null, phoneNum);
             if (userInfoDO != null) {
                 panResult.setRespCode(144);
                 panResult.setRespData(null);
@@ -84,12 +69,7 @@ public class RegistProvider {
         }
     }
 
-    /**
-     * 用户注册数据处理
-     *
-     * @author: quhailong
-     * @date: 2019/9/25
-     */
+    @Override
     public RestAPIResult<String> userRegistHandle(UserRegistRequest request) throws Exception {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         if (jedisClusterUtil.isExistKey("regist:" + request.getPid())) {
@@ -105,7 +85,7 @@ public class RegistProvider {
                 userInfoDO.setCreateTime(new Date());
                 userInfoDO.setUpdateTime(new Date());
                 userInfoDO.setPicLocation("/");
-                userInfoService.saveUserInfo(userInfoDO);
+                userInfoDao.saveUserInfo(userInfoDO);
                 coreRemote.initCapacity(userId);
                 userInfoDO.setPassword("");
                 String accessToken = JWTUtils.createJWT(IDUtils.showNextId(new Random().nextInt(30)).toString(),
@@ -124,16 +104,11 @@ public class RegistProvider {
         }
     }
 
-    /**
-     * 注册发送短信数据处理
-     *
-     * @author: quhailong
-     * @date: 2019/9/26
-     */
+    @Override
     public RestAPIResult<String> regPhoneSendHandle(RegPhoneSendRequest request) {
         RestAPIResult<String> panResult = new RestAPIResult<String>();
         if (request.getVcodestr() == null && request.getVcodestr() == null) {
-            UserInfoDO userInfoDO = userInfoService.getUserInfoByUserNameOrPhone(null, request.getPhoneNum());
+            UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserNameOrPhone(null, request.getPhoneNum());
             if (userInfoDO != null) {
                 panResult.error("手机号码已注册");
                 return panResult;
@@ -184,21 +159,16 @@ public class RegistProvider {
         }
     }
 
-    /**
-     * 修改密码数据处理
-     *
-     * @author: quhailong
-     * @date: 2019/9/26
-     */
+    @Override
     public RestAPIResult<String> changePwdHandle(ChangePwdRequest request) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         String newPassword = RSAUtils.decryptDataOnJava(request.getNewPassword(), request.getRsaKey());
-        UserInfoDO userInfoDO = userInfoService.getUserInfoByUserId(request.getUid());
+        UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserId(request.getUid());
         String salt = IDUtils.showNextId(new Random().nextInt(30)).toString().substring(0, 16);
         userInfoDO.setPassword(MD5Utils.generate(newPassword, salt));
         userInfoDO.setSalt(salt);
         userInfoDO.setUpdateTime(new Date());
-        userInfoService.updateUserInfo(userInfoDO);
+        userInfoDao.updateUserInfo(userInfoDO);
         CookieUtils.removeCookie("token");
         CookieUtils.removeCookie("uid");
         jedisClusterUtil.setValue("LOGOUT:token", request.getToken(), 60 * 60 * 24 * 365);
@@ -207,15 +177,10 @@ public class RegistProvider {
         return panResult;
     }
 
-    /**
-     * 加载用户头像数据处理
-     *
-     * @author: quhailong
-     * @date: 2019/9/26
-     */
+    @Override
     public RestAPIResult<String> loadImgHandle(String uid) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
-        UserInfoDO userInfoDO = userInfoService.getUserInfoByUserId(uid);
+        UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserId(uid);
         String picLocation = userInfoDO.getPicLocation();
         if (picLocation.contains("group")) {
             panResult.success("null");
@@ -227,25 +192,16 @@ public class RegistProvider {
         return panResult;
     }
 
-    /**
-     * 上传用户头像数据处理
-     *
-     * @author: quhailong
-     * @date: 2019/9/26
-     */
+    @Override
     public RestAPIResult<String> uploadPicHandle(String uid, MultipartFile file) throws IOException {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         String picLocation = fileRemote.upload(file).getRespData();
-        UserInfoDO userInfoDO = userInfoService.getUserInfoByUserId(uid);
+        UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserId(uid);
         userInfoDO.setPicLocation(picLocation);
         userInfoDO.setUpdateTime(new Date());
-        userInfoService.updateUserInfo(userInfoDO);
+        userInfoDao.updateUserInfo(userInfoDO);
         panResult.success(null);
         panResult.setDataCode("200");
         return panResult;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(MD5Utils.generate("quhailong123", IDUtils.showNextId(new Random().nextInt(30)).toString().substring(0, 16)));
     }
 }

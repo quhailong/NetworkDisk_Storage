@@ -1,45 +1,35 @@
-package top.quhailong.pan.user.provider;
+package top.quhailong.pan.user.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import top.quhailong.pan.request.ForgetPhoneSendRequest;
 import top.quhailong.pan.request.ModifyPassRequest;
 import top.quhailong.pan.request.SendSmsRequest;
+import top.quhailong.pan.user.dao.UserInfoDao;
 import top.quhailong.pan.user.entity.UserInfoDO;
 import top.quhailong.pan.user.remote.EdgeRemote;
-import top.quhailong.pan.user.service.UserInfoService;
+import top.quhailong.pan.user.service.PasswordService;
 import top.quhailong.pan.utils.*;
 
 import java.util.Date;
 import java.util.Random;
 
-/**
- * 密码服务数据处理
- *
- * @author: quhailong
- * @date: 2019/9/26
- */
-@Component
-public class PasswordProvider {
+@Service
+public class PasswordServiceImpl implements PasswordService {
     @Autowired
     private JedisClusterUtil jedisClusterUtil;
     @Autowired
-    private UserInfoService userInfoService;
-    @Autowired
     private EdgeRemote edgeRemote;
+    @Autowired
+    private UserInfoDao userInfoDao;
 
-    /**
-     * 忘记密码短信服务数据处理
-     *
-     * @author: quhailong
-     * @date: 2019/9/26
-     */
+    @Override
     public RestAPIResult<String> forgetPhoneSendHandle(ForgetPhoneSendRequest request) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         if (request.getVcodestr() != null && request.getVerfyCode() != null && request.getUsername() != null) {
             if (jedisClusterUtil.isExistKey("verfiyCode:" + request.getVcodestr())) {
                 if (request.getVerfyCode().equalsIgnoreCase(jedisClusterUtil.getValue("verfiyCode:" + request.getVcodestr()))) {
-                    UserInfoDO userInfoDO = userInfoService.getUserInfoByPassport(request.getUsername());
+                    UserInfoDO userInfoDO = userInfoDao.getUserInfoByPassport(request.getUsername());
                     if (userInfoDO != null && userInfoDO.getPhone() == null) {
                         panResult.error("手机号码不存在");
                         return panResult;
@@ -83,15 +73,10 @@ public class PasswordProvider {
         }
     }
 
-    /**
-     * 手机号/用户名校验数据处理
-     *
-     * @author: quhailong
-     * @date: 2019/9/26
-     */
+    @Override
     public RestAPIResult<String> checkPhoneSendHandle(String username) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
-        UserInfoDO userInfoDO = userInfoService.getUserInfoByPassport(username);
+        UserInfoDO userInfoDO = userInfoDao.getUserInfoByPassport(username);
         String userPhone = userInfoDO.getPhone();
         if (userPhone == null) {
             panResult.setRespCode(144);
@@ -103,15 +88,10 @@ public class PasswordProvider {
         }
     }
 
-    /**
-     * 忘记密码的修改数据处理
-     *
-     * @author: quhailong
-     * @date: 2019/9/26
-     */
+    @Override
     public RestAPIResult<String> modifyPassHandle(ModifyPassRequest request) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
-        UserInfoDO userInfoDO = userInfoService.getUserInfoByPassport(request.getUsername());
+        UserInfoDO userInfoDO = userInfoDao.getUserInfoByPassport(request.getUsername());
         if (userInfoDO == null) {
             panResult.error("用户信息不存在");
             return panResult;
@@ -129,7 +109,7 @@ public class PasswordProvider {
                 userInfoDO.setPassword(MD5Utils.generate(newPassword, salt));
                 userInfoDO.setSalt(salt);
                 userInfoDO.setUpdateTime(new Date());
-                userInfoService.updateUserInfo(userInfoDO);
+                userInfoDao.updateUserInfo(userInfoDO);
                 userInfoDO.setPassword("");
                 String accessToken = JWTUtils.createJWT(IDUtils.showNextId(new Random().nextInt(30)).toString(), JSONUtils.toJSONString(userInfoDO), 12 * 60 * 60 * 1000);
                 CookieUtils.addCookie("token", accessToken);
