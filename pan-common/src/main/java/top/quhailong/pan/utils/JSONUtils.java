@@ -122,9 +122,4 @@ public class JSONUtils<T> {
         }
         return resultList;
     }
-    public static void main(String[] args){
-        float v = Float.parseFloat(new DecimalFormat("0").format(((float) 1 / (float) 1) * 100));
-        System.out.println(v);
-
-    }
 }
