@@ -1,5 +1,7 @@
 package top.quhailong.pan.serviceapi.service;
 
+import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,18 +16,18 @@ public interface CoreService {
     @RequestMapping(value = "createdir", method = RequestMethod.POST)
     RestAPIResult<String> createDir(@RequestBody CreateDirRequest request);
 
-    @RequestMapping(value = "checkdirwhether",consumes="application/json", method = RequestMethod.GET)
-    RestAPIResult<Integer> checkDirWhether(CheckDirWhetherRequest request);
+    @RequestMapping(value = "checkdirwhether", method = RequestMethod.GET)
+    RestAPIResult<Integer> checkDirWhether(@SpringQueryMap CheckDirWhetherRequest request);
 
     @RequestMapping(value = "createvirtualaddress", method = RequestMethod.POST)
     RestAPIResult<Integer> createVirtualAddress(@RequestBody CreateVirtualAddressRequest request);
 
     @RequestMapping(value = "getfilenamebyvid", method = RequestMethod.GET)
-    RestAPIResult<String> getFileNameByVid(@RequestParam("vid")String vid,@RequestParam("uid") String uid);
+    RestAPIResult<String> getFileNameByVid(@RequestParam("vid") String vid, @RequestParam("uid") String uid);
 
     @RequestMapping(value = "getvirtualaddress", method = RequestMethod.GET)
     RestAPIResult<VirtualAddressDTO> getVirtualaddress(@RequestParam("vid") String vid, @RequestParam("uid") String uid);
 
     @RequestMapping(value = "initcapacity", method = RequestMethod.POST)
-    RestAPIResult<Integer> initCapacity(@RequestParam("userId")String userId);
+    RestAPIResult<Integer> initCapacity(@RequestParam("userId") String userId);
 }

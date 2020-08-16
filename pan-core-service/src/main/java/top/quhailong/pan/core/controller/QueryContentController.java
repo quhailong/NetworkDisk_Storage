@@ -3,6 +3,7 @@ package top.quhailong.pan.core.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -101,8 +102,8 @@ public class QueryContentController {
      * @author: quhailong
      * @date: 2019/9/25
      */
-    @RequestMapping(value = "checkdirwhether", method = RequestMethod.GET,consumes="application/json")
-    public RestAPIResult<Integer> checkDirWhether(@RequestBody CheckDirWhetherRequest request) {
+    @RequestMapping(value = "checkdirwhether", method = RequestMethod.GET)
+    public RestAPIResult<Integer> checkDirWhether(CheckDirWhetherRequest request) {
         logger.info("查询文件夹是否存在请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
