@@ -233,7 +233,6 @@ public class UpdateContentProvider {
             capacity.setUsedCapacity(capacity.getUsedCapacity() + virtualAddressDO.getFileSize());
             capacityService.updateCapacity(capacity);
         } else {
-            virtualaddressService.removeVirtualAddress(oldUuid);
             virtualaddressService.updateVirtualAddress(virtualAddressDO);
         }
         return true;

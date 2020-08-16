@@ -281,9 +281,6 @@
   <insert id="saveVirtualAddress" parameterType="top.quhailong.pan.core.entity.VirtualAddressDO">
     insert into virtual_address
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="uuid != null">
         uuid,
       </if>
@@ -319,9 +316,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="uuid != null">
         #{uuid,jdbcType=VARCHAR},
       </if>
