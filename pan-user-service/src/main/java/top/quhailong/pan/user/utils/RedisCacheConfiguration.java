@@ -5,18 +5,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import top.quhailong.pan.utils.JedisClusterUtil;
 
 @Configuration
-@EnableCaching
-public class RedisCacheConfiguration extends CachingConfigurerSupport {
+public class RedisCacheConfiguration {
     Logger logger = LoggerFactory.getLogger(RedisCacheConfiguration.class);
 
-    @Value("${spring.redis.host}")
+    /*@Value("${spring.redis.host}")
     private String host;
 
     @Value("${spring.redis.port}")
@@ -29,16 +30,16 @@ public class RedisCacheConfiguration extends CachingConfigurerSupport {
     private int maxIdle;
 
     @Value("${spring.redis.pool.max.wait}")
-    private long maxWaitMillis;
+    private long maxWaitMillis;*/
 
-    @Value("${spring.redis.password}")
+    @Value("${redisPassword}")
     private String password;
 
-    @Value("${spring.redis.cluster.nodes}")
+    @Value("${redisUrl}")
     private String nodes;
 
 
-    public JedisPool getRedisPoolFactory() {
+    /*public JedisPool getRedisPoolFactory() {
         logger.info("JedisPool注入成功！！");
         logger.info("redis地址：" + host + ":" + port);
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
@@ -46,9 +47,11 @@ public class RedisCacheConfiguration extends CachingConfigurerSupport {
         jedisPoolConfig.setMaxWaitMillis(maxWaitMillis);
         JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout, password);
         return jedisPool;
-    }
+    }*/
 
     @Bean
+    @Primary
+    @RefreshScope
     public JedisClusterUtil getJedisClusterUtil() {
         logger.info("开始初始化JedisCluster,nodes:{},password:{}！！", nodes, password);
         JedisClusterUtil jedisClusterUtil = new JedisClusterUtil(nodes, password);
