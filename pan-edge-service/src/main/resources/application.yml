@@ -1,13 +1,3 @@
-server:
-  port: 8091
-eureka:
-  client:
-    healthcheck:
-      enabled: true
-  instance:
-    leaseRenewalIntervalInSeconds: 10
-    leaseExpirationDurationInSeconds: 30
-  
 spring:
   redis:
     host: 192.168.1.113
@@ -24,3 +14,24 @@ spring:
 feign:
   hystrix:
     enabled: false
+management:
+  endpoints:
+    web:
+      #Actuator 默认所有的监控点路径都在/actuator/*，当然如果有需要这个路径也支持定制。
+      base-path: /monitor
+      #Actuator 默认只开放了两个端点 /actuator/health 和 /actuator/info
+      exposure:
+        #打开所有的监控点
+        include: '*'
+        #屏蔽env,beans监控点
+        exclude: env,beans
+  endpoint:
+    health:
+      #详细显示health信息
+      show-details: always
+      #启用接口关闭 Spring Boot (post请求)
+      shutdown:
+        enabled: true
+  health:
+    defaults:
+      enabled: true

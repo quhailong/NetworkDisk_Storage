@@ -1,15 +1,15 @@
+server:
+  port: 8093
 spring:
-  cloud: 
-    config: 
-      profile: config
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.93.128:8848
+        password: nacos
+        username: nacos
       discovery:
-        enabled: true
-        service-id: config-service
-      username: admin
-      password: admin123
-  application: 
+        server-addr: 192.168.93.128:8848
+        password: nacos
+        username: nacos
+  application:
     name: share-service
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://admin:admin123@localhost:8888/eureka/

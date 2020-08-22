@@ -36,10 +36,8 @@
 
     <modules>
         <module>../pan-common</module>
-        <module>../pan-config-service</module>
         <module>../pan-service-api</module>
         <module>../pan-edge-service</module>
-        <module>../pan-eureka-service</module>
         <module>../pan-file-service</module>
         <module>../pan-user-service</module>
         <module>../pan-core-page</module>
