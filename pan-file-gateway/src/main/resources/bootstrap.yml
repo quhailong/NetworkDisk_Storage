@@ -1,0 +1,15 @@
+server:
+  port: 8096
+spring:
+  cloud: 
+    nacos:
+      config:
+        server-addr: 192.168.93.128:8848
+        password: nacos
+        username: nacos
+      discovery:
+        server-addr: 192.168.93.128:8848
+        password: nacos
+        username: nacos
+  application: 
+    name: core-gateway

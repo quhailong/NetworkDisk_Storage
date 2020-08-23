@@ -9,9 +9,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 /**
- * 登录、注册网关
+ * 核心网关
  *
- * @author 屈海龙
+ * @author: quhailong
+ * @date: 2020/8/23
  */
 @EnableDiscoveryClient
 @SpringBootApplication

@@ -1,19 +1,25 @@
-server: 
-  port: 8096
-  
-spring: 
+spring:
   application: 
-    name: file-zuul
+    name: file-gateway
   servlet:
     multipart:
       maxFileSize: 800MB
       maxRequestSize: 800MB
   cloud:
-    nacos:
-      discovery:
-        server-addr: 192.168.93.128:8848
-        password: nacos
-        username: nacos
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            # 允许携带认证信息
+            allow-credentials: true
+            # 允许跨域的源(网站域名/ip)，设置*为全部
+            allowed-origins: "*"
+            # 允许跨域请求里的head字段，设置*为全部
+            allowed-headers: "*"
+            # 允许跨域的method， 默认为GET和OPTIONS，设置*为全部
+            allowed-methods: "*"
+            # 跨域允许的有效期
+            max-age: 3600
 hystrix: #hystrix配置
   command:
     default:
@@ -24,15 +30,6 @@ hystrix: #hystrix配置
 ribbon: 
   ReadTimeout: 60000
   ConnectTimeout: 60000
-zuul: 
-  sensitiveHeaders:
-  host:
-    connectTimeoutMillis: 20000
-    socketTimeoutMillis: 20000
-  routes: 
-    file:
-      path: /api/file/**
-      serviceId: file-service
 management:
   endpoints:
     web:
