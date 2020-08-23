@@ -44,7 +44,7 @@
         <module>../pan-core-service</module>
         <module>../pan-regist-page</module>
         <module>../pan-share-service</module>
-        <module>../pan-core-zuul</module>
+        <module>../pan-core-gateway</module>
         <module>../pan-file-zuul</module>
     </modules>
 
