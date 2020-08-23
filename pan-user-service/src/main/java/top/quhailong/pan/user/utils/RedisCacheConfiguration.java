@@ -14,6 +14,7 @@ import redis.clients.jedis.JedisPoolConfig;
 import top.quhailong.pan.utils.JedisClusterUtil;
 
 @Configuration
+@RefreshScope
 public class RedisCacheConfiguration {
     Logger logger = LoggerFactory.getLogger(RedisCacheConfiguration.class);
 
