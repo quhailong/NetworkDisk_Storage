@@ -13,3 +13,6 @@ spring:
         username: nacos
   application: 
     name: core-gateway
+logging:
+  level:
+    root: info

@@ -21,6 +21,8 @@ import top.quhailong.pan.utils.JSONUtils;
 import top.quhailong.pan.utils.JWTUtils;
 import top.quhailong.pan.utils.RestAPIResult;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,12 +52,15 @@ public class TokenFilter implements GlobalFilter, Ordered {
 
     private Mono<Void> verifyToken(ServerWebExchange exchange, GatewayFilterChain chain) {
         try {
+            ServerHttpRequest request;
             HttpCookie cookie = exchange.getRequest().getCookies().getFirst("token");
             String token = cookie.getValue();
             Claims claims = JWTUtils.parseJWT(token, "nimadetou".getBytes());
             String subject = claims.getSubject();
             UserInfoDTO userinfo = JSONUtils.parseObject(subject, UserInfoDTO.class);
-            return chain.filter(exchange);
+            String operationInfo = URLEncoder.encode(JSONUtils.toJSONString(userinfo), StandardCharsets.UTF_8.toString());
+            request = exchange.getRequest().mutate().header("operationInfo", operationInfo).build();
+            return chain.filter(exchange.mutate().request(request).build());
         } catch (Exception e) {
             ServerHttpResponse response = exchange.getResponse();
             response.getHeaders().add("Content-Type", "application/json;charset=UTF-8");

@@ -1,6 +1,7 @@
 package top.quhailong.pan.user.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import top.quhailong.pan.request.ChangePwdRequest;
@@ -26,13 +27,13 @@ public class RegisterServiceImpl implements RegisterService {
     @Autowired
     private UserInfoDao userInfoDao;
     @Autowired
-    private JedisClusterUtil jedisClusterUtil;
-    @Autowired
     private CoreRemote coreRemote;
     @Autowired
     private EdgeRemote edgeRemote;
     @Autowired
     private FileRemote fileRemote;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     public RestAPIResult<String> checkUserNameHandle(String username) {
@@ -72,8 +73,8 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public RestAPIResult<String> userRegistHandle(UserRegistRequest request) throws Exception {
         RestAPIResult<String> panResult = new RestAPIResult<>();
-        if (jedisClusterUtil.isExistKey("regist:" + request.getPid())) {
-            if (jedisClusterUtil.isExistKey("SMS:" + request.getPhoneNum()) && jedisClusterUtil.getValue("SMS:" + request.getPhoneNum()).equals(request.getVerifyCode())) {
+        if (redisTemplate.hasKey("regist:" + request.getPid())) {
+            if (redisTemplate.hasKey("SMS:" + request.getPhoneNum()) && redisTemplate.opsForValue().get("SMS:" + request.getPhoneNum()).equals(request.getVerifyCode())) {
                 UserInfoDO userInfoDO = new UserInfoDO();
                 String salt = IDUtils.showNextId(new Random().nextInt(30)).toString().substring(0, 16);
                 userInfoDO.setPassword(MD5Utils.generate(RSAUtils.decryptDataOnJava(request.getPassword(), request.getRsaKey()), salt));
@@ -118,8 +119,8 @@ public class RegisterServiceImpl implements RegisterService {
                 return panResult;
             }
         } else if (request.getVcodestr() != null && request.getVerfyCode() != null && request.getPhoneNum() != null) {
-            if (jedisClusterUtil.isExistKey("verfiyCode:" + request.getVcodestr())) {
-                if (request.getVerfyCode().equalsIgnoreCase(jedisClusterUtil.getValue("verfiyCode:" + request.getVcodestr()))) {
+            if (redisTemplate.hasKey("verfiyCode:" + request.getVcodestr())) {
+                if (request.getVerfyCode().equalsIgnoreCase(redisTemplate.opsForValue().get("verfiyCode:" + request.getVcodestr()))) {
                     String sid = "";
                     String token = "";
                     String appid = "";
@@ -137,8 +138,8 @@ public class RegisterServiceImpl implements RegisterService {
                     sendSmsRequest.setToken(token);
                     sendSmsRequest.setUid(uid);
                     RestAPIResult<String> result = edgeRemote.sendSms(sendSmsRequest);
-                    jedisClusterUtil.setValue("SMS:" + request.getPhoneNum(), param, 120);
-                    jedisClusterUtil.delKey("verfiyCode:" + request.getVcodestr());
+                    redisTemplate.opsForValue().set("SMS:" + request.getPhoneNum(),param,120);
+                    redisTemplate.delete("verfiyCode:" + request.getVcodestr());
                     if (result.getRespMsg().equals("0")) {
                         panResult.error("发送短信失败");
                         return panResult;
@@ -171,7 +172,7 @@ public class RegisterServiceImpl implements RegisterService {
         userInfoDao.updateUserInfo(userInfoDO);
         CookieUtils.removeCookie("token");
         CookieUtils.removeCookie("uid");
-        jedisClusterUtil.setValue("LOGOUT:token", request.getToken(), 60 * 60 * 24 * 365);
+        redisTemplate.opsForValue().set("LOGOUT:token", request.getToken(), 60 * 60 * 24 * 365);
         panResult.success(null);
         panResult.setDataCode("200");
         return panResult;

@@ -1,28 +1,3 @@
-spring:
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.cj.jdbc.Driver
-    url: ${databaseUrl}
-    username: ${databaseUsername}
-    password: ${databasePassword}
-    initialSize: 5
-    minIdle: 5
-    maxActive: 20
-    maxWait: 60000
-    timeBetweenEvictionRunsMillis: 60000
-    minEvictableIdleTimeMillis: 300000
-    validationQuery: SELECT 1 FROM DUAL
-    testWhileIdle: true
-    testOnBorrow: false
-    testOnReturn: false
-    poolPreparedStatements: true
-    maxPoolPreparedStatementPerConnectionSize: 20
-    filters: stat,wall
-    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
-  redis:
-    cluster:
-      nodes: ${redisUrl}
-    password: ${redisPassword}
 pagehelper:
   helperDialect: mysql
   supportMethodsArguments: true

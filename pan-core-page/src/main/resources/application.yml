@@ -1,24 +1,9 @@
 spring:
-  redis:
-    host: 192.168.1.113
-    port: 6379
-    timeout: 3600
-    cluster:
-      nodes: ${redisUrl}
-    password: ${redisPassword}
-    pool:
-      max:
-        active: 10
-        idle: 8
-        wait: -1
   thymeleaf:
     mode: LEGACYHTML5
     cache: false
     servlet:
       content-type: text/html
-feign:
-  hystrix:
-    enabled: false
 management:
   endpoints:
     web:

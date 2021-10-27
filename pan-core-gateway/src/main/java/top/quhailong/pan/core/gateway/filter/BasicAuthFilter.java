@@ -1,6 +1,6 @@
 package top.quhailong.pan.core.gateway.filter;
 
-import com.alibaba.nacos.client.identify.Base64;
+import com.alibaba.nacos.common.codec.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

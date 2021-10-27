@@ -20,46 +20,6 @@ spring:
             allowed-methods: "*"
             # 跨域允许的有效期
             max-age: 3600
-      #注册中心服务发现
-#      discovery:
-#         locator:
-#           #开启通过服务中心的自动根据 serviceId 创建路由的功能
-#           enabled: true
-#           # 配置之后访问时无需大写
-#           lower-case-service-id: true
-#           predicates[0]:
-#             name: Path
-#             args[patten]: "'/api/' + serviceId + '/**'"
-#           filters[0]:
-#             name: RewritePath
-#             args[regexp]: "'/api/' + serviceId + '/(?<remaining>.*)'"
-#             args[replacement]: "'/${remaining}}'"
-#      routes:
-#         - id: core-service
-#           uri: lb://core-service
-#           predicates:
-#             - Path= /api/core/**
-#           filters:
-#             - StripPrefix=2
-#         - id: edge-service
-#           uri: lb://edge-service
-#           predicates:
-#             - Path= /api/edge/**
-#           filters:
-#             - StripPrefix=2
-#         - id: user-service
-#           uri: lb://user-service
-#           predicates:
-#             - Path= /api/user/**
-#           filters:
-#             - StripPrefix=2
-#         - id: share-service
-#           uri: lb://share-service
-#           predicates:
-#             - Path= /api/share/**
-#           filters:
-#             - StripPrefix=2
-
 management:
   endpoints:
     web:

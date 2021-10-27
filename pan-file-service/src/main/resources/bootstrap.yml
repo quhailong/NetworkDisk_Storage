@@ -7,6 +7,10 @@ spring:
         server-addr: 192.168.93.128:8848
         password: nacos
         username: nacos
+        extension-configs:
+          - data-id: common-config.yaml
+            group: DEFAULT_GROUP
+            refresh: true
       discovery:
         server-addr: 192.168.93.128:8848
         password: nacos

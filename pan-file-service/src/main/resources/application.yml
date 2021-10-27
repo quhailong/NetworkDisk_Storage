@@ -12,38 +12,6 @@ spring:
     multipart:
       maxFileSize: 800MB
       maxRequestSize: 800MB
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.cj.jdbc.Driver
-    url: ${databaseUrl}
-    username: ${databaseUsername}
-    password: ${databasePassword}
-    initialSize: 5
-    minIdle: 5
-    maxActive: 20
-    maxWait: 60000
-    timeBetweenEvictionRunsMillis: 60000
-    minEvictableIdleTimeMillis: 300000
-    validationQuery: SELECT 1 FROM DUAL
-    testWhileIdle: true
-    testOnBorrow: false
-    testOnReturn: false
-    poolPreparedStatements: true
-    maxPoolPreparedStatementPerConnectionSize: 20
-    filters: stat,wall
-    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
-  redis:
-    host: 192.168.1.113
-    port: 6379
-    timeout: 3600
-    cluster:
-      nodes: ${redisUrl}
-    password: ${redisPassword}
-    pool:
-      max:
-        active: 10
-        idle: 8
-        wait: -1
 pagehelper:
   helperDialect: mysql
   supportMethodsArguments: true

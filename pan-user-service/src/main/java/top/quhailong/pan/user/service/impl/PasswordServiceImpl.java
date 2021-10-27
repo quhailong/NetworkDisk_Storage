@@ -1,6 +1,7 @@
 package top.quhailong.pan.user.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import top.quhailong.pan.request.ForgetPhoneSendRequest;
 import top.quhailong.pan.request.ModifyPassRequest;
@@ -17,7 +18,7 @@ import java.util.Random;
 @Service
 public class PasswordServiceImpl implements PasswordService {
     @Autowired
-    private JedisClusterUtil jedisClusterUtil;
+    private RedisTemplate<String, String> redisTemplate;
     @Autowired
     private EdgeRemote edgeRemote;
     @Autowired
@@ -27,8 +28,8 @@ public class PasswordServiceImpl implements PasswordService {
     public RestAPIResult<String> forgetPhoneSendHandle(ForgetPhoneSendRequest request) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         if (request.getVcodestr() != null && request.getVerfyCode() != null && request.getUsername() != null) {
-            if (jedisClusterUtil.isExistKey("verfiyCode:" + request.getVcodestr())) {
-                if (request.getVerfyCode().equalsIgnoreCase(jedisClusterUtil.getValue("verfiyCode:" + request.getVcodestr()))) {
+            if (redisTemplate.hasKey("verfiyCode:" + request.getVcodestr())) {
+                if (request.getVerfyCode().equalsIgnoreCase(redisTemplate.opsForValue().get("verfiyCode:" + request.getVcodestr()))) {
                     UserInfoDO userInfoDO = userInfoDao.getUserInfoByPassport(request.getUsername());
                     if (userInfoDO != null && userInfoDO.getPhone() == null) {
                         panResult.error("手机号码不存在");
@@ -51,8 +52,8 @@ public class PasswordServiceImpl implements PasswordService {
                     sendSmsRequest.setToken(token);
                     sendSmsRequest.setUid(uid);
                     RestAPIResult<String> result = edgeRemote.sendSms(sendSmsRequest);
-                    jedisClusterUtil.setValue("SMSForget:" + userInfoDO.getPhone(), param, 120);
-                    jedisClusterUtil.delKey("verfiyCode:" + request.getVcodestr());
+                    redisTemplate.opsForValue().set("SMSForget:" + userInfoDO.getPhone(), param, 120);
+                    redisTemplate.delete("verfiyCode:" + request.getVcodestr());
                     if (result.getRespMsg().equals("0")) {
                         panResult.error("发送短信失败");
                         return panResult;
@@ -102,7 +103,7 @@ public class PasswordServiceImpl implements PasswordService {
             return panResult;
         }
 
-        if (jedisClusterUtil.isExistKey("SMSForget:" + phoneNum) && jedisClusterUtil.getValue("SMSForget:" + phoneNum).equals(request.getVerifyCode())) {
+        if (redisTemplate.hasKey("SMSForget:" + phoneNum) && redisTemplate.opsForValue().get("SMSForget:" + phoneNum).equals(request.getVerifyCode())) {
             try {
                 String newPassword = RSAUtils.decryptDataOnJava(request.getPassword(), request.getRsaKey());
                 String salt = IDUtils.showNextId(new Random().nextInt(30)).toString().substring(0, 16);

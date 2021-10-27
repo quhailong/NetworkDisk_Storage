@@ -1,6 +1,5 @@
 package top.quhailong.pan.core.gateway.config;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.PropertyKeyConst;
@@ -9,60 +8,80 @@ import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
-import org.springframework.cloud.gateway.filter.FilterDefinition;
-import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionWriter;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
-import top.quhailong.pan.core.gateway.entity.FilterEntity;
-import top.quhailong.pan.core.gateway.entity.PredicateEntity;
-import top.quhailong.pan.core.gateway.entity.RouteEntity;
+import top.quhailong.pan.utils.JSONUtils;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executor;
+
 /**
  * 动态路由配置
  *
- * @author: quhailong
- * @date: 2020/8/23
+ * @author: hailong.qu
+ * @date: 2020/8/24
  */
 @Component
-@RefreshScope
-public class DynamicRoutingConfig implements ApplicationEventPublisherAware, CommandLineRunner {
+public class DynamicRoutingConfig implements ApplicationEventPublisherAware {
     private final Logger logger = LoggerFactory.getLogger(DynamicRoutingConfig.class);
+    /**
+     * data-id
+     */
     @Value("${gateway-route-data-id}")
     private String dataId;
+    /**
+     * group
+     */
     @Value("${gateway-route-group}")
     private String group;
+    /**
+     * 服务地址
+     */
     @Value("${spring.cloud.nacos.config.server-addr}")
     private String nacosServerAddr;
+    /**
+     * 用户名
+     */
     @Value("${spring.cloud.nacos.config.username}")
     private String nacosUserName;
+    /**
+     * 密码
+     */
     @Value("${spring.cloud.nacos.config.password}")
     private String nacosPassword;
-
-    @Autowired
-    private RouteDefinitionWriter routeDefinitionWriter;
+    /**
+     * 路由ID列表
+     */
+    private static final List<String> ROUTE_LIST = new ArrayList<>();
+    private final RouteDefinitionWriter routeDefinitionWriter;
 
     private ApplicationEventPublisher applicationEventPublisher;
+
+    public DynamicRoutingConfig(RouteDefinitionWriter routeDefinitionWriter) {
+        this.routeDefinitionWriter = routeDefinitionWriter;
+    }
+
+    @Override
+    public void setApplicationEventPublisher(@NonNull ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
+
     /**
      * 刷新路由，开启配置文件变更监听
      *
-     * @author: quhailong
-     * @date: 2020/8/23
+     * @author: hailong.qu
+     * @date: 2020/8/24
      */
     @Bean
     public void refreshRouting() throws NacosException {
@@ -71,6 +90,9 @@ public class DynamicRoutingConfig implements ApplicationEventPublisherAware, Com
         properties.put(PropertyKeyConst.USERNAME, nacosUserName);
         properties.put(PropertyKeyConst.PASSWORD, nacosPassword);
         ConfigService configService = NacosFactory.createConfigService(properties);
+        // 程序首次启动, 并加载初始化路由配置
+        String configInfo = configService.getConfig(dataId, group, 5000);
+        addAndPublishBatchRoute(configInfo);
         configService.addListener(dataId, group, new Listener() {
             @Override
             public Executor getExecutor() {
@@ -79,109 +101,71 @@ public class DynamicRoutingConfig implements ApplicationEventPublisherAware, Com
 
             @Override
             public void receiveConfigInfo(String configInfo) {
-                logger.info(configInfo);
-
-                boolean refreshGatewayRoute = JSONObject.parseObject(configInfo).getBoolean("refreshGatewayRoute");
-
-                if (refreshGatewayRoute) {
-                    List<RouteEntity> list = JSON.parseArray(JSONObject.parseObject(configInfo).getString("routeList")).toJavaList(RouteEntity.class);
-
-                    for (RouteEntity route : list) {
-                        update(assembleRouteDefinition(route));
-                    }
-                } else {
-                    logger.info("路由未发生变更");
-                }
-
-
+                addAndPublishBatchRoute(configInfo);
             }
         });
     }
 
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
+    /**
+     * 添加单条路由信息
+     *
+     * @author: hailong.qu
+     * @date: 2020/9/2
+     */
+    private void addRoute(RouteDefinition definition) {
+        routeDefinitionWriter.save(Mono.just(definition)).subscribe();
+        ROUTE_LIST.add(definition.getId());
     }
 
     /**
-     * 更新路由
+     * 清空所有路由
      *
-     * @author: quhailong
-     * @date: 2020/8/23
+     * @author: hailong.qu
+     * @date: 2020/9/2
      */
-    public void update(RouteDefinition routeDefinition) {
-
-        try {
-            this.routeDefinitionWriter.delete(Mono.just(routeDefinition.getId()));
-            logger.info("路由更新成功");
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+    private void clearRoute() {
+        for (String id : ROUTE_LIST) {
+            this.routeDefinitionWriter.delete(Mono.just(id)).subscribe();
         }
-
-        try {
-            routeDefinitionWriter.save(Mono.just(routeDefinition)).subscribe();
-            this.applicationEventPublisher.publishEvent(new RefreshRoutesEvent(this));
-            logger.info("路由更新成功");
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+        ROUTE_LIST.clear();
     }
 
-    public RouteDefinition assembleRouteDefinition(RouteEntity routeEntity) {
-
-        RouteDefinition definition = new RouteDefinition();
-
-        // ID
-        definition.setId(routeEntity.getId());
-
-        // Predicates
-        List<PredicateDefinition> pdList = new ArrayList<>();
-        for (PredicateEntity predicateEntity : routeEntity.getPredicates()) {
-            PredicateDefinition predicateDefinition = new PredicateDefinition();
-            predicateDefinition.setArgs(predicateEntity.getArgs());
-            predicateDefinition.setName(predicateEntity.getName());
-            pdList.add(predicateDefinition);
-        }
-        definition.setPredicates(pdList);
-
-        // Filters
-        List<FilterDefinition> fdList = new ArrayList<>();
-        for (FilterEntity filterEntity : routeEntity.getFilters()) {
-            FilterDefinition filterDefinition = new FilterDefinition();
-            filterDefinition.setArgs(filterEntity.getArgs());
-            filterDefinition.setName(filterEntity.getName());
-            fdList.add(filterDefinition);
-        }
-        definition.setFilters(fdList);
-
-        // URI
-        URI uri = UriComponentsBuilder.fromUriString(routeEntity.getUri()).build().toUri();
-        definition.setUri(uri);
-
-        return definition;
-    }
     /**
-     * 项目启动拉取配置文件进行初始化
+     * 批量添加和发布路由
      *
-     * @author: quhailong
-     * @date: 2020/8/23
+     * @author: hailong.qu
+     * @date: 2020/9/2
      */
-    @Override
-    public void run(String... args) throws Exception {
-        Properties properties = new Properties();
-        properties.put(PropertyKeyConst.SERVER_ADDR, nacosServerAddr);
-        properties.put(PropertyKeyConst.USERNAME, nacosUserName);
-        properties.put(PropertyKeyConst.PASSWORD, nacosPassword);
-        ConfigService configService = NacosFactory.createConfigService(properties);
-        String serviceConfig = configService.getConfig(dataId, group, 5000);
-        boolean refreshGatewayRoute = JSONObject.parseObject(serviceConfig).getBoolean("refreshGatewayRoute");
-        if (refreshGatewayRoute) {
-            List<RouteEntity> list = JSON.parseArray(JSONObject.parseObject(serviceConfig).getString("routeList")).toJavaList(RouteEntity.class);
-            for (RouteEntity route : list) {
-                update(assembleRouteDefinition(route));
+    private void addAndPublishBatchRoute(String configInfo) {
+        if (configInfo != null && !Objects.equals(configInfo, "")) {
+            try {
+                boolean refreshGatewayRoute = JSONObject.parseObject(configInfo).getBoolean("refreshGatewayRoute");
+                if (refreshGatewayRoute) {
+                    clearRoute();
+                    List<RouteDefinition> routeDefinitionList = JSONUtils.parseArray(JSONObject.parseObject(configInfo).getString("routeList"), RouteDefinition.class);
+                    if (routeDefinitionList != null && routeDefinitionList.size() > 0) {
+                        for (RouteDefinition routeDefinition : routeDefinitionList) {
+                            addRoute(routeDefinition);
+                        }
+                    }
+                    publish();
+                    logger.info("路由更新成功");
+                } else {
+                    logger.info("路由未发生变更");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } else {
-            logger.info("路由未发生变更");
         }
+    }
+
+    /**
+     * 发布配置
+     *
+     * @author: hailong.qu
+     * @date: 2020/9/2
+     */
+    private void publish() {
+        this.applicationEventPublisher.publishEvent(new RefreshRoutesEvent(this.routeDefinitionWriter));
     }
 }
