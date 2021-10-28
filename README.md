@@ -62,14 +62,14 @@ http://localhost:8097/为主界面，数据库sql脚本和nacos配置均在工�
 >注意：每个项目中的resources文件夹需要IDEA识别出来，否则不能读取配置文件  
 ![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/9.png)
 ## 系统部分截图
-![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/1.png)  
-![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/2.png)  
-![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/3.png)  
-![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/4.png)  
-![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/5.png)  
-![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/6.png)  
-![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/7.png)  
-![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/8.png)
+![Alt text](./1.png)  
+![Alt text](./2.png)  
+![Alt text](./3.png)  
+![Alt text](./4.png)  
+![Alt text](./5.png)  
+![Alt text](./6.png)  
+![Alt text](./7.png)  
+![Alt text](./8.png)
 ## tips
 项目有些地方还不太完善，如果有什么问题请联系  
 QQ：961584293  
