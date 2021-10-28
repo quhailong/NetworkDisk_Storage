@@ -64,6 +64,7 @@ CREATE TABLE `user_info` (
   UNIQUE KEY `index_user_name` (`user_name`),
   UNIQUE KEY `index_phone` (`phone`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='用户信息表';
+INSERT INTO `pan`.`user_info` (`id`, `user_id`, `user_name`, `password`, `phone`, `salt`, `pic_location`, `create_time`, `update_time`) VALUES ('1', '628185656501301248', 'quhailong', '66173fe0be1ec5fe09a6ca0668c90832b68e20010588e145', '17526895020', '6301506080280084', '/', '2019-09-30 03:05:32', '2020-08-22 15:10:37');
 
 
 CREATE TABLE `virtual_address` (
