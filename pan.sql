@@ -5,7 +5,8 @@ CREATE TABLE `capacity` (
   `used_capacity` bigint(20) DEFAULT NULL COMMENT '使用容量',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='容量表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='容量表';
+INSERT INTO `pan`.`capacity` (`id`, `user_id`, `total_capacity`, `used_capacity`) VALUES ('1', '628185656501301248', '5368709120', '0');
 
 
 CREATE TABLE `file` (
@@ -19,7 +20,7 @@ CREATE TABLE `file` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_file_id` (`file_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='文件信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='文件信息表';
 
 
 CREATE TABLE `share` (
@@ -37,7 +38,7 @@ CREATE TABLE `share` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_share_id` (`share_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='分享表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='分享表';
 
 
 CREATE TABLE `share_map` (
@@ -45,7 +46,7 @@ CREATE TABLE `share_map` (
   `share_id` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '分享ID',
   `virtual_address_id` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '虚拟地址ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='分享文件对应表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='分享文件对应表';
 
 
 
@@ -63,7 +64,7 @@ CREATE TABLE `user_info` (
   UNIQUE KEY `index_user_id` (`id`),
   UNIQUE KEY `index_user_name` (`user_name`),
   UNIQUE KEY `index_phone` (`phone`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='用户信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='用户信息表';
 INSERT INTO `pan`.`user_info` (`id`, `user_id`, `user_name`, `password`, `phone`, `salt`, `pic_location`, `create_time`, `update_time`) VALUES ('1', '628185656501301248', 'quhailong', '66173fe0be1ec5fe09a6ca0668c90832b68e20010588e145', '17526895020', '6301506080280084', '/', '2019-09-30 03:05:32', '2020-08-22 15:10:37');
 
 
@@ -82,4 +83,4 @@ CREATE TABLE `virtual_address` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_uuid` (`uuid`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='虚拟地址表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='虚拟地址表';
