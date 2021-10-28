@@ -1,16 +1,19 @@
+server:
+  port: 8097
 spring:
-  cloud: 
-    config: 
-      #uri: http://localhost:9004
-      profile: config
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.93.128:8848
+        password: nacos
+        username: nacos
+        extension-configs:
+          - data-id: common-config.yaml
+            group: DEFAULT_GROUP
+            refresh: true
       discovery:
-        enabled: true
-        service-id: config-service
-      username: admin
-      password: admin123
-  application: 
+        server-addr: 192.168.93.128:8848
+        password: nacos
+        username: nacos
+  application:
     name: core-page
-eureka:
-  client:
-    service-url:
-      defaultZone: http://admin:admin123@localhost:8888/eureka/

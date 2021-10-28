@@ -5,6 +5,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -26,7 +27,7 @@ import java.util.Map;
 @Component
 public class PageProvider {
     @Autowired
-    private JedisClusterUtil jedisClusterUtil;
+    private RedisTemplate<String,String> redisTemplate;
     @Autowired
     private TokenAnalysisUtils tokenAnalysisUtils;
 
@@ -55,7 +56,7 @@ public class PageProvider {
         String token = CookieUtils.getCookie("token");
         if (!StringUtils.isEmpty(token)) {
             try {
-                if (jedisClusterUtil.isExistKey("LOGOUT:" + token)) {
+                if (redisTemplate.hasKey("LOGOUT:" + token)) {
                     return "login";
                 } else {
                     UserInfoDTO userInfoDTO = tokenAnalysisUtils.tokenAnalysis(token);
@@ -80,7 +81,7 @@ public class PageProvider {
         String token = CookieUtils.getCookie("token");
         if (!StringUtils.isEmpty(token)) {
             try {
-                if (jedisClusterUtil.isExistKey("LOGOUT:" + token)) {
+                if (redisTemplate.hasKey("LOGOUT:" + token)) {
                     return "login";
                 } else {
                     UserInfoDTO userInfoDTO = tokenAnalysisUtils.tokenAnalysis(token);
@@ -105,7 +106,7 @@ public class PageProvider {
         String token = CookieUtils.getCookie("token");
         if (!StringUtils.isEmpty(token)) {
             try {
-                if (jedisClusterUtil.isExistKey("LOGOUT:" + token)) {
+                if (redisTemplate.hasKey("LOGOUT:" + token)) {
                     return "login";
                 } else {
                     UserInfoDTO userInfoDTO = tokenAnalysisUtils.tokenAnalysis(token);

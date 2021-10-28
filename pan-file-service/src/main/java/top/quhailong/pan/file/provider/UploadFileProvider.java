@@ -1,6 +1,7 @@
 package top.quhailong.pan.file.provider;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import top.quhailong.pan.file.entity.FileDO;
@@ -9,7 +10,6 @@ import top.quhailong.pan.file.service.FileService;
 import top.quhailong.pan.file.utils.FileUtils;
 import top.quhailong.pan.request.*;
 import top.quhailong.pan.utils.IDUtils;
-import top.quhailong.pan.utils.JedisClusterUtil;
 import top.quhailong.pan.utils.RestAPIResult;
 
 import java.io.IOException;
@@ -29,11 +29,11 @@ public class UploadFileProvider {
     @Autowired
     private CoreRemote coreRemote;
     @Autowired
-    private JedisClusterUtil jedisClusterUtil;
-    @Autowired
     private FileService fileService;
     @Autowired
     private FileUtils fileUtils;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     /**
      * 上传文件数据处理
@@ -71,8 +71,8 @@ public class UploadFileProvider {
                     coreRemote.createDir(createDirRequest);
                 }
             }
-            String md5 = jedisClusterUtil.getValue("fileMd5:" + request.getFid());
-            jedisClusterUtil.delKey("fileMd5:" + request.getFid());
+            String md5 = redisTemplate.opsForValue().get("fileMd5:" + request.getFid());
+            redisTemplate.delete("fileMd5:" + request.getFid());
             Integer count = fileService.checkMd5Whether(md5);
             FileDO fileDO;
             if (count > 0) {
@@ -199,7 +199,7 @@ public class UploadFileProvider {
                 createVirtualAddressRequest.setParentPath(parentPath);
             }
             coreRemote.createVirtualAddress(createVirtualAddressRequest);
-            jedisClusterUtil.delKey("fileMd5:" + request.getFid());
+            redisTemplate.delete("fileMd5:" + request.getFid());
             panResult.success(null);
             return panResult;
         }

@@ -2,6 +2,7 @@ package top.quhailong.pan.user.service.impl;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import top.quhailong.pan.response.UserInfoDTO;
@@ -17,7 +18,7 @@ public class PassportServiceImpl implements PassportService {
     @Autowired
     private UserInfoDao userInfoDao;
     @Autowired
-    private JedisClusterUtil jedisClusterUtil;
+    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     public RestAPIResult<String> loginHandle(String username, String password, String RSAKey) throws Exception {
@@ -46,7 +47,7 @@ public class PassportServiceImpl implements PassportService {
             JWTUtils.parseJWT(token, "nimadetou".getBytes());
             CookieUtils.removeCookie("token");
             CookieUtils.removeCookie("uid");
-            jedisClusterUtil.setValue("LOGOUT:" + token, token, 60 * 60 * 24 * 365);
+            redisTemplate.opsForValue().set("LOGOUT:" + token, token, 60 * 60 * 24 * 365);
             panResult.success(null);
             return panResult;
         } else {

@@ -1,0 +1,53 @@
+spring:
+  application: 
+    name: file-gateway
+  servlet:
+    multipart:
+      maxFileSize: 800MB
+      maxRequestSize: 800MB
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            # 允许携带认证信息
+            allow-credentials: true
+            # 允许跨域的源(网站域名/ip)，设置*为全部
+            allowed-origins: "*"
+            # 允许跨域请求里的head字段，设置*为全部
+            allowed-headers: "*"
+            # 允许跨域的method， 默认为GET和OPTIONS，设置*为全部
+            allowed-methods: "*"
+            # 跨域允许的有效期
+            max-age: 3600
+hystrix: #hystrix配置
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 300000 
+ribbon: 
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+management:
+  endpoints:
+    web:
+      #Actuator 默认所有的监控点路径都在/actuator/*，当然如果有需要这个路径也支持定制。
+      base-path: /monitor
+      #Actuator 默认只开放了两个端点 /actuator/health 和 /actuator/info
+      exposure:
+        #打开所有的监控点
+        include: '*'
+        #屏蔽env,beans监控点
+        exclude: env,beans
+  endpoint:
+    health:
+      #详细显示health信息
+      show-details: always
+      #启用接口关闭 Spring Boot (post请求)
+      shutdown:
+        enabled: true
+  health:
+    defaults:
+      enabled: true
