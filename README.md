@@ -60,7 +60,7 @@ pan-user-service---系统用户服务
 http://localhost:8097/为主界面，数据库sql脚本和nacos配置均在工程根目录。  
 系统默认账户名：quhailong，密码123456
 >注意：每个项目中的resources文件夹需要IDEA识别出来，否则不能读取配置文件  
-![Alt text](https://github.com/quhailong/NetworkDisk_Storage/blob/master/9.png)
+![Alt text](./9.png)
 ## 系统部分截图
 ![Alt text](./1.png)  
 ![Alt text](./2.png)  
