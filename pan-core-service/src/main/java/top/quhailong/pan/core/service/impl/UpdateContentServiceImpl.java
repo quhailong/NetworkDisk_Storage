@@ -1,11 +1,12 @@
-package top.quhailong.pan.core.provider;
+package top.quhailong.pan.core.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import top.quhailong.pan.core.dao.CapacityDao;
+import top.quhailong.pan.core.dao.VirtualAddressDao;
 import top.quhailong.pan.core.entity.CapacityDO;
 import top.quhailong.pan.core.entity.VirtualAddressDO;
-import top.quhailong.pan.core.service.CapacityService;
-import top.quhailong.pan.core.service.VirtualaddressService;
+import top.quhailong.pan.core.service.IUpdateContentService;
 import top.quhailong.pan.request.CopyOrMoveFileRequest;
 import top.quhailong.pan.request.CreateDirRequest;
 import top.quhailong.pan.request.CreateVirtualAddressRequest;
@@ -17,18 +18,12 @@ import top.quhailong.pan.utils.RestAPIResult;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/**
- * 更新内容数据处理类
- *
- * @author: quhailong
- * @date: 2019/9/24
- */
-@Component
-public class UpdateContentProvider {
+@Service
+public class UpdateContentServiceImpl implements IUpdateContentService {
     @Autowired
-    private VirtualaddressService virtualaddressService;
+    private VirtualAddressDao virtualAddressDao;
     @Autowired
-    private CapacityService capacityService;
+    private CapacityDao capacityDao;
 
     /**
      * 重命名文件或文件夹数据处理
@@ -36,14 +31,15 @@ public class UpdateContentProvider {
      * @author: quhailong
      * @date: 2019/9/24
      */
+    @Override
     public RestAPIResult<String> renameFileOrDirHandle(RenameFileOrDirRequest request) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
-        VirtualAddressDO virtualAddressDO = virtualaddressService.getVirtualAddress(request.getVid());
+        VirtualAddressDO virtualAddressDO = virtualAddressDao.getVirtualAddress(request.getVid());
         String suffix = "";
-        if(virtualAddressDO.getAddrType() != 0){
+        if (virtualAddressDO.getAddrType() != 0) {
             suffix = virtualAddressDO.getFileName().substring(virtualAddressDO.getFileName().lastIndexOf("."));
         }
-        Integer count = virtualaddressService.checkVirtualAddress(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath(), virtualAddressDO.getAddrType(), virtualAddressDO.getAddrType() != 0 ? request.getNewName() + suffix : request.getNewName());
+        Integer count = virtualAddressDao.checkVirtualAddress(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath(), virtualAddressDO.getAddrType(), virtualAddressDO.getAddrType() != 0 ? request.getNewName() + suffix : request.getNewName());
         if (count == 0 || request.getFlag() != null) {
             if (virtualAddressDO.getAddrType() != 0) {
                 changeFileName(request.getNewName(), virtualAddressDO, count);
@@ -73,7 +69,7 @@ public class UpdateContentProvider {
             virtualAddressDO.setFileName(newName + virtualAddressDO.getFileName().substring(virtualAddressDO.getFileName().lastIndexOf(".")));
         }
         virtualAddressDO.setUpdateTime(new Date());
-        virtualaddressService.updateVirtualAddress(virtualAddressDO);
+        virtualAddressDao.updateVirtualAddress(virtualAddressDO);
     }
 
     /**
@@ -90,9 +86,9 @@ public class UpdateContentProvider {
             virtualAddressDO.setFileName(newName);
         }
         virtualAddressDO.setUpdateTime(new Date());
-        virtualaddressService.updateVirtualAddress(virtualAddressDO);
+        virtualAddressDao.updateVirtualAddress(virtualAddressDO);
 
-        List<VirtualAddressDO> virtualAddressDOList = virtualaddressService.listVirtualAddressLikeFilePath(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath().equals("/") ? virtualAddressDO.getParentPath() + oldName : virtualAddressDO.getParentPath() + "/" + oldName);
+        List<VirtualAddressDO> virtualAddressDOList = virtualAddressDao.listVirtualAddressLikeFilePath(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath().equals("/") ? virtualAddressDO.getParentPath() + oldName : virtualAddressDO.getParentPath() + "/" + oldName);
         if (virtualAddressDOList != null && virtualAddressDOList.size() > 0) {
             for (VirtualAddressDO virtualAddressLike : virtualAddressDOList) {
                 String suff;
@@ -108,7 +104,7 @@ public class UpdateContentProvider {
                     pre = virtualAddressLike.getParentPath() + "/" + virtualAddressDO.getFileName();
                 }
                 virtualAddressLike.setParentPath(pre + suff);
-                virtualaddressService.updateVirtualAddress(virtualAddressLike);
+                virtualAddressDao.updateVirtualAddress(virtualAddressLike);
             }
         }
     }
@@ -119,12 +115,13 @@ public class UpdateContentProvider {
      * @author: quhailong
      * @date: 2019/9/24
      */
+    @Override
     public RestAPIResult<String> deleteFileHandle(String vids) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         List<String> vidList = JSONUtils.parseObject(vids, List.class);
         if (vidList != null && vidList.size() > 0) {
             for (String vid : vidList) {
-                VirtualAddressDO virtualAddressDO = virtualaddressService.getVirtualAddress(vid);
+                VirtualAddressDO virtualAddressDO = virtualAddressDao.getVirtualAddress(vid);
                 if (virtualAddressDO.getAddrType() != 0) {
                     delFile(virtualAddressDO);
                 } else {
@@ -144,10 +141,10 @@ public class UpdateContentProvider {
      * @date: 2019/9/24
      */
     private void delFile(VirtualAddressDO virtualAddressDO) {
-        virtualaddressService.removeVirtualAddress(virtualAddressDO.getUuid());
-        CapacityDO capacityDO = capacityService.getCapacity(virtualAddressDO.getUserId());
+        virtualAddressDao.removeVirtualAddress(virtualAddressDO.getUuid());
+        CapacityDO capacityDO = capacityDao.getCapacity(virtualAddressDO.getUserId());
         capacityDO.setUsedCapacity(capacityDO.getUsedCapacity() - virtualAddressDO.getFileSize());
-        capacityService.updateCapacity(capacityDO);
+        capacityDao.updateCapacity(capacityDO);
     }
 
     /**
@@ -157,14 +154,14 @@ public class UpdateContentProvider {
      * @date: 2019/9/24
      */
     private void delDirFile(VirtualAddressDO virtualAddressDO) {
-        virtualaddressService.removeVirtualAddress(virtualAddressDO.getUuid());
-        List<VirtualAddressDO> virtualAddressDOList = virtualaddressService.listVirtualAddressLikeFilePath(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath().equals("/") ? virtualAddressDO.getParentPath() + virtualAddressDO.getFileName() : virtualAddressDO.getParentPath() + "/" + virtualAddressDO.getFileName());
+        virtualAddressDao.removeVirtualAddress(virtualAddressDO.getUuid());
+        List<VirtualAddressDO> virtualAddressDOList = virtualAddressDao.listVirtualAddressLikeFilePath(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath().equals("/") ? virtualAddressDO.getParentPath() + virtualAddressDO.getFileName() : virtualAddressDO.getParentPath() + "/" + virtualAddressDO.getFileName());
         if (virtualAddressDOList != null && virtualAddressDOList.size() > 0) {
             for (VirtualAddressDO virtualAddressDOLike : virtualAddressDOList) {
-                virtualaddressService.removeVirtualAddress(virtualAddressDOLike.getUuid());
-                CapacityDO capacityDO = capacityService.getCapacity(virtualAddressDOLike.getUserId());
+                virtualAddressDao.removeVirtualAddress(virtualAddressDOLike.getUuid());
+                CapacityDO capacityDO = capacityDao.getCapacity(virtualAddressDOLike.getUserId());
                 capacityDO.setUsedCapacity(capacityDO.getUsedCapacity() - virtualAddressDOLike.getFileSize());
-                capacityService.updateCapacity(capacityDO);
+                capacityDao.updateCapacity(capacityDO);
             }
         }
     }
@@ -175,13 +172,14 @@ public class UpdateContentProvider {
      * @author: quhailong
      * @date: 2019/9/24
      */
+    @Override
     public RestAPIResult<String> createDirHandle(CreateDirRequest request) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         if (!Pattern.compile("^[a-zA-Z0-9\u4E00-\u9FA5_]+$").matcher(request.getDirName()).matches()) {
             panResult.error("文件夹长度必须小于20，并且不能包含特殊字符，只能为数字、字母、中文、下划线");
             return panResult;
         }
-        Integer count = virtualaddressService.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getDirName());
+        Integer count = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getDirName());
         VirtualAddressDO virtualAddressDO = new VirtualAddressDO();
         virtualAddressDO.setAddrType(0);
         virtualAddressDO.setDirWhether(1);
@@ -198,7 +196,7 @@ public class UpdateContentProvider {
         virtualAddressDO.setUserId(request.getUid());
         virtualAddressDO.setUpdateTime(new Date());
         virtualAddressDO.setUuid(IDUtils.showNextId(new Random().nextInt(30)).toString());
-        virtualaddressService.saveVirtualAddress(virtualAddressDO);
+        virtualAddressDao.saveVirtualAddress(virtualAddressDO);
         Map<String, Object> map = new HashMap<>();
         map.put("0", JSONUtils.toJSONString(virtualAddressDO));
         panResult.setRespMap(map);
@@ -216,7 +214,7 @@ public class UpdateContentProvider {
         String oldUuid = virtualAddressDO.getUuid();
         String pre = virtualAddressDO.getFileName().substring(0, virtualAddressDO.getFileName().lastIndexOf("."));
         String suffix = virtualAddressDO.getFileName().substring(virtualAddressDO.getFileName().lastIndexOf("."));
-        Integer count = virtualaddressService.checkVirtualAddress(virtualAddressDO.getUserId(), dest, null, virtualAddressDO.getFileName());
+        Integer count = virtualAddressDao.checkVirtualAddress(virtualAddressDO.getUserId(), dest, null, virtualAddressDO.getFileName());
         if (count > 0) {
             virtualAddressDO.setFileName(pre + "(" + count + ")" + suffix);
         }
@@ -225,15 +223,15 @@ public class UpdateContentProvider {
         virtualAddressDO.setCreateTime(new Date());
         virtualAddressDO.setUpdateTime(new Date());
         if (opera.equals("copyOK")) {
-            CapacityDO capacity = capacityService.getCapacity(virtualAddressDO.getUserId());
+            CapacityDO capacity = capacityDao.getCapacity(virtualAddressDO.getUserId());
             if ((capacity.getUsedCapacity() + virtualAddressDO.getFileSize()) > capacity.getTotalCapacity()) {
                 return false;
             }
-            virtualaddressService.saveVirtualAddress(virtualAddressDO);
+            virtualAddressDao.saveVirtualAddress(virtualAddressDO);
             capacity.setUsedCapacity(capacity.getUsedCapacity() + virtualAddressDO.getFileSize());
-            capacityService.updateCapacity(capacity);
+            capacityDao.updateCapacity(capacity);
         } else {
-            virtualaddressService.updateVirtualAddress(virtualAddressDO);
+            virtualAddressDao.updateVirtualAddress(virtualAddressDO);
         }
         return true;
     }
@@ -245,10 +243,10 @@ public class UpdateContentProvider {
      * @date: 2019/9/24
      */
     private boolean copyOrMoveDirFile(VirtualAddressDO virtualAddressDO, String dest, String opera) {
-        Integer count = virtualaddressService.checkVirtualAddress(virtualAddressDO.getUserId(), dest, null, virtualAddressDO.getFileName());
+        Integer count = virtualAddressDao.checkVirtualAddress(virtualAddressDO.getUserId(), dest, null, virtualAddressDO.getFileName());
         String uuid = IDUtils.showNextId(new Random().nextInt(30)).toString();
         if (opera.equals("moveOK")) {
-            virtualaddressService.removeVirtualAddress(virtualAddressDO.getUuid());
+            virtualAddressDao.removeVirtualAddress(virtualAddressDO.getUuid());
         }
         VirtualAddressDO virtualAddressDONew = new VirtualAddressDO();
         virtualAddressDONew.setAddrType(0);
@@ -256,7 +254,7 @@ public class UpdateContentProvider {
         virtualAddressDONew.setFileId(null);
         if (count > 0) {
             virtualAddressDONew.setFileName(virtualAddressDO.getFileName() + "(" + count + ")");
-        }else{
+        } else {
             virtualAddressDONew.setFileName(virtualAddressDO.getFileName());
         }
         virtualAddressDONew.setFileSize(null);
@@ -268,7 +266,7 @@ public class UpdateContentProvider {
         virtualAddressDONew.setDirWhether(1);
 
 
-        List<VirtualAddressDO> virtualAddressDOList = virtualaddressService.listVirtualAddressLikeFilePath(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath().equals("/") ? virtualAddressDO.getParentPath() + virtualAddressDO.getFileName() : virtualAddressDO.getParentPath() + "/" + virtualAddressDO.getFileName());
+        List<VirtualAddressDO> virtualAddressDOList = virtualAddressDao.listVirtualAddressLikeFilePath(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath().equals("/") ? virtualAddressDO.getParentPath() + virtualAddressDO.getFileName() : virtualAddressDO.getParentPath() + "/" + virtualAddressDO.getFileName());
         if (virtualAddressDOList != null && virtualAddressDOList.size() > 0) {
             for (VirtualAddressDO virtualAddressLike : virtualAddressDOList) {
                 String oldUuid = virtualAddressLike.getUuid();
@@ -277,29 +275,30 @@ public class UpdateContentProvider {
                 virtualAddressLike.setCreateTime(new Date());
                 virtualAddressLike.setUpdateTime(new Date());
                 if (opera.equals("moveOK")) {
-                    virtualaddressService.removeVirtualAddress(oldUuid);
-                    virtualaddressService.saveVirtualAddress(virtualAddressLike);
+                    virtualAddressDao.removeVirtualAddress(oldUuid);
+                    virtualAddressDao.saveVirtualAddress(virtualAddressLike);
                 } else {
-                    CapacityDO capacity = capacityService.getCapacity(virtualAddressLike.getUserId());
+                    CapacityDO capacity = capacityDao.getCapacity(virtualAddressLike.getUserId());
                     if ((capacity.getUsedCapacity() + virtualAddressLike.getFileSize()) > capacity.getTotalCapacity()) {
                         return false;
                     }
                     capacity.setUsedCapacity(capacity.getUsedCapacity() + virtualAddressLike.getFileSize());
-                    capacityService.updateCapacity(capacity);
-                    virtualaddressService.saveVirtualAddress(virtualAddressLike);
+                    capacityDao.updateCapacity(capacity);
+                    virtualAddressDao.saveVirtualAddress(virtualAddressLike);
                 }
             }
         }
-        virtualaddressService.saveVirtualAddress(virtualAddressDONew);
+        virtualAddressDao.saveVirtualAddress(virtualAddressDONew);
         return true;
 
     }
 
+    @Override
     public RestAPIResult<String> copyOrMoveFileHandle(CopyOrMoveFileRequest request) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         List<String> vidList = JSONUtils.parseObject(request.getVids(), List.class);
         for (String vid : vidList) {
-            VirtualAddressDO virtualAddressDO = virtualaddressService.getVirtualAddress(vid);
+            VirtualAddressDO virtualAddressDO = virtualAddressDao.getVirtualAddress(vid);
             if (virtualAddressDO.getAddrType() != 0) {
                 if ((request.getDest().equals(virtualAddressDO.getParentPath()) || request.getDest().indexOf((virtualAddressDO.getParentPath().equals("/") ? virtualAddressDO.getParentPath() : virtualAddressDO.getParentPath() + "/") + virtualAddressDO.getFileName()) == 0)) {
                     if (request.getOpera().equals("copyOK")) {
@@ -333,11 +332,12 @@ public class UpdateContentProvider {
         return panResult;
     }
 
+    @Override
     public RestAPIResult<Integer> createVirtualAddressHandle(CreateVirtualAddressRequest request) {
         RestAPIResult<Integer> panResult = new RestAPIResult<>();
         String pre = request.getFileName().substring(0, request.getFileName().lastIndexOf("."));
         String suffix = request.getFileName().substring(request.getFileName().lastIndexOf("."));
-        Integer count = virtualaddressService.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getFileName());
+        Integer count = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getFileName());
         VirtualAddressDO virtualAddressDO = new VirtualAddressDO();
         if (count > 0) {
             virtualAddressDO.setFileName(pre + "(" + count + ")" + suffix);
@@ -355,14 +355,13 @@ public class UpdateContentProvider {
         virtualAddressDO.setCreateTime(new Date());
         virtualAddressDO.setUpdateTime(new Date());
         Integer result = 0;
-        CapacityDO capacity = capacityService.getCapacity(request.getUid());
+        CapacityDO capacity = capacityDao.getCapacity(request.getUid());
         if ((capacity.getUsedCapacity() + virtualAddressDO.getFileSize()) <= capacity.getTotalCapacity()) {
-            result = virtualaddressService.saveVirtualAddress(virtualAddressDO);
+            result = virtualAddressDao.saveVirtualAddress(virtualAddressDO);
             capacity.setUsedCapacity(capacity.getUsedCapacity() + virtualAddressDO.getFileSize());
-            capacityService.updateCapacity(capacity);
+            capacityDao.updateCapacity(capacity);
         }
         panResult.success(result);
         return panResult;
     }
-
 }

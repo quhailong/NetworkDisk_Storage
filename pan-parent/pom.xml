@@ -24,13 +24,12 @@
         <druid.verion>1.2.8</druid.verion>
         <jjwt.verion>0.9.1</jjwt.verion>
         <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
-        <fastdfs.version>1.27</fastdfs.version>
+        <fastdfs.version>1.29-SNAPSHOT</fastdfs.version>
         <pagehelper.version>1.4.0</pagehelper.version>
         <lombok.version>1.18.8</lombok.version>
         <commons-logging.version>1.2</commons-logging.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
-        <bcprov-jdk16.version>1.46</bcprov-jdk16.version>
         <spring-cloud-alibaba.version>2.2.6.RELEASE</spring-cloud-alibaba.version>
         <!-- nacos-client -->
         <nacos-client.version>2.0.3</nacos-client.version>
@@ -82,7 +81,7 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>com.github.penggle</groupId>
+                <groupId>org.csource</groupId>
                 <artifactId>fastdfs-client-java</artifactId>
                 <version>${fastdfs.version}</version>
             </dependency>
@@ -111,11 +110,6 @@
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>${commons-beanutils.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk16</artifactId>
-                <version>${bcprov-jdk16.version}</version>
             </dependency>
             <!-- nacos-client -->
             <dependency>

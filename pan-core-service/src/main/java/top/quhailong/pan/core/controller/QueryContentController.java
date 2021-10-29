@@ -3,13 +3,11 @@ package top.quhailong.pan.core.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.util.StopWatch;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import top.quhailong.pan.core.provider.QueryContentProvider;
+import top.quhailong.pan.core.service.IQueryContentService;
 import top.quhailong.pan.request.CheckDirWhetherRequest;
 import top.quhailong.pan.request.ListFileRequest;
 import top.quhailong.pan.request.ListFolderRequest;
@@ -34,7 +32,7 @@ public class QueryContentController {
     @Resource
     private HttpServletRequest httpServletRequest;
     @Autowired
-    private QueryContentProvider queryContentProvider;
+    private IQueryContentService queryContentService;
 
     /**
      * 查询文件列表
@@ -49,7 +47,7 @@ public class QueryContentController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("查询文件列表数据处理开始,request:{}", request);
-        RestAPIResult<String> result = queryContentProvider.listFileHandle(request);
+        RestAPIResult<String> result = queryContentService.listFileHandle(request);
         logger.info("查询文件列表数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("查询文件列表调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -69,7 +67,7 @@ public class QueryContentController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("展示文件夹列表数据处理开始,request:{}", request);
-        RestAPIResult<String> result = queryContentProvider.listFolderHandle(request);
+        RestAPIResult<String> result = queryContentService.listFolderHandle(request);
         logger.info("展示文件夹列表数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("展示文件夹列表调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -89,7 +87,7 @@ public class QueryContentController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("搜索文件数据处理开始,request:{}", request);
-        RestAPIResult<String> result = queryContentProvider.searchFileHandle(request);
+        RestAPIResult<String> result = queryContentService.searchFileHandle(request);
         logger.info("搜索文件数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("搜索文件调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -108,7 +106,7 @@ public class QueryContentController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("查询文件夹是否存在数据处理开始,request:{}", request);
-        RestAPIResult<Integer> result = queryContentProvider.checkDirWhetherHandle(request);
+        RestAPIResult<Integer> result = queryContentService.checkDirWhetherHandle(request);
         logger.info("查询文件夹是否存在数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("查询文件夹是否存在调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -127,7 +125,7 @@ public class QueryContentController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("根据虚拟地址ID获取文件名称数据处理开始,vid:{}", vid);
-        RestAPIResult<String> result = queryContentProvider.getFileNameByVidHandle(vid, uid);
+        RestAPIResult<String> result = queryContentService.getFileNameByVidHandle(vid, uid);
         logger.info("根据虚拟地址ID获取文件名称数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("根据虚拟地址ID获取文件名称调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -146,7 +144,7 @@ public class QueryContentController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("根据虚拟地址ID获取实体数据处理开始,vid:{}", vid);
-        RestAPIResult<VirtualAddressDTO> result = queryContentProvider.getVirtualaddressHandle(vid, uid);
+        RestAPIResult<VirtualAddressDTO> result = queryContentService.getVirtualaddressHandle(vid, uid);
         logger.info("根据虚拟地址ID获取实体数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("根据虚拟地址ID获取实体调用时间,millies:{}", stopWatch.getTotalTimeMillis());

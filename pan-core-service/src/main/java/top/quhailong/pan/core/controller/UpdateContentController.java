@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import top.quhailong.pan.core.provider.UpdateContentProvider;
+import top.quhailong.pan.core.service.IUpdateContentService;
 import top.quhailong.pan.request.CopyOrMoveFileRequest;
 import top.quhailong.pan.request.CreateDirRequest;
 import top.quhailong.pan.request.CreateVirtualAddressRequest;
@@ -30,7 +30,7 @@ public class UpdateContentController {
     @Resource
     private HttpServletRequest httpServletRequest;
     @Autowired
-    private UpdateContentProvider updateContentProvider;
+    private IUpdateContentService updateContentService;
 
     /**
      * 文件或文件夹重命名
@@ -45,7 +45,7 @@ public class UpdateContentController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("文件或文件夹重命名数据处理开始,request:{}", request);
-        RestAPIResult<String> result = updateContentProvider.renameFileOrDirHandle(request);
+        RestAPIResult<String> result = updateContentService.renameFileOrDirHandle(request);
         logger.info("文件或文件夹重命名数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("文件或文件夹重命名调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -65,7 +65,7 @@ public class UpdateContentController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("删除文件数据处理开始,vids:{}", vids);
-        RestAPIResult<String> result = updateContentProvider.deleteFileHandle(vids);
+        RestAPIResult<String> result = updateContentService.deleteFileHandle(vids);
         logger.info("删除文件数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("删除文件调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -85,7 +85,7 @@ public class UpdateContentController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("创建文件夹数据处理开始,request:{}", request);
-        RestAPIResult<String> result = updateContentProvider.createDirHandle(request);
+        RestAPIResult<String> result = updateContentService.createDirHandle(request);
         logger.info("创建文件夹数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("创建文件夹调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -105,7 +105,7 @@ public class UpdateContentController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("文件复制或移动数据处理开始,request:{}", request);
-        RestAPIResult<String> result = updateContentProvider.copyOrMoveFileHandle(request);
+        RestAPIResult<String> result = updateContentService.copyOrMoveFileHandle(request);
         logger.info("文件复制或移动数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("文件复制或移动调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -124,7 +124,7 @@ public class UpdateContentController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("创建文件数据处理开始,request:{}", request);
-        RestAPIResult<Integer> result = updateContentProvider.createVirtualAddressHandle(request);
+        RestAPIResult<Integer> result = updateContentService.createVirtualAddressHandle(request);
         logger.info("创建文件数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("创建文件调用时间,millies:{}", stopWatch.getTotalTimeMillis());
