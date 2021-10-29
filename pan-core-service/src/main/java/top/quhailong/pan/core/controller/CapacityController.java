@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import top.quhailong.pan.core.provider.CapacityProvider;
+import top.quhailong.pan.core.service.ICapacityService;
 import top.quhailong.pan.utils.RestAPIResult;
 
 import javax.annotation.Resource;
@@ -26,7 +26,7 @@ public class CapacityController {
     @Resource
     private HttpServletRequest httpServletRequest;
     @Autowired
-    private CapacityProvider capacityProvider;
+    private ICapacityService capacityService;
 
     /**
      * 查询使用容量
@@ -41,7 +41,7 @@ public class CapacityController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("查询使用容量数据处理开始,uid:{}", uid);
-        RestAPIResult<String> result = capacityProvider.useCapacityHandle(uid);
+        RestAPIResult<String> result = capacityService.useCapacityHandle(uid);
         logger.info("查询使用容量数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("查询使用容量调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -60,7 +60,7 @@ public class CapacityController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("初始化容量数据处理开始,userId:{}", userId);
-        RestAPIResult<Integer> result = capacityProvider.initCapacityHandle(userId);
+        RestAPIResult<Integer> result = capacityService.initCapacityHandle(userId);
         logger.info("初始化容量数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("初始化容量调用时间,millies:{}", stopWatch.getTotalTimeMillis());
