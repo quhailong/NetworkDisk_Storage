@@ -9,7 +9,7 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import top.quhailong.pan.core.page.provider.PageProvider;
+import top.quhailong.pan.core.page.service.IPageService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ public class PageController {
     @Resource
     private HttpServletRequest httpServletRequest;
     @Autowired
-    private PageProvider pageProvider;
+    private IPageService pageService;
 
     /**
      * 首页跳转
@@ -35,7 +35,7 @@ public class PageController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("首页跳转数据处理开始");
-        String resultUrl = pageProvider.indexHandle();
+        String resultUrl = pageService.indexHandle();
         logger.info("首页跳转数据处理结束,resultUrl:{}", resultUrl);
         stopWatch.stop();
         logger.info("首页跳转调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -54,7 +54,7 @@ public class PageController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("跳转到主页面数据处理开始");
-        String resultUrl = pageProvider.homeHandle(model);
+        String resultUrl = pageService.homeHandle(model);
         logger.info("跳转到主页面数据处理结束,resultUrl:{}", resultUrl);
         stopWatch.stop();
         logger.info("跳转到主页面调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -73,7 +73,7 @@ public class PageController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("跳转到分享管理页面数据处理开始");
-        String resultUrl = pageProvider.shareHandle(model);
+        String resultUrl = pageService.shareHandle(model);
         logger.info("跳转到分享管理页面数据处理结束,resultUrl:{}", resultUrl);
         stopWatch.stop();
         logger.info("跳转到分享管理页面调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -92,7 +92,7 @@ public class PageController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("查看分享页面数据处理开始");
-        String resultUrl = pageProvider.sHandle(model, shareId);
+        String resultUrl = pageService.sHandle(model, shareId);
         logger.info("查看分享页面数据处理结束,resultUrl:{}", resultUrl);
         stopWatch.stop();
         logger.info("查看分享页面调用时间,millies:{}", stopWatch.getTotalTimeMillis());
