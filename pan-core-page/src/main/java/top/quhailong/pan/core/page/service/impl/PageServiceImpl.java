@@ -1,4 +1,4 @@
-package top.quhailong.pan.core.page.provider;
+package top.quhailong.pan.core.page.service.impl;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -7,8 +7,10 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import top.quhailong.pan.core.page.service.IPageService;
 import top.quhailong.pan.core.page.utils.TokenAnalysisUtils;
 import top.quhailong.pan.request.AddShareViewCountRequest;
 import top.quhailong.pan.response.ShareDTO;
@@ -24,8 +26,8 @@ import java.util.Map;
  * @author: quhailong
  * @date: 2019/9/27
  */
-@Component
-public class PageProvider {
+@Service
+public class PageServiceImpl implements IPageService {
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
     @Autowired
@@ -37,6 +39,7 @@ public class PageProvider {
      * @author: quhailong
      * @date: 2019/9/27
      */
+    @Override
     public String indexHandle() {
         String token = CookieUtils.getCookie("token");
         if (StringUtils.isEmpty(token)) {
@@ -52,6 +55,7 @@ public class PageProvider {
      * @author: quhailong
      * @date: 2019/9/27
      */
+    @Override
     public String homeHandle(Model model) {
         String token = CookieUtils.getCookie("token");
         if (!StringUtils.isEmpty(token)) {
@@ -77,6 +81,7 @@ public class PageProvider {
      * @author: quhailong
      * @date: 2019/9/27
      */
+    @Override
     public String shareHandle(Model model) {
         String token = CookieUtils.getCookie("token");
         if (!StringUtils.isEmpty(token)) {
@@ -102,6 +107,7 @@ public class PageProvider {
      * @author: quhailong
      * @date: 2019/9/27
      */
+    @Override
     public String sHandle(Model model, String shareId) {
         String token = CookieUtils.getCookie("token");
         if (!StringUtils.isEmpty(token)) {
