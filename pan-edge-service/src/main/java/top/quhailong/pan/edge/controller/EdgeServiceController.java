@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
-import top.quhailong.pan.edge.provider.EdgeServiceProvider;
+import top.quhailong.pan.edge.service.IEdgeService;
 import top.quhailong.pan.utils.RestAPIResult;
 
 import javax.annotation.Resource;
@@ -19,7 +19,7 @@ public class EdgeServiceController {
     @Resource
     private HttpServletRequest httpServletRequest;
     @Autowired
-    private EdgeServiceProvider edgeServiceProvider;
+    private IEdgeService edgeService;
 
     /**
      * 生成公钥
@@ -34,7 +34,7 @@ public class EdgeServiceController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("生成公钥数据处理开始");
-        RestAPIResult<String> result = edgeServiceProvider.getPublicKeyHandle();
+        RestAPIResult<String> result = edgeService.getPublicKeyHandle();
         logger.info("生成公钥数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("生成公钥调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -53,7 +53,7 @@ public class EdgeServiceController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("生成验证码数据处理开始");
-        edgeServiceProvider.getVerfyImgHandle(vcodestr, response);
+        edgeService.getVerfyImgHandle(vcodestr, response);
         logger.info("生成验证码数据处理结束");
         stopWatch.stop();
         logger.info("生成验证码调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -72,7 +72,7 @@ public class EdgeServiceController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("检查密码格式数据处理开始");
-        RestAPIResult<String> result = edgeServiceProvider.regCheckPwdHandle(password, RSAKey);
+        RestAPIResult<String> result = edgeService.regCheckPwdHandle(password, RSAKey);
         logger.info("检查密码格式数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("检查密码格式调用时间,millies:{}", stopWatch.getTotalTimeMillis());
