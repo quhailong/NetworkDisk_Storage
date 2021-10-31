@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import top.quhailong.pan.edge.provider.SendSmsProvider;
+import top.quhailong.pan.edge.service.ISendSmsService;
 import top.quhailong.pan.request.SendSmsRequest;
 import top.quhailong.pan.utils.RestAPIResult;
 
@@ -21,7 +21,7 @@ public class SendSmsController {
     @Resource
     private HttpServletRequest httpServletRequest;
     @Autowired
-    private SendSmsProvider sendSmsProvider;
+    private ISendSmsService sendSmsService;
 
     /**
      * 发送短信
@@ -36,7 +36,7 @@ public class SendSmsController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("发送短信数据处理开始");
-        RestAPIResult<String> result = sendSmsProvider.sendSmsHandle(request);
+        RestAPIResult<String> result = sendSmsService.sendSmsHandle(request);
         logger.info("发送短信数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("发送短信调用时间,millies:{}", stopWatch.getTotalTimeMillis());

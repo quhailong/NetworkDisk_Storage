@@ -1,8 +1,9 @@
-package top.quhailong.pan.edge.provider;
+package top.quhailong.pan.edge.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import top.quhailong.pan.edge.service.IEdgeService;
 import top.quhailong.pan.utils.RSAUtils;
 import top.quhailong.pan.utils.RestAPIResult;
 
@@ -16,17 +17,12 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-/**
- * 边缘服务数据处理类
- *
- * @author: quhailong
- * @date: 2019/9/26
- */
-@Component
-public class EdgeServiceProvider {
+@Service
+public class EdgeServiceImpl implements IEdgeService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    @Override
     public RestAPIResult<String> regCheckPwdHandle(String password, String RSAKey) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         try {
@@ -49,6 +45,7 @@ public class EdgeServiceProvider {
         }
     }
 
+    @Override
     public RestAPIResult<String> getPublicKeyHandle() throws Exception {
         RestAPIResult<String> panResult = new RestAPIResult<String>();
         Map<String, Object> keyMap = RSAUtils.genKeyPair();
@@ -68,6 +65,7 @@ public class EdgeServiceProvider {
      * @author: quhailong
      * @date: 2019/9/26
      */
+    @Override
     public void getVerfyImgHandle(String vcodestr, HttpServletResponse response) {
         int width = 120;
         int height = 30;
