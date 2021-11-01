@@ -33,6 +33,8 @@ public class PasswordServiceImpl implements PasswordService {
     private String appId;
     @Value("${sms-authToken}")
     private String authToken;
+    @Value("${sms-forget-pass-template-id}")
+    private String templateId;
 
     @Override
     public RestAPIResult<String> forgetPhoneSendHandle(ForgetPhoneSendRequest request) {
@@ -54,7 +56,7 @@ public class PasswordServiceImpl implements PasswordService {
                     sendSmsRequest.setAppid(appId);
                     sendSmsRequest.setMobile(mobile);
                     sendSmsRequest.setParam(param);
-                    sendSmsRequest.setTemplateid("334617");
+                    sendSmsRequest.setTemplateid(templateId);
                     sendSmsRequest.setToken(authToken);
                     sendSmsRequest.setUid(uid);
                     RestAPIResult<String> result = edgeRemote.sendSms(sendSmsRequest);
