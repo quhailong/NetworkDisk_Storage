@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 @Service
@@ -118,7 +119,7 @@ public class EdgeServiceImpl implements IEdgeService {
         }
 
         // 将生成的字母存入到session中
-        redisTemplate.opsForValue().set("verfiyCode:" + vcodestr, sb.toString(), 600);
+        redisTemplate.opsForValue().set("verfiyCode:" + vcodestr, sb.toString(), 600, TimeUnit.SECONDS);
         // 步骤五 绘制干扰线
         graphics.setColor(getRandColor(160, 200));
         int x1;

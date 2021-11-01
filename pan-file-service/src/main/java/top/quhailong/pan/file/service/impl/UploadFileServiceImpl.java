@@ -1,12 +1,13 @@
-package top.quhailong.pan.file.provider;
+package top.quhailong.pan.file.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import top.quhailong.pan.file.dao.FileDao;
 import top.quhailong.pan.file.entity.FileDO;
 import top.quhailong.pan.file.remote.CoreRemote;
-import top.quhailong.pan.file.service.FileService;
+import top.quhailong.pan.file.service.IUploadFileService;
 import top.quhailong.pan.file.utils.FileUtils;
 import top.quhailong.pan.request.*;
 import top.quhailong.pan.utils.IDUtils;
@@ -18,18 +19,12 @@ import java.net.URLDecoder;
 import java.util.Date;
 import java.util.Random;
 
-/**
- * 上传文件数据处理类
- *
- * @author: quhailong
- * @date: 2019/9/25
- */
-@Component
-public class UploadFileProvider {
+@Service
+public class UploadFileServiceImpl implements IUploadFileService {
     @Autowired
     private CoreRemote coreRemote;
     @Autowired
-    private FileService fileService;
+    private FileDao fileDao;
     @Autowired
     private FileUtils fileUtils;
     @Autowired
@@ -41,6 +36,7 @@ public class UploadFileProvider {
      * @author: quhailong
      * @date: 2019/9/25
      */
+    @Override
     public RestAPIResult<String> uploadFileHandle(UploadFileRequest request) throws IOException {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         String parentPath = request.getParentPath();
@@ -73,7 +69,7 @@ public class UploadFileProvider {
             }
             String md5 = redisTemplate.opsForValue().get("fileMd5:" + request.getFid());
             redisTemplate.delete("fileMd5:" + request.getFid());
-            Integer count = fileService.checkMd5Whether(md5);
+            Integer count = fileDao.checkMd5Whether(md5);
             FileDO fileDO;
             if (count > 0) {
                 fileDO = getFileDOByMd5(md5);
@@ -106,7 +102,7 @@ public class UploadFileProvider {
      * @date: 2019/9/25
      */
     private FileDO getFileDOByMd5(String md5) {
-        FileDO fileDO = fileService.getFileByMd5(md5);
+        FileDO fileDO = fileDao.getFileByMd5(md5);
         return fileDO;
     }
 
@@ -143,7 +139,7 @@ public class UploadFileProvider {
         } else {
             fileDO.setFileType(6);
         }
-        fileService.saveFile(fileDO);
+        fileDao.saveFile(fileDO);
         return fileDO;
     }
 
@@ -153,6 +149,7 @@ public class UploadFileProvider {
      * @author: quhailong
      * @date: 2019/9/25
      */
+    @Override
     public RestAPIResult<String> quickUploadFileHandle(QuickUploadFileRequest request) throws UnsupportedEncodingException {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         String parentPath = request.getParentPath();
@@ -164,7 +161,7 @@ public class UploadFileProvider {
         }
         synchronized (this) {
             String upPath = "";
-            FileDO fileDO = fileService.getFileByMd5(request.getMd5());
+            FileDO fileDO = fileDao.getFileByMd5(request.getMd5());
             CreateVirtualAddressRequest createVirtualAddressRequest = new CreateVirtualAddressRequest();
             createVirtualAddressRequest.setFid(fileDO.getFileId());
             createVirtualAddressRequest.setFileName(fileName.substring(fileName.lastIndexOf("/") + 1));
@@ -211,6 +208,7 @@ public class UploadFileProvider {
      * @author: quhailong
      * @date: 2019/9/26
      */
+    @Override
     public RestAPIResult<String> uploadHandle(MultipartFile file) throws IOException {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         String fileAddr = fileUtils.saveFile(file);

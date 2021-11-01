@@ -1,11 +1,12 @@
-package top.quhailong.pan.file.provider;
+package top.quhailong.pan.file.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import top.quhailong.pan.file.dao.FileDao;
 import top.quhailong.pan.file.entity.FileDO;
 import top.quhailong.pan.file.remote.CoreRemote;
 import top.quhailong.pan.file.remote.ShareRemote;
-import top.quhailong.pan.file.service.FileService;
+import top.quhailong.pan.file.service.IDownloadService;
 import top.quhailong.pan.file.utils.FastDFSClient;
 import top.quhailong.pan.file.utils.FileUtils;
 import top.quhailong.pan.response.VirtualAddressDTO;
@@ -20,29 +21,23 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipOutputStream;
 
-/**
- * 下载文件数据处理类
- *
- * @author: quhailong
- * @date: 2019/9/25
- */
-@Component
-public class DownloadProvider {
+@Service
+public class DownloadServiceImpl implements IDownloadService {
     @Autowired
     private CoreRemote coreRemote;
     @Autowired
-    private FileService fileService;
+    private FileDao fileDao;
     @Autowired
     private FileUtils fileUtils;
     @Autowired
     private ShareRemote shareRemote;
-
     /**
      * 下载文件数据处理
      *
      * @author: quhailong
      * @date: 2019/9/25
      */
+    @Override
     public void downloadHandle(String uid, String vids, HttpServletResponse res) throws IOException {
         List<String> vidList = JSONUtils.parseObject(vids, List.class);
         download(uid, vidList, res);
@@ -159,7 +154,7 @@ public class DownloadProvider {
         Map<String, String> map = new HashMap<>();
         for (String vid : vidList) {
             VirtualAddressDTO virtualaddressDTO = coreRemote.getVirtualaddress(vid, uid).getRespData();
-            FileDO fileDO = fileService.getFileByFid(virtualaddressDTO.getFileId());
+            FileDO fileDO = fileDao.getFileByFid(virtualaddressDTO.getFileId());
             map.put(virtualaddressDTO.getFileName(), fileDO.getFileLocation());
         }
         return map;
@@ -171,6 +166,7 @@ public class DownloadProvider {
      * @author: quhailong
      * @date: 2019/9/26
      */
+    @Override
     public void downloadShareHandle(String lockPassword, String shareId, HttpServletResponse res) throws IOException {
         RestAPIResult<String> apiResult = shareRemote.getUid(shareId, lockPassword);
         if (apiResult.getRespCode() == 1) {
@@ -181,4 +177,5 @@ public class DownloadProvider {
             shareRemote.addShareDownload(shareId);
         }
     }
+
 }

@@ -9,7 +9,7 @@ import top.quhailong.pan.request.AddShareViewCountRequest;
 import top.quhailong.pan.request.SaveShareRequest;
 import top.quhailong.pan.request.ShareListRequest;
 import top.quhailong.pan.request.ShareRequest;
-import top.quhailong.pan.share.provider.ShareProvider;
+import top.quhailong.pan.share.service.IShareService;
 import top.quhailong.pan.utils.RestAPIResult;
 
 import javax.annotation.Resource;
@@ -21,7 +21,7 @@ public class ShareController {
     @Resource
     private HttpServletRequest httpServletRequest;
     @Autowired
-    private ShareProvider shareProvider;
+    private IShareService shareService;
 
     /**
      * 分享文件
@@ -35,7 +35,7 @@ public class ShareController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("分享文件数据处理开始,request:{}", request);
-        RestAPIResult<String> result = shareProvider.shareHandle(request);
+        RestAPIResult<String> result = shareService.shareHandle(request);
         logger.info("分享文件数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("分享文件调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -55,7 +55,7 @@ public class ShareController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("获取分享列表数据处理开始,request:{}", request);
-        RestAPIResult<String> result = shareProvider.shareListHandle(request);
+        RestAPIResult<String> result = shareService.shareListHandle(request);
         logger.info("获取分享列表数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("获取分享列表调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -75,7 +75,7 @@ public class ShareController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("取消分享数据处理开始,vids:{}", vids);
-        RestAPIResult<String> result = shareProvider.unShareHandle(uid, vids);
+        RestAPIResult<String> result = shareService.unShareHandle(uid, vids);
         logger.info("取消分享数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("取消分享调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -95,7 +95,7 @@ public class ShareController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("获取分享用户信息数据处理开始,shareId:{}", shareId);
-        RestAPIResult<String> result = shareProvider.getShareUserHandle(shareId);
+        RestAPIResult<String> result = shareService.getShareUserHandle(shareId);
         logger.info("获取分享用户信息数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("获取分享用户信息调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -115,7 +115,7 @@ public class ShareController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("保存分享数据处理开始,request:{}", request);
-        RestAPIResult<String> result = shareProvider.saveShareHandle(request);
+        RestAPIResult<String> result = shareService.saveShareHandle(request);
         logger.info("保存分享数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("保存分享调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -135,7 +135,7 @@ public class ShareController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("查询分享是否带密码数据处理开始,shareId:{}", shareId);
-        RestAPIResult<String> result = shareProvider.checkLockHandle(shareId);
+        RestAPIResult<String> result = shareService.checkLockHandle(shareId);
         logger.info("查询分享是否带密码数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("查询分享是否带密码调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -155,7 +155,7 @@ public class ShareController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("验证分享密码数据处理开始,shareId:{}", shareId);
-        RestAPIResult<String> result = shareProvider.verifykLockHandle(lockPassword, shareId);
+        RestAPIResult<String> result = shareService.verifykLockHandle(lockPassword, shareId);
         logger.info("验证分享密码数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("验证分享密码调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -175,7 +175,7 @@ public class ShareController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("获取分享虚拟地址信息数据处理开始,shareId:{}", shareId);
-        RestAPIResult<String> result = shareProvider.getVinfoHandle(shareId, lockPassword);
+        RestAPIResult<String> result = shareService.getVinfoHandle(shareId, lockPassword);
         logger.info("获取分享虚拟地址信息数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("获取分享虚拟地址信息调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -195,7 +195,7 @@ public class ShareController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("增加分享访问量数据处理开始,request:{}", request);
-        shareProvider.addShareViewCountHandle(request);
+        shareService.addShareViewCountHandle(request);
         logger.info("增加分享访问量数据处理结束");
         stopWatch.stop();
         logger.info("增加分享访问量调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -214,7 +214,7 @@ public class ShareController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("增加分享下载量数据处理开始,shareId:{}", shareId);
-        shareProvider.addShareDownloadCountHandle(shareId);
+        shareService.addShareDownloadCountHandle(shareId);
         logger.info("增加分享下载量数据处理结束");
         stopWatch.stop();
         logger.info("增加分享下载量调用时间,millies:{}", stopWatch.getTotalTimeMillis());

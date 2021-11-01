@@ -120,6 +120,7 @@ $(function () {
                     new invokeSettime("#TANGRAM__PSP_3__verifyCodeSend");
                 } else {
                     $("#TANGRAM__PSP_3__verifyCodeSEError").html(data.respMsg);
+                    change();
                 }
             }
         });

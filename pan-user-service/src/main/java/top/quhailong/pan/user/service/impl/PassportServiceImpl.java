@@ -12,6 +12,7 @@ import top.quhailong.pan.user.service.PassportService;
 import top.quhailong.pan.utils.*;
 
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class PassportServiceImpl implements PassportService {
@@ -47,7 +48,7 @@ public class PassportServiceImpl implements PassportService {
             JWTUtils.parseJWT(token, "nimadetou".getBytes());
             CookieUtils.removeCookie("token");
             CookieUtils.removeCookie("uid");
-            redisTemplate.opsForValue().set("LOGOUT:" + token, token, 60 * 60 * 24 * 365);
+            redisTemplate.opsForValue().set("LOGOUT:" + token, token, 60 * 60 * 24 * 365, TimeUnit.SECONDS);
             panResult.success(null);
             return panResult;
         } else {

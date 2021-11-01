@@ -1,6 +1,8 @@
 package top.quhailong.pan.user.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import top.quhailong.pan.request.ForgetPhoneSendRequest;
@@ -14,7 +16,9 @@ import top.quhailong.pan.utils.*;
 
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
+@RefreshScope
 @Service
 public class PasswordServiceImpl implements PasswordService {
     @Autowired
@@ -23,6 +27,12 @@ public class PasswordServiceImpl implements PasswordService {
     private EdgeRemote edgeRemote;
     @Autowired
     private UserInfoDao userInfoDao;
+    @Value("${sms-accountSid}")
+    private String accountSid;
+    @Value("${sms-appId}")
+    private String appId;
+    @Value("${sms-authToken}")
+    private String authToken;
 
     @Override
     public RestAPIResult<String> forgetPhoneSendHandle(ForgetPhoneSendRequest request) {
@@ -35,24 +45,20 @@ public class PasswordServiceImpl implements PasswordService {
                         panResult.error("手机号码不存在");
                         return panResult;
                     }
-                    String sid = "";
-                    String token = "";
-                    String appid = "";
-                    String templateid = "";
                     Integer sixNum = (int) ((Math.random() * 9 + 1) * 100000);
                     String param = sixNum.toString();
                     String mobile = userInfoDO.getPhone();
                     String uid = "";
                     SendSmsRequest sendSmsRequest = new SendSmsRequest();
-                    sendSmsRequest.setSid(sid);
-                    sendSmsRequest.setAppid(appid);
+                    sendSmsRequest.setSid(accountSid);
+                    sendSmsRequest.setAppid(appId);
                     sendSmsRequest.setMobile(mobile);
                     sendSmsRequest.setParam(param);
-                    sendSmsRequest.setTemplateid(templateid);
-                    sendSmsRequest.setToken(token);
+                    sendSmsRequest.setTemplateid("334617");
+                    sendSmsRequest.setToken(authToken);
                     sendSmsRequest.setUid(uid);
                     RestAPIResult<String> result = edgeRemote.sendSms(sendSmsRequest);
-                    redisTemplate.opsForValue().set("SMSForget:" + userInfoDO.getPhone(), param, 120);
+                    redisTemplate.opsForValue().set("SMSForget:" + userInfoDO.getPhone(), param, 120, TimeUnit.SECONDS);
                     redisTemplate.delete("verfiyCode:" + request.getVcodestr());
                     if (result.getRespMsg().equals("0")) {
                         panResult.error("发送短信失败");
