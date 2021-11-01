@@ -34,6 +34,8 @@ public class RegisterServiceImpl implements RegisterService {
     private String appId;
     @Value("${sms-authToken}")
     private String authToken;
+    @Value("${sms-register-template-id}")
+    private String templateId;
     @Autowired
     private UserInfoDao userInfoDao;
     @Autowired
@@ -140,7 +142,7 @@ public class RegisterServiceImpl implements RegisterService {
                     sendSmsRequest.setAppid(appId);
                     sendSmsRequest.setMobile(mobile);
                     sendSmsRequest.setParam(param);
-                    sendSmsRequest.setTemplateid("294195");
+                    sendSmsRequest.setTemplateid(templateId);
                     sendSmsRequest.setToken(authToken);
                     sendSmsRequest.setUid(uid);
                     RestAPIResult<String> result = edgeRemote.sendSms(sendSmsRequest);
