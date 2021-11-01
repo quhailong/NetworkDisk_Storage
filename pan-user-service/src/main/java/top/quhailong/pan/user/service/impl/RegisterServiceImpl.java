@@ -1,6 +1,8 @@
 package top.quhailong.pan.user.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,10 +22,18 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+@RefreshScope
 @Service
 public class RegisterServiceImpl implements RegisterService {
+    @Value("${sms-accountSid}")
+    private String accountSid;
+    @Value("${sms-appId}")
+    private String appId;
+    @Value("${sms-authToken}")
+    private String authToken;
     @Autowired
     private UserInfoDao userInfoDao;
     @Autowired
@@ -121,24 +131,20 @@ public class RegisterServiceImpl implements RegisterService {
         } else if (request.getVcodestr() != null && request.getVerfyCode() != null && request.getPhoneNum() != null) {
             if (redisTemplate.hasKey("verfiyCode:" + request.getVcodestr())) {
                 if (request.getVerfyCode().equalsIgnoreCase(redisTemplate.opsForValue().get("verfiyCode:" + request.getVcodestr()))) {
-                    String sid = "";
-                    String token = "";
-                    String appid = "";
-                    String templateid = "";
                     Integer sixNum = (int) ((Math.random() * 9 + 1) * 100000);
                     String param = sixNum.toString();
                     String mobile = request.getPhoneNum();
                     String uid = "";
                     SendSmsRequest sendSmsRequest = new SendSmsRequest();
-                    sendSmsRequest.setSid(sid);
-                    sendSmsRequest.setAppid(appid);
+                    sendSmsRequest.setSid(accountSid);
+                    sendSmsRequest.setAppid(appId);
                     sendSmsRequest.setMobile(mobile);
                     sendSmsRequest.setParam(param);
-                    sendSmsRequest.setTemplateid(templateid);
-                    sendSmsRequest.setToken(token);
+                    sendSmsRequest.setTemplateid("294195");
+                    sendSmsRequest.setToken(authToken);
                     sendSmsRequest.setUid(uid);
                     RestAPIResult<String> result = edgeRemote.sendSms(sendSmsRequest);
-                    redisTemplate.opsForValue().set("SMS:" + request.getPhoneNum(),param,120);
+                    redisTemplate.opsForValue().set("SMS:" + request.getPhoneNum(), param, 120, TimeUnit.SECONDS);
                     redisTemplate.delete("verfiyCode:" + request.getVcodestr());
                     if (result.getRespMsg().equals("0")) {
                         panResult.error("发送短信失败");
@@ -172,7 +178,7 @@ public class RegisterServiceImpl implements RegisterService {
         userInfoDao.updateUserInfo(userInfoDO);
         CookieUtils.removeCookie("token");
         CookieUtils.removeCookie("uid");
-        redisTemplate.opsForValue().set("LOGOUT:token", request.getToken(), 60 * 60 * 24 * 365);
+        redisTemplate.opsForValue().set("LOGOUT:token", request.getToken(), 60 * 60 * 24 * 365, TimeUnit.SECONDS);
         panResult.success(null);
         panResult.setDataCode("200");
         return panResult;

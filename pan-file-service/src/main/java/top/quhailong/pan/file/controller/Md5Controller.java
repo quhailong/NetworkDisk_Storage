@@ -7,7 +7,7 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import top.quhailong.pan.file.provider.Md5Provider;
+import top.quhailong.pan.file.service.IMd5Service;
 import top.quhailong.pan.utils.RestAPIResult;
 
 import javax.annotation.Resource;
@@ -25,7 +25,7 @@ public class Md5Controller {
     @Resource
     private HttpServletRequest httpServletRequest;
     @Autowired
-    private Md5Provider md5Provider;
+    private IMd5Service md5Provider;
 
     /**
      * Md5校验服务

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @CrossOrigin
@@ -27,7 +28,7 @@ public class RegistPageController {
     public String regist(Model model) {
         String pid = UUID.randomUUID().toString();
         model.addAttribute("pid", pid);
-        redisTemplate.opsForValue().set("regist:" + pid, "registPid", 600);
+        redisTemplate.opsForValue().set("regist:" + pid, "registPid", 600, TimeUnit.SECONDS);
         return "regist";
     }
 

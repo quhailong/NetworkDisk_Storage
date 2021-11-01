@@ -7,7 +7,7 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import top.quhailong.pan.file.provider.DownloadProvider;
+import top.quhailong.pan.file.service.IDownloadService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +26,7 @@ public class DownloadController {
     @Resource
     private HttpServletRequest httpServletRequest;
     @Autowired
-    private DownloadProvider downloadProvider;
+    private IDownloadService downloadService;
 
     /**
      * 下载文件
@@ -41,7 +41,7 @@ public class DownloadController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("下载文件数据处理开始,vids:{}", vids);
-        downloadProvider.downloadHandle(uid, vids, res);
+        downloadService.downloadHandle(uid, vids, res);
         logger.info("下载文件数据处理结束");
         stopWatch.stop();
         logger.info("下载文件调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -60,7 +60,7 @@ public class DownloadController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("下载分享文件数据处理开始,shareId:{}", shareId);
-        downloadProvider.downloadShareHandle(lockPassword, shareId, res);
+        downloadService.downloadShareHandle(lockPassword, shareId, res);
         logger.info("下载分享文件数据处理结束");
         stopWatch.stop();
         logger.info("下载分享文件调用时间,millies:{}", stopWatch.getTotalTimeMillis());
