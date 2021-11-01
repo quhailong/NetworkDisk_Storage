@@ -53,10 +53,11 @@ pan-regist-page---系统注册页面的展示服务
 pan-share-service---文件分享服务  
 pan-user-service---系统用户服务  
 ## 项目运行顺序
-1. 先在windows或linux平台安装nacos2.0.3，导入nacos_config_export_20211028084907.zip（nacos具体使用请百度）
+1. 先在windows或linux平台安装nacos2.0.3，导入nacos_config.zip（nacos具体使用请百度）
 2. 将项目resources目录下bootstrap.yml文件中的nacos服务地址账号密码改成自己的。
 3. 将pan.sql导入到你的数据库中
 4. pan-common需要install，之后启动其他模块（无顺序）  
+5. 短信参数配置在nacos配置user-service里（云之讯平台）
 http://localhost:8097/为主界面，数据库sql脚本和nacos配置均在工程根目录。  
 系统默认账户名：quhailong，密码123456
 >注意：每个项目中的resources文件夹需要IDEA识别出来，否则不能读取配置文件  
