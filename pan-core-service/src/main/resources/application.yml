@@ -1,11 +1,3 @@
-spring:
-  security:
-    basic:
-      enable: true
-    user:
-      name: admin
-      password: admin123
-
 pagehelper:
   helperDialect: mysql
   supportMethodsArguments: true

@@ -28,7 +28,7 @@ public class FastDFSClient {
 			//ClientGlobal.init("/usr/local/conf/fdfs_client.conf");
 			ClientGlobal.init(filePath);
 			trackerClient = new TrackerClient();
-			trackerServer = trackerClient.getConnection();
+			trackerServer = trackerClient.getTrackerServer();
 			storageClient = new StorageClient(trackerServer, storageServer);
 		} catch (Exception e) {
 			logger.error("FastDFS Client Init Fail!",e);
@@ -42,7 +42,7 @@ public class FastDFSClient {
 		long startTime = System.currentTimeMillis();
 		String[] uploadResults = null;
 		try {
-			TrackerServer trackerServer = trackerClient.getConnection();
+			TrackerServer trackerServer = trackerClient.getTrackerServer();
 			storageClient = new StorageClient(trackerServer, storageServer);
 			uploadResults = storageClient.upload_file(file.getContent(), file.getExt(), null);
 		} catch (IOException e) {
@@ -80,7 +80,7 @@ public class FastDFSClient {
 
 	public static InputStream downFile(String groupName, String remoteFileName) {
 		try {
-			TrackerServer trackerServer = trackerClient.getConnection();
+			TrackerServer trackerServer = trackerClient.getTrackerServer();
 			storageClient = new StorageClient(trackerServer, storageServer);
 			byte[] fileByte = storageClient.download_file(groupName, remoteFileName);
 			InputStream ins = new ByteArrayInputStream(fileByte);

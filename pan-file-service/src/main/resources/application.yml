@@ -1,10 +1,4 @@
 spring:
-  security:
-    basic:
-      enable: true
-    user:
-      name: admin
-      password: admin123
   #http:
     #multipart:
       #maxRequestSize: 800Mb
