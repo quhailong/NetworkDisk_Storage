@@ -2,7 +2,6 @@ package top.quhailong.pan.user.remote;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import top.quhailong.pan.serviceapi.service.CoreService;
-import top.quhailong.pan.utils.BasicAuthConfiguration;
 
 /**
  * 核心服务API
@@ -10,6 +9,6 @@ import top.quhailong.pan.utils.BasicAuthConfiguration;
  * @author: quhailong
  * @date: 2019/9/26
  */
-@FeignClient(value = "core-service",configuration = BasicAuthConfiguration.class)
+@FeignClient(value = "core-service")
 public interface CoreRemote extends CoreService {
 }

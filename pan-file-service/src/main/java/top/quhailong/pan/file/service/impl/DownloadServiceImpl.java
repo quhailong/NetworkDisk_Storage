@@ -71,8 +71,8 @@ public class DownloadServiceImpl implements IDownloadService {
                     int i = bis.read(buff);
                     while (i != -1) {
                         os.write(buff, 0, buff.length);
-                        os.flush();
                         i = bis.read(buff);
+                        os.flush();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
