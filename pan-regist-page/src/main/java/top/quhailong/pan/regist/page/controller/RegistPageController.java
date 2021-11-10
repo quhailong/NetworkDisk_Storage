@@ -1,12 +1,12 @@
 package top.quhailong.pan.regist.page.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 @CrossOrigin
 public class RegistPageController {
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisUtil redisUtil;
 
     /**
      * 注册页面跳转
@@ -28,7 +28,7 @@ public class RegistPageController {
     public String regist(Model model) {
         String pid = UUID.randomUUID().toString();
         model.addAttribute("pid", pid);
-        redisTemplate.opsForValue().set("regist:" + pid, "registPid", 600, TimeUnit.SECONDS);
+        redisUtil.setEx("regist:" + pid, "registPid", 600, TimeUnit.SECONDS);
         return "regist";
     }
 

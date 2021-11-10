@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  top.quhailong.pan.framework.redis.config.PanRedisAutoConfiguration

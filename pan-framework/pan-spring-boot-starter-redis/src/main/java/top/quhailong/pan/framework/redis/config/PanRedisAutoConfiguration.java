@@ -1,16 +1,34 @@
-package top.quhailong.pan.regist.page.utils;
+package top.quhailong.pan.framework.redis.config;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.integration.redis.util.RedisLockRegistry;
+import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 
 import java.io.Serializable;
 
 @Configuration
-public class RedisConfig {
+@AutoConfigureBefore({RedisAutoConfiguration.class})// springcloud-gateway启动会首先加载这个，所以PanRedisAutoConfiguration加载要比它早
+public class PanRedisAutoConfiguration {
+    @Value("${spring.application.name}")
+    public String appName;
+
+    @Bean
+    public RedisLockRegistry redisLockRegistry(RedisConnectionFactory redisConnectionFactory) {
+        return new RedisLockRegistry(redisConnectionFactory, appName);
+    }
+
+    /**
+     * 创建 RedisTemplate Bean，使用 JSON 序列化方式
+     */
     @Bean
     public RedisTemplate<String, Serializable> redisTemplate(LettuceConnectionFactory connectionFactory) {
         // 创建 RedisTemplate 对象
@@ -26,5 +44,10 @@ public class RedisConfig {
         redisTemplate.setHashValueSerializer(RedisSerializer.json());
 
         return redisTemplate;
+    }
+
+    @Bean
+    public RedisUtil redisUtil() {
+        return new RedisUtil();
     }
 }

@@ -34,8 +34,9 @@
         </dependency>
         <!--redis -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <groupId>top.quhailong.pan.framework</groupId>
+            <artifactId>pan-spring-boot-starter-redis</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -99,6 +99,5 @@ target/
 
 info_log/
 error_log/
-META-INF/
 .idea/
 *.iml
