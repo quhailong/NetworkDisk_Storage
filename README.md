@@ -5,17 +5,6 @@
 因本人在B站看到有人将此毕业设计进行售卖，因此作出如下声明：  
 此系统为本人2018年的毕业设计，属于原创，本人允许开发者进行二次开发及传播，仅用于学习用途，不允许进行售卖，否则将追究受益人责任，请遵循GPL-v3.0协议，如需要商业用途，请联系作者   
 特此声明！
-## ChangeLog
-### 2021年10月28日
-1. 移除config和eureka服务，采用nacos作为注册中心和配置中心
-2. 修改core-zuul网关实现为spring cloud gateway
-3. 修改file-zuul网关实现为spring cloud gateway
-4. 移除jedisClusterUtil
-5. 更新全部项目的redis使用方式，改为redisTemplate
-6. 更新pom版本
-7. 上传nacos配置
-### 2019年10月07日
-修改原先模糊的微服务概念，修改项目结构，eureka中增加认证，微服务调用增加BasicAuth认证，规范代码规范（但不完整，后续会继续修改），删掉发送短信相关参数，需要使用的话请在云之讯申请账号或采用其它平台短信服务。
 ## 描述
 基于SpringBoot和SpringCloud的网盘系统，与百度网盘相似
 ## 采用技术
@@ -52,11 +41,12 @@ pan-service-api---系统微服务调用api管理
 pan-regist-page---系统注册页面的展示服务  
 pan-share-service---文件分享服务  
 pan-user-service---系统用户服务  
+pan-framework---框架组件抽取  
 ## 项目运行顺序
 1. 先在windows或linux平台安装nacos2.0.3，导入nacos_config.zip（nacos具体使用请百度）
 2. 将项目resources目录下bootstrap.yml文件中的nacos服务地址账号密码改成自己的。
 3. 将pan.sql导入到你的数据库中
-4. pan-common需要install，之后启动其他模块（无顺序）  
+4. pan-common和pan-framework需要install（pan-common先），之后启动其他模块（无顺序）  
 5. 短信参数配置在nacos配置user-service里（云之讯平台）
 http://localhost:8097/为主界面，数据库sql脚本和nacos配置均在工程根目录。  
 系统默认账户名：quhailong，密码123456

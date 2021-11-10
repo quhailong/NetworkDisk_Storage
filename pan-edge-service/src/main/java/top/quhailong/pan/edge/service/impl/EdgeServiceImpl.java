@@ -1,9 +1,9 @@
 package top.quhailong.pan.edge.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import top.quhailong.pan.edge.service.IEdgeService;
+import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 import top.quhailong.pan.utils.RSAUtils;
 import top.quhailong.pan.utils.RestAPIResult;
 
@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @Service
 public class EdgeServiceImpl implements IEdgeService {
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisUtil redisUtil;
 
     @Override
     public RestAPIResult<String> regCheckPwdHandle(String password, String RSAKey) {
@@ -119,7 +119,7 @@ public class EdgeServiceImpl implements IEdgeService {
         }
 
         // 将生成的字母存入到session中
-        redisTemplate.opsForValue().set("verfiyCode:" + vcodestr, sb.toString(), 600, TimeUnit.SECONDS);
+        redisUtil.setEx("verfiyCode:" + vcodestr, sb.toString(), 600, TimeUnit.SECONDS);
         // 步骤五 绘制干扰线
         graphics.setColor(getRandColor(160, 200));
         int x1;

@@ -1,7 +1,6 @@
 package top.quhailong.pan.file.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import top.quhailong.pan.file.dao.FileDao;
@@ -9,6 +8,7 @@ import top.quhailong.pan.file.entity.FileDO;
 import top.quhailong.pan.file.remote.CoreRemote;
 import top.quhailong.pan.file.service.IUploadFileService;
 import top.quhailong.pan.file.utils.FileUtils;
+import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 import top.quhailong.pan.request.*;
 import top.quhailong.pan.utils.IDUtils;
 import top.quhailong.pan.utils.RestAPIResult;
@@ -28,7 +28,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
     @Autowired
     private FileUtils fileUtils;
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisUtil redisUtil;
 
     /**
      * 上传文件数据处理
@@ -67,8 +67,8 @@ public class UploadFileServiceImpl implements IUploadFileService {
                     coreRemote.createDir(createDirRequest);
                 }
             }
-            String md5 = redisTemplate.opsForValue().get("fileMd5:" + request.getFid());
-            redisTemplate.delete("fileMd5:" + request.getFid());
+            String md5 = redisUtil.get("fileMd5:" + request.getFid());
+            redisUtil.delete("fileMd5:" + request.getFid());
             Integer count = fileDao.checkMd5Whether(md5);
             FileDO fileDO;
             if (count > 0) {
@@ -196,7 +196,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
                 createVirtualAddressRequest.setParentPath(parentPath);
             }
             coreRemote.createVirtualAddress(createVirtualAddressRequest);
-            redisTemplate.delete("fileMd5:" + request.getFid());
+            redisUtil.delete("fileMd5:" + request.getFid());
             panResult.success(null);
             return panResult;
         }

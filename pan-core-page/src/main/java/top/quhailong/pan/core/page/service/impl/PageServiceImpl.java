@@ -5,17 +5,19 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import top.quhailong.pan.core.page.service.IPageService;
 import top.quhailong.pan.core.page.utils.TokenAnalysisUtils;
+import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 import top.quhailong.pan.request.AddShareViewCountRequest;
 import top.quhailong.pan.response.ShareDTO;
 import top.quhailong.pan.response.UserInfoDTO;
-import top.quhailong.pan.utils.*;
+import top.quhailong.pan.utils.CookieUtils;
+import top.quhailong.pan.utils.HttpClientUtils;
+import top.quhailong.pan.utils.JSONUtils;
+import top.quhailong.pan.utils.RestAPIResult;
 
 import java.util.Date;
 import java.util.Map;
@@ -29,7 +31,7 @@ import java.util.Map;
 @Service
 public class PageServiceImpl implements IPageService {
     @Autowired
-    private RedisTemplate<String,String> redisTemplate;
+    private RedisUtil redisUtil;
     @Autowired
     private TokenAnalysisUtils tokenAnalysisUtils;
 
@@ -60,7 +62,7 @@ public class PageServiceImpl implements IPageService {
         String token = CookieUtils.getCookie("token");
         if (!StringUtils.isEmpty(token)) {
             try {
-                if (redisTemplate.hasKey("LOGOUT:" + token)) {
+                if (redisUtil.hasKey("LOGOUT:" + token)) {
                     return "login";
                 } else {
                     UserInfoDTO userInfoDTO = tokenAnalysisUtils.tokenAnalysis(token);
@@ -86,7 +88,7 @@ public class PageServiceImpl implements IPageService {
         String token = CookieUtils.getCookie("token");
         if (!StringUtils.isEmpty(token)) {
             try {
-                if (redisTemplate.hasKey("LOGOUT:" + token)) {
+                if (redisUtil.hasKey("LOGOUT:" + token)) {
                     return "login";
                 } else {
                     UserInfoDTO userInfoDTO = tokenAnalysisUtils.tokenAnalysis(token);
@@ -112,7 +114,7 @@ public class PageServiceImpl implements IPageService {
         String token = CookieUtils.getCookie("token");
         if (!StringUtils.isEmpty(token)) {
             try {
-                if (redisTemplate.hasKey("LOGOUT:" + token)) {
+                if (redisUtil.hasKey("LOGOUT:" + token)) {
                     return "login";
                 } else {
                     UserInfoDTO userInfoDTO = tokenAnalysisUtils.tokenAnalysis(token);

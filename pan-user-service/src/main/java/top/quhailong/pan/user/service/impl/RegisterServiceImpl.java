@@ -3,9 +3,9 @@ package top.quhailong.pan.user.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 import top.quhailong.pan.request.ChangePwdRequest;
 import top.quhailong.pan.request.RegPhoneSendRequest;
 import top.quhailong.pan.request.SendSmsRequest;
@@ -45,7 +45,7 @@ public class RegisterServiceImpl implements RegisterService {
     @Autowired
     private FileRemote fileRemote;
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisUtil redisUtil;
 
     @Override
     public RestAPIResult<String> checkUserNameHandle(String username) {
@@ -85,8 +85,8 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public RestAPIResult<String> userRegistHandle(UserRegistRequest request) throws Exception {
         RestAPIResult<String> panResult = new RestAPIResult<>();
-        if (redisTemplate.hasKey("regist:" + request.getPid())) {
-            if (redisTemplate.hasKey("SMS:" + request.getPhoneNum()) && redisTemplate.opsForValue().get("SMS:" + request.getPhoneNum()).equals(request.getVerifyCode())) {
+        if (redisUtil.hasKey("regist:" + request.getPid())) {
+            if (redisUtil.hasKey("SMS:" + request.getPhoneNum()) && redisUtil.get("SMS:" + request.getPhoneNum()).equals(request.getVerifyCode())) {
                 UserInfoDO userInfoDO = new UserInfoDO();
                 String salt = IDUtils.showNextId(new Random().nextInt(30)).toString().substring(0, 16);
                 userInfoDO.setPassword(MD5Utils.generate(RSAUtils.decryptDataOnJava(request.getPassword(), request.getRsaKey()), salt));
@@ -131,8 +131,8 @@ public class RegisterServiceImpl implements RegisterService {
                 return panResult;
             }
         } else if (request.getVcodestr() != null && request.getVerfyCode() != null && request.getPhoneNum() != null) {
-            if (redisTemplate.hasKey("verfiyCode:" + request.getVcodestr())) {
-                if (request.getVerfyCode().equalsIgnoreCase(redisTemplate.opsForValue().get("verfiyCode:" + request.getVcodestr()))) {
+            if (redisUtil.hasKey("verfiyCode:" + request.getVcodestr())) {
+                if (request.getVerfyCode().equalsIgnoreCase(redisUtil.get("verfiyCode:" + request.getVcodestr()))) {
                     Integer sixNum = (int) ((Math.random() * 9 + 1) * 100000);
                     String param = sixNum.toString();
                     String mobile = request.getPhoneNum();
@@ -146,8 +146,8 @@ public class RegisterServiceImpl implements RegisterService {
                     sendSmsRequest.setToken(authToken);
                     sendSmsRequest.setUid(uid);
                     RestAPIResult<String> result = edgeRemote.sendSms(sendSmsRequest);
-                    redisTemplate.opsForValue().set("SMS:" + request.getPhoneNum(), param, 120, TimeUnit.SECONDS);
-                    redisTemplate.delete("verfiyCode:" + request.getVcodestr());
+                    redisUtil.setEx("SMS:" + request.getPhoneNum(), param, 120, TimeUnit.SECONDS);
+                    redisUtil.delete("verfiyCode:" + request.getVcodestr());
                     if (result.getRespMsg().equals("0")) {
                         panResult.error("发送短信失败");
                         return panResult;
@@ -180,7 +180,7 @@ public class RegisterServiceImpl implements RegisterService {
         userInfoDao.updateUserInfo(userInfoDO);
         CookieUtils.removeCookie("token");
         CookieUtils.removeCookie("uid");
-        redisTemplate.opsForValue().set("LOGOUT:token", request.getToken(), 60 * 60 * 24 * 365, TimeUnit.SECONDS);
+        redisUtil.setEx("LOGOUT:token", request.getToken(), 60 * 60 * 24 * 365, TimeUnit.SECONDS);
         panResult.success(null);
         panResult.setDataCode("200");
         return panResult;
