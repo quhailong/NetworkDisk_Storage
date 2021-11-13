@@ -5,6 +5,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>pan-spring-boot-starter-redis</module>
+        <module>pan-spring-boot-starter-web</module>
     </modules>
     <parent>
         <groupId>top.quhailong.pan.parent</groupId>
@@ -19,4 +20,12 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
 </project>

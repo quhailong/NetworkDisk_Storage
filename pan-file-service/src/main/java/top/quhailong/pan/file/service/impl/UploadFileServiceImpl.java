@@ -3,6 +3,7 @@ package top.quhailong.pan.file.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import top.quhailong.pan.constant.RedisConstants;
 import top.quhailong.pan.file.dao.FileDao;
 import top.quhailong.pan.file.entity.FileDO;
 import top.quhailong.pan.file.remote.CoreRemote;
@@ -67,8 +68,8 @@ public class UploadFileServiceImpl implements IUploadFileService {
                     coreRemote.createDir(createDirRequest);
                 }
             }
-            String md5 = redisUtil.get("fileMd5:" + request.getFid());
-            redisUtil.delete("fileMd5:" + request.getFid());
+            String md5 = redisUtil.get(String.format(RedisConstants.FILE_MD5, request.getFid()));
+            redisUtil.delete(String.format(RedisConstants.FILE_MD5, request.getFid()));
             Integer count = fileDao.checkMd5Whether(md5);
             FileDO fileDO;
             if (count > 0) {
@@ -196,7 +197,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
                 createVirtualAddressRequest.setParentPath(parentPath);
             }
             coreRemote.createVirtualAddress(createVirtualAddressRequest);
-            redisUtil.delete("fileMd5:" + request.getFid());
+            redisUtil.delete(String.format(RedisConstants.FILE_MD5, request.getFid()));
             panResult.success(null);
             return panResult;
         }

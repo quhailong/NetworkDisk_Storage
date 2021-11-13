@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
+import top.quhailong.pan.constant.RedisConstants;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 import top.quhailong.pan.request.ForgetPhoneSendRequest;
 import top.quhailong.pan.request.ModifyPassRequest;
@@ -40,8 +41,8 @@ public class PasswordServiceImpl implements PasswordService {
     public RestAPIResult<String> forgetPhoneSendHandle(ForgetPhoneSendRequest request) {
         RestAPIResult<String> panResult = new RestAPIResult<>();
         if (request.getVcodestr() != null && request.getVerfyCode() != null && request.getUsername() != null) {
-            if (redisUtil.hasKey("verfiyCode:" + request.getVcodestr())) {
-                if (request.getVerfyCode().equalsIgnoreCase(redisUtil.get("verfiyCode:" + request.getVcodestr()))) {
+            if (redisUtil.hasKey(String.format(RedisConstants.VERFIYCODE, request.getVcodestr()))) {
+                if (request.getVerfyCode().equalsIgnoreCase(redisUtil.get(String.format(RedisConstants.VERFIYCODE, request.getVcodestr())))) {
                     UserInfoDO userInfoDO = userInfoDao.getUserInfoByPassport(request.getUsername());
                     if (userInfoDO != null && userInfoDO.getPhone() == null) {
                         panResult.error("手机号码不存在");
@@ -60,8 +61,8 @@ public class PasswordServiceImpl implements PasswordService {
                     sendSmsRequest.setToken(authToken);
                     sendSmsRequest.setUid(uid);
                     RestAPIResult<String> result = edgeRemote.sendSms(sendSmsRequest);
-                    redisUtil.setEx("SMSForget:" + userInfoDO.getPhone(), param, 120, TimeUnit.SECONDS);
-                    redisUtil.delete("verfiyCode:" + request.getVcodestr());
+                    redisUtil.setEx(String.format(RedisConstants.SMSForget, userInfoDO.getPhone()), param, 120, TimeUnit.SECONDS);
+                    redisUtil.delete(String.format(RedisConstants.VERFIYCODE, request.getVcodestr()));
                     if (result.getRespMsg().equals("0")) {
                         panResult.error("发送短信失败");
                         return panResult;
@@ -111,7 +112,7 @@ public class PasswordServiceImpl implements PasswordService {
             return panResult;
         }
 
-        if (redisUtil.hasKey("SMSForget:" + phoneNum) && redisUtil.get("SMSForget:" + phoneNum).equals(request.getVerifyCode())) {
+        if (redisUtil.hasKey(String.format(RedisConstants.SMSForget, phoneNum)) && redisUtil.get(String.format(RedisConstants.SMSForget, phoneNum)).equals(request.getVerifyCode())) {
             try {
                 String newPassword = RSAUtils.decryptDataOnJava(request.getPassword(), request.getRsaKey());
                 String salt = IDUtils.showNextId(new Random().nextInt(30)).toString().substring(0, 16);
