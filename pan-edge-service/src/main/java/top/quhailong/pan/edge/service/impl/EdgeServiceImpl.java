@@ -2,6 +2,7 @@ package top.quhailong.pan.edge.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.quhailong.pan.constant.RedisConstants;
 import top.quhailong.pan.edge.service.IEdgeService;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 import top.quhailong.pan.utils.RSAUtils;
@@ -119,7 +120,7 @@ public class EdgeServiceImpl implements IEdgeService {
         }
 
         // 将生成的字母存入到session中
-        redisUtil.setEx("verfiyCode:" + vcodestr, sb.toString(), 600, TimeUnit.SECONDS);
+        redisUtil.setEx(String.format(RedisConstants.VERFIYCODE, vcodestr), sb.toString(), 600, TimeUnit.SECONDS);
         // 步骤五 绘制干扰线
         graphics.setColor(getRandColor(160, 200));
         int x1;

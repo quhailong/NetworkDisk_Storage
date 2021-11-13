@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import top.quhailong.pan.constant.RedisConstants;
 import top.quhailong.pan.core.page.service.IPageService;
 import top.quhailong.pan.core.page.utils.TokenAnalysisUtils;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
@@ -62,7 +63,7 @@ public class PageServiceImpl implements IPageService {
         String token = CookieUtils.getCookie("token");
         if (!StringUtils.isEmpty(token)) {
             try {
-                if (redisUtil.hasKey("LOGOUT:" + token)) {
+                if (redisUtil.hasKey(String.format(RedisConstants.LOGOUT, token))) {
                     return "login";
                 } else {
                     UserInfoDTO userInfoDTO = tokenAnalysisUtils.tokenAnalysis(token);
@@ -88,7 +89,7 @@ public class PageServiceImpl implements IPageService {
         String token = CookieUtils.getCookie("token");
         if (!StringUtils.isEmpty(token)) {
             try {
-                if (redisUtil.hasKey("LOGOUT:" + token)) {
+                if (redisUtil.hasKey(String.format(RedisConstants.LOGOUT, token))) {
                     return "login";
                 } else {
                     UserInfoDTO userInfoDTO = tokenAnalysisUtils.tokenAnalysis(token);
@@ -114,7 +115,7 @@ public class PageServiceImpl implements IPageService {
         String token = CookieUtils.getCookie("token");
         if (!StringUtils.isEmpty(token)) {
             try {
-                if (redisUtil.hasKey("LOGOUT:" + token)) {
+                if (redisUtil.hasKey(String.format(RedisConstants.LOGOUT, token))) {
                     return "login";
                 } else {
                     UserInfoDTO userInfoDTO = tokenAnalysisUtils.tokenAnalysis(token);

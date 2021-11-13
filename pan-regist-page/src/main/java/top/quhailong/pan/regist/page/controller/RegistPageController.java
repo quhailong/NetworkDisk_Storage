@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import top.quhailong.pan.constant.RedisConstants;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +29,7 @@ public class RegistPageController {
     public String regist(Model model) {
         String pid = UUID.randomUUID().toString();
         model.addAttribute("pid", pid);
-        redisUtil.setEx("regist:" + pid, "registPid", 600, TimeUnit.SECONDS);
+        redisUtil.setEx(String.format(RedisConstants.REGIST, pid), "registPid", 600, TimeUnit.SECONDS);
         return "regist";
     }
 

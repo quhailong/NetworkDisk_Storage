@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import top.quhailong.pan.constant.RedisConstants;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 import top.quhailong.pan.request.ChangePwdRequest;
 import top.quhailong.pan.request.RegPhoneSendRequest;
@@ -85,8 +86,8 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public RestAPIResult<String> userRegistHandle(UserRegistRequest request) throws Exception {
         RestAPIResult<String> panResult = new RestAPIResult<>();
-        if (redisUtil.hasKey("regist:" + request.getPid())) {
-            if (redisUtil.hasKey("SMS:" + request.getPhoneNum()) && redisUtil.get("SMS:" + request.getPhoneNum()).equals(request.getVerifyCode())) {
+        if (redisUtil.hasKey(String.format(RedisConstants.REGIST, request.getPid()))) {
+            if (redisUtil.hasKey(String.format(RedisConstants.SMS, request.getPhoneNum())) && redisUtil.get(String.format(RedisConstants.SMS, request.getPhoneNum())).equals(request.getVerifyCode())) {
                 UserInfoDO userInfoDO = new UserInfoDO();
                 String salt = IDUtils.showNextId(new Random().nextInt(30)).toString().substring(0, 16);
                 userInfoDO.setPassword(MD5Utils.generate(RSAUtils.decryptDataOnJava(request.getPassword(), request.getRsaKey()), salt));
@@ -131,8 +132,8 @@ public class RegisterServiceImpl implements RegisterService {
                 return panResult;
             }
         } else if (request.getVcodestr() != null && request.getVerfyCode() != null && request.getPhoneNum() != null) {
-            if (redisUtil.hasKey("verfiyCode:" + request.getVcodestr())) {
-                if (request.getVerfyCode().equalsIgnoreCase(redisUtil.get("verfiyCode:" + request.getVcodestr()))) {
+            if (redisUtil.hasKey(String.format(RedisConstants.VERFIYCODE, request.getVcodestr()))) {
+                if (request.getVerfyCode().equalsIgnoreCase(redisUtil.get(String.format(RedisConstants.VERFIYCODE, request.getVcodestr())))) {
                     Integer sixNum = (int) ((Math.random() * 9 + 1) * 100000);
                     String param = sixNum.toString();
                     String mobile = request.getPhoneNum();
@@ -146,8 +147,8 @@ public class RegisterServiceImpl implements RegisterService {
                     sendSmsRequest.setToken(authToken);
                     sendSmsRequest.setUid(uid);
                     RestAPIResult<String> result = edgeRemote.sendSms(sendSmsRequest);
-                    redisUtil.setEx("SMS:" + request.getPhoneNum(), param, 120, TimeUnit.SECONDS);
-                    redisUtil.delete("verfiyCode:" + request.getVcodestr());
+                    redisUtil.setEx(String.format(RedisConstants.SMS, request.getPhoneNum()), param, 120, TimeUnit.SECONDS);
+                    redisUtil.delete(String.format(RedisConstants.VERFIYCODE, request.getVcodestr()));
                     if (result.getRespMsg().equals("0")) {
                         panResult.error("发送短信失败");
                         return panResult;
@@ -180,7 +181,7 @@ public class RegisterServiceImpl implements RegisterService {
         userInfoDao.updateUserInfo(userInfoDO);
         CookieUtils.removeCookie("token");
         CookieUtils.removeCookie("uid");
-        redisUtil.setEx("LOGOUT:token", request.getToken(), 60 * 60 * 24 * 365, TimeUnit.SECONDS);
+        redisUtil.setEx(String.format(RedisConstants.LOGOUT, request.getToken()), request.getToken(), 60 * 60 * 24 * 365, TimeUnit.SECONDS);
         panResult.success(null);
         panResult.setDataCode("200");
         return panResult;

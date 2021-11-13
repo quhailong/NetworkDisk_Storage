@@ -4,6 +4,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import top.quhailong.pan.constant.RedisConstants;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 import top.quhailong.pan.response.UserInfoDTO;
 import top.quhailong.pan.user.dao.UserInfoDao;
@@ -48,7 +49,7 @@ public class PassportServiceImpl implements PassportService {
             JWTUtils.parseJWT(token, "nimadetou".getBytes());
             CookieUtils.removeCookie("token");
             CookieUtils.removeCookie("uid");
-            redisUtil.setEx("LOGOUT:" + token, token, 60 * 60 * 24 * 365, TimeUnit.SECONDS);
+            redisUtil.setEx(String.format(RedisConstants.LOGOUT, token), token, 60 * 60 * 24 * 365, TimeUnit.SECONDS);
             panResult.success(null);
             return panResult;
         } else {
