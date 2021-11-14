@@ -3,7 +3,9 @@ package top.quhailong.pan.serviceapi.service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
+
+import java.util.Map;
 
 public interface ShareService {
 
@@ -11,5 +13,5 @@ public interface ShareService {
     void addShareDownload(@RequestParam("shareId") String shareId);
 
     @RequestMapping(value = "getvinfo", method = RequestMethod.GET)
-    RestAPIResult<String> getUid(@RequestParam("shareId") String shareId, @RequestParam("lockPassword") String lockPassword);
+    RestAPIResultDTO<Map<String, Object>> getVinfo(@RequestParam("shareId") String shareId, @RequestParam("lockPassword") String lockPassword);
 }

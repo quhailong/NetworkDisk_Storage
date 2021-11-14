@@ -11,8 +11,8 @@ import top.quhailong.pan.file.service.IUploadFileService;
 import top.quhailong.pan.file.utils.FileUtils;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 import top.quhailong.pan.request.*;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 import top.quhailong.pan.utils.IDUtils;
-import top.quhailong.pan.utils.RestAPIResult;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -38,8 +38,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
      * @date: 2019/9/25
      */
     @Override
-    public RestAPIResult<String> uploadFileHandle(UploadFileRequest request) throws IOException {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> uploadFileHandle(UploadFileRequest request) throws IOException {
         String parentPath = request.getParentPath();
         MultipartFile file = request.getFile();
         if (parentPath != null) {
@@ -91,8 +90,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
                 createVirtualAddressRequest.setParentPath(upPath.equals("") ? parentPath : parentPath + "/" + upPath);
             }
             coreRemote.createVirtualAddress(createVirtualAddressRequest);
-            panResult.success(null);
-            return panResult;
+            return RestAPIResultDTO.Success("成功");
         }
     }
 
@@ -151,8 +149,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
      * @date: 2019/9/25
      */
     @Override
-    public RestAPIResult<String> quickUploadFileHandle(QuickUploadFileRequest request) throws UnsupportedEncodingException {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> quickUploadFileHandle(QuickUploadFileRequest request) throws UnsupportedEncodingException {
         String parentPath = request.getParentPath();
         String fileName = request.getFileName();
         if (parentPath != null) {
@@ -198,8 +195,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
             }
             coreRemote.createVirtualAddress(createVirtualAddressRequest);
             redisUtil.delete(String.format(RedisConstants.FILE_MD5, request.getFid()));
-            panResult.success(null);
-            return panResult;
+            return RestAPIResultDTO.Success("成功");
         }
     }
 
@@ -210,10 +206,9 @@ public class UploadFileServiceImpl implements IUploadFileService {
      * @date: 2019/9/26
      */
     @Override
-    public RestAPIResult<String> uploadHandle(MultipartFile file) throws IOException {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> uploadHandle(MultipartFile file) throws IOException {
+        RestAPIResultDTO<String> panResult = new RestAPIResultDTO<>();
         String fileAddr = fileUtils.saveFile(file);
-        panResult.success(fileAddr);
-        return panResult;
+        return RestAPIResultDTO.Success(fileAddr, "成功");
     }
 }

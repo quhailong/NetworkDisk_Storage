@@ -6,11 +6,13 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import top.quhailong.pan.constant.RedisConstants;
+import top.quhailong.pan.enums.ResultCodeEnum;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 import top.quhailong.pan.request.ChangePwdRequest;
 import top.quhailong.pan.request.RegPhoneSendRequest;
 import top.quhailong.pan.request.SendSmsRequest;
 import top.quhailong.pan.request.UserRegistRequest;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 import top.quhailong.pan.user.dao.UserInfoDao;
 import top.quhailong.pan.user.entity.UserInfoDO;
 import top.quhailong.pan.user.remote.CoreRemote;
@@ -21,6 +23,7 @@ import top.quhailong.pan.utils.*;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -49,43 +52,33 @@ public class RegisterServiceImpl implements RegisterService {
     private RedisUtil redisUtil;
 
     @Override
-    public RestAPIResult<String> checkUserNameHandle(String username) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> checkUserNameHandle(String username) {
         if (Pattern.compile("^[a-zA-Z0-9\u4E00-\u9FA5_]+$").matcher(username).matches() && !Pattern.compile("^[0-9]+$").matcher(username).matches()) {
             UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserNameOrPhone(username, null);
             if (userInfoDO != null) {
-                panResult.error("用户名已经被使用了，请更换");
-                return panResult;
+                return RestAPIResultDTO.Error("用户名已经被使用了，请更换");
             }
-            panResult.success(null);
-            return panResult;
+            return RestAPIResultDTO.Success("用户名没有被使用");
         } else {
-            panResult.error("用户名仅支持中英文、数字和下划线,且不能为纯数字");
-            return panResult;
+            return RestAPIResultDTO.Error("用户名仅支持中英文、数字和下划线,且不能为纯数字");
         }
     }
 
     @Override
-    public RestAPIResult<String> checkPhoneHandle(String phoneNum) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> checkPhoneHandle(String phoneNum) {
         if (Pattern.compile("^[1][3,4,5,7,8][0-9]{9}$").matcher(phoneNum).matches()) {
             UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserNameOrPhone(null, phoneNum);
             if (userInfoDO != null) {
-                panResult.setRespCode(144);
-                panResult.setRespData(null);
-                return panResult;
+                return RestAPIResultDTO.Error("用户名已经被使用了", 144);
             }
-            panResult.success(null);
-            return panResult;
+            return RestAPIResultDTO.Success("用户名没有被使用");
         } else {
-            panResult.error("手机号码格式不正确");
-            return panResult;
+            return RestAPIResultDTO.Error("手机号码格式不正确");
         }
     }
 
     @Override
-    public RestAPIResult<String> userRegistHandle(UserRegistRequest request) throws Exception {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> userRegistHandle(UserRegistRequest request) throws Exception {
         if (redisUtil.hasKey(String.format(RedisConstants.REGIST, request.getPid()))) {
             if (redisUtil.hasKey(String.format(RedisConstants.SMS, request.getPhoneNum())) && redisUtil.get(String.format(RedisConstants.SMS, request.getPhoneNum())).equals(request.getVerifyCode())) {
                 UserInfoDO userInfoDO = new UserInfoDO();
@@ -106,30 +99,23 @@ public class RegisterServiceImpl implements RegisterService {
                         JSONUtils.toJSONString(userInfoDO), 12 * 60 * 60 * 1000);
                 CookieUtils.addCookie("token", accessToken);
                 CookieUtils.addCookie("uid", userInfoDO.getUserId());
-                panResult.success(null);
-                return panResult;
+                return RestAPIResultDTO.Success("注册成功");
             } else {
-                panResult.error("验证码错误");
-                return panResult;
+                return RestAPIResultDTO.Error("验证码错误");
             }
         } else {
-            panResult.error("页面失效，请刷新页面");
-            return panResult;
+            return RestAPIResultDTO.Error("页面失效，请刷新页面");
         }
     }
 
     @Override
-    public RestAPIResult<String> regPhoneSendHandle(RegPhoneSendRequest request) {
-        RestAPIResult<String> panResult = new RestAPIResult<String>();
+    public RestAPIResultDTO<String> regPhoneSendHandle(RegPhoneSendRequest request) {
         if (request.getVcodestr() == null && request.getVcodestr() == null) {
             UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserNameOrPhone(null, request.getPhoneNum());
             if (userInfoDO != null) {
-                panResult.error("手机号码已注册");
-                return panResult;
+                return RestAPIResultDTO.Error("手机号码已注册");
             } else {
-                panResult.setRespCode(1);
-                panResult.setRespData(UUID.randomUUID().toString().replaceAll("-", ""));
-                return panResult;
+                return RestAPIResultDTO.Success(UUID.randomUUID().toString().replaceAll("-", ""), "注册成功");
             }
         } else if (request.getVcodestr() != null && request.getVerfyCode() != null && request.getPhoneNum() != null) {
             if (redisUtil.hasKey(String.format(RedisConstants.VERFIYCODE, request.getVcodestr()))) {
@@ -146,32 +132,26 @@ public class RegisterServiceImpl implements RegisterService {
                     sendSmsRequest.setTemplateid(templateId);
                     sendSmsRequest.setToken(authToken);
                     sendSmsRequest.setUid(uid);
-                    RestAPIResult<String> result = edgeRemote.sendSms(sendSmsRequest);
+                    RestAPIResultDTO<String> result = edgeRemote.sendSms(sendSmsRequest);
                     redisUtil.setEx(String.format(RedisConstants.SMS, request.getPhoneNum()), param, 120, TimeUnit.SECONDS);
                     redisUtil.delete(String.format(RedisConstants.VERFIYCODE, request.getVcodestr()));
-                    if (result.getRespMsg().equals("0")) {
-                        panResult.error("发送短信失败");
-                        return panResult;
+                    if (result.errorWhether()) {
+                        return RestAPIResultDTO.Error("发送短信失败");
                     }
-                    panResult.success(null);
-                    return panResult;
+                    return RestAPIResultDTO.Success("发送短信成功");
                 } else {
-                    panResult.error("验证码错误");
-                    return panResult;
+                    return RestAPIResultDTO.Error("验证码错误");
                 }
             } else {
-                panResult.error("验证码错误");
-                return panResult;
+                return RestAPIResultDTO.Error("验证码错误");
             }
         } else {
-            panResult.error("别瞎捷豹改参数");
-            return panResult;
+            return RestAPIResultDTO.Error(null, ResultCodeEnum.PARAMATER_ERROR);
         }
     }
 
     @Override
-    public RestAPIResult<String> changePwdHandle(ChangePwdRequest request) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> changePwdHandle(ChangePwdRequest request) {
         String newPassword = RSAUtils.decryptDataOnJava(request.getNewPassword(), request.getRsaKey());
         UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserId(request.getUid());
         String salt = IDUtils.showNextId(new Random().nextInt(30)).toString().substring(0, 16);
@@ -182,36 +162,27 @@ public class RegisterServiceImpl implements RegisterService {
         CookieUtils.removeCookie("token");
         CookieUtils.removeCookie("uid");
         redisUtil.setEx(String.format(RedisConstants.LOGOUT, request.getToken()), request.getToken(), 60 * 60 * 24 * 365, TimeUnit.SECONDS);
-        panResult.success(null);
-        panResult.setDataCode("200");
-        return panResult;
+        return RestAPIResultDTO.Success("修改成功");
     }
 
     @Override
-    public RestAPIResult<String> loadImgHandle(String uid) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> loadImgHandle(String uid) {
         UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserId(uid);
         String picLocation = userInfoDO.getPicLocation();
         if (picLocation.contains("group")) {
-            panResult.success("null");
-            panResult.setRespData(picLocation);
+            return RestAPIResultDTO.Success(picLocation, "成功");
         } else {
-            panResult.success("null");
-            panResult.setRespData("group1/M00/00/00/wKhdgF2RromAYwaYAAAJL2wXkdY418_big.jpg");
+            return RestAPIResultDTO.Success("group1/M00/00/00/wKhdgF2RromAYwaYAAAJL2wXkdY418_big.jpg", "成功");
         }
-        return panResult;
     }
 
     @Override
-    public RestAPIResult<String> uploadPicHandle(String uid, MultipartFile file) throws IOException {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> uploadPicHandle(String uid, MultipartFile file) throws IOException {
         String picLocation = fileRemote.upload(file).getRespData();
         UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserId(uid);
         userInfoDO.setPicLocation(picLocation);
         userInfoDO.setUpdateTime(new Date());
         userInfoDao.updateUserInfo(userInfoDO);
-        panResult.success(null);
-        panResult.setDataCode("200");
-        return panResult;
+        return RestAPIResultDTO.Success("上传成功");
     }
 }

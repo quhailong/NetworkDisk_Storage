@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 import top.quhailong.pan.response.UserInfoDTO;
 import top.quhailong.pan.utils.JSONUtils;
 import top.quhailong.pan.utils.JWTUtils;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -63,9 +63,7 @@ public class TokenFilter implements GlobalFilter, Ordered {
         } catch (Exception e) {
             ServerHttpResponse response = exchange.getResponse();
             response.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
-            RestAPIResult restAPIResult = new RestAPIResult();
-            restAPIResult.error("token验证失败");
-            DataBuffer dataBuffer = response.bufferFactory().wrap(JSON.toJSONString(restAPIResult).getBytes());
+            DataBuffer dataBuffer = response.bufferFactory().wrap(JSON.toJSONString(RestAPIResultDTO.Error("token验证失败")).getBytes());
             return response.writeWith(Flux.just(dataBuffer));
         }
     }

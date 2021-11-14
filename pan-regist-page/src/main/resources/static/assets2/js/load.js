@@ -123,7 +123,7 @@ $(document).ready(
 									crossDomain : true,
 									dataType : "json", //指定服务器返回的数据类型
 									success : function(data) {
-										if(data.respData == "200"){
+										if(data.respCode === 1){
 											flashContent();
 											$(".QxJxtg").removeClass('cazEfA');
 										}else{
@@ -204,7 +204,7 @@ $(document).ready(
 					    									  crossDomain : true,
 					    									  dataType : "json", //指定服务器返回的数据类型
 					    									  success : function(data) {
-					    										  if(data.respCode == 200){
+					    										  if(data.respCode === 1){
 					    											  alert("修改成功");
 					    											  flashContent();
 					    											  $(".QxJxtg").removeClass('cazEfA');
@@ -221,7 +221,7 @@ $(document).ready(
 					    							  onCancel : function() {
 					    							  }
 					    						  });
-					    					  }else if(data.respCode == 200){
+					    					  }else if(data.respCode === 1){
 					    						  alert("修改成功");
 					    						  flashContent();
 					    						  $(".QxJxtg").removeClass('cazEfA');
@@ -350,7 +350,7 @@ $(document).ready(
 									  crossDomain : true,
 									  dataType : "json", //指定服务器返回的数据类型
 									  success : function(data) {
-										  if(data.dataCode == 200){
+										  if(data.respCode === 1){
 											  alert("删除成功");
 											  flashContent();
 											  $(".QxJxtg").removeClass('cazEfA');
@@ -388,8 +388,8 @@ $(document).ready(
 						if (!$(this).hasClass("input-focus")) {
 							$(this).addClass("input-focus");
 							$.get("http://localhost:9005/cgi/getPublickKey", function(data) {
-								$("#publicKey").val(data.respMap.publicKey);
-								$("#RSAKey").val(data.respMap.RSAKey);
+								$("#publicKey").val(data.respData.publicKey);
+								$("#RSAKey").val(data.respData.RSAKey);
 							});
 						}
 					});

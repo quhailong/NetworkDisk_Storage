@@ -10,7 +10,7 @@ import top.quhailong.pan.request.ChangePwdRequest;
 import top.quhailong.pan.request.RegPhoneSendRequest;
 import top.quhailong.pan.request.UserRegistRequest;
 import top.quhailong.pan.user.service.RegisterService;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -37,12 +37,12 @@ public class RegisterController {
      * @date: 2019/9/25
      */
     @RequestMapping(value = "regcheckusername", method = RequestMethod.GET)
-    public RestAPIResult<String> checkUserName(@RequestParam("userName") String userName) {
+    public RestAPIResultDTO<String> checkUserName(@RequestParam("userName") String userName) {
         logger.info("用户名查重请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("用户名查重数据处理开始,userName:{}", userName);
-        RestAPIResult<String> result = registerService.checkUserNameHandle(userName);
+        RestAPIResultDTO<String> result = registerService.checkUserNameHandle(userName);
         logger.info("用户名查重数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("用户名查重调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -56,12 +56,12 @@ public class RegisterController {
      * @date: 2019/9/25
      */
     @RequestMapping(value = "regcheckphone", method = RequestMethod.GET)
-    public RestAPIResult<String> checkPhone(@RequestParam("phoneNum") String phoneNum) {
+    public RestAPIResultDTO<String> checkPhone(@RequestParam("phoneNum") String phoneNum) {
         logger.info("手机号查重请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("手机号查重数据处理开始,phoneNum:{}", phoneNum);
-        RestAPIResult<String> result = registerService.checkPhoneHandle(phoneNum);
+        RestAPIResultDTO<String> result = registerService.checkPhoneHandle(phoneNum);
         logger.info("手机号查重数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("手机号查重调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -75,12 +75,12 @@ public class RegisterController {
      * @date: 2019/9/25
      */
     @RequestMapping(value = "regphone", method = RequestMethod.POST)
-    public RestAPIResult<String> userRegist(@RequestBody UserRegistRequest request) throws Exception {
+    public RestAPIResultDTO<String> userRegist(@RequestBody UserRegistRequest request) throws Exception {
         logger.info("用户注册请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("用户注册数据处理开始,request:{}", request);
-        RestAPIResult<String> result = registerService.userRegistHandle(request);
+        RestAPIResultDTO<String> result = registerService.userRegistHandle(request);
         logger.info("用户注册数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("用户注册调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -94,12 +94,12 @@ public class RegisterController {
      * @date: 2019/9/26
      */
     @RequestMapping(value = "regphonesend", method = RequestMethod.POST)
-    public RestAPIResult<String> regPhoneSend(@RequestBody RegPhoneSendRequest request) {
+    public RestAPIResultDTO<String> regPhoneSend(@RequestBody RegPhoneSendRequest request) {
         logger.info("注册发送短信请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("注册发送短信数据处理开始,request:{}", request);
-        RestAPIResult<String> result = registerService.regPhoneSendHandle(request);
+        RestAPIResultDTO<String> result = registerService.regPhoneSendHandle(request);
         logger.info("注册发送短信数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("注册发送短信调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -113,12 +113,12 @@ public class RegisterController {
      * @date: 2019/9/26
      */
     @RequestMapping(value = "changepwd", method = RequestMethod.POST)
-    public RestAPIResult<String> changePwd(@RequestBody ChangePwdRequest request) {
+    public RestAPIResultDTO<String> changePwd(@RequestBody ChangePwdRequest request) {
         logger.info("修改密码请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("修改密码数据处理开始,request:{}", request);
-        RestAPIResult<String> result = registerService.changePwdHandle(request);
+        RestAPIResultDTO<String> result = registerService.changePwdHandle(request);
         logger.info("修改密码数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("修改密码调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -132,12 +132,12 @@ public class RegisterController {
      * @date: 2019/9/26
      */
     @RequestMapping(value = "loadimg", method = RequestMethod.GET)
-    public RestAPIResult<String> loadImg(@RequestParam("uid") String uid) {
+    public RestAPIResultDTO<String> loadImg(@RequestParam("uid") String uid) {
         logger.info("加载用户头像请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("加载用户头像数据处理开始,uid:{}", uid);
-        RestAPIResult<String> result = registerService.loadImgHandle(uid);
+        RestAPIResultDTO<String> result = registerService.loadImgHandle(uid);
         logger.info("加载用户头像数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("加载用户头像调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -151,12 +151,12 @@ public class RegisterController {
      * @date: 2019/9/26
      */
     @RequestMapping(value = "uploadpic", method = RequestMethod.POST)
-    public RestAPIResult<String> uploadPic(@RequestParam("uid") String uid, @RequestParam("file") MultipartFile file) throws IOException {
+    public RestAPIResultDTO<String> uploadPic(@RequestParam("uid") String uid, @RequestParam("file") MultipartFile file) throws IOException {
         logger.info("上传用户头像请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("上传用户头像数据处理开始,uid:{}", uid);
-        RestAPIResult<String> result = registerService.uploadPicHandle(uid, file);
+        RestAPIResultDTO<String> result = registerService.uploadPicHandle(uid, file);
         logger.info("上传用户头像数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("上传用户头像调用时间,millies:{}", stopWatch.getTotalTimeMillis());

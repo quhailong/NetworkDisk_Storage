@@ -11,9 +11,9 @@ import top.quhailong.pan.request.CopyOrMoveFileRequest;
 import top.quhailong.pan.request.CreateDirRequest;
 import top.quhailong.pan.request.CreateVirtualAddressRequest;
 import top.quhailong.pan.request.RenameFileOrDirRequest;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 import top.quhailong.pan.utils.IDUtils;
 import top.quhailong.pan.utils.JSONUtils;
-import top.quhailong.pan.utils.RestAPIResult;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -32,8 +32,8 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
      * @date: 2019/9/24
      */
     @Override
-    public RestAPIResult<String> renameFileOrDirHandle(RenameFileOrDirRequest request) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> renameFileOrDirHandle(RenameFileOrDirRequest request) {
+        RestAPIResultDTO<String> panResult = new RestAPIResultDTO<>();
         VirtualAddressDO virtualAddressDO = virtualAddressDao.getVirtualAddress(request.getVid());
         String suffix = "";
         if (virtualAddressDO.getAddrType() != 0) {
@@ -116,8 +116,7 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
      * @date: 2019/9/24
      */
     @Override
-    public RestAPIResult<String> deleteFileHandle(String vids) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> deleteFileHandle(String vids) {
         List<String> vidList = JSONUtils.parseObject(vids, List.class);
         if (vidList != null && vidList.size() > 0) {
             for (String vid : vidList) {
@@ -129,9 +128,7 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
                 }
             }
         }
-        panResult.success(null);
-        panResult.setDataCode("200");
-        return panResult;
+        return RestAPIResultDTO.Success(null);
     }
 
     /**
@@ -173,11 +170,9 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
      * @date: 2019/9/24
      */
     @Override
-    public RestAPIResult<String> createDirHandle(CreateDirRequest request) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<Map<String, Object>> createDirHandle(CreateDirRequest request) {
         if (!Pattern.compile("^[a-zA-Z0-9\u4E00-\u9FA5_]+$").matcher(request.getDirName()).matches()) {
-            panResult.error("文件夹长度必须小于20，并且不能包含特殊字符，只能为数字、字母、中文、下划线");
-            return panResult;
+            return RestAPIResultDTO.Error("文件夹长度必须小于20，并且不能包含特殊字符，只能为数字、字母、中文、下划线");
         }
         Integer count = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getDirName());
         VirtualAddressDO virtualAddressDO = new VirtualAddressDO();
@@ -199,9 +194,7 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
         virtualAddressDao.saveVirtualAddress(virtualAddressDO);
         Map<String, Object> map = new HashMap<>();
         map.put("0", JSONUtils.toJSONString(virtualAddressDO));
-        panResult.setRespMap(map);
-        panResult.setRespData("200");
-        return panResult;
+        return RestAPIResultDTO.Success(map);
     }
 
     /**
@@ -294,47 +287,39 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
     }
 
     @Override
-    public RestAPIResult<String> copyOrMoveFileHandle(CopyOrMoveFileRequest request) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> copyOrMoveFileHandle(CopyOrMoveFileRequest request) {
         List<String> vidList = JSONUtils.parseObject(request.getVids(), List.class);
         for (String vid : vidList) {
             VirtualAddressDO virtualAddressDO = virtualAddressDao.getVirtualAddress(vid);
             if (virtualAddressDO.getAddrType() != 0) {
                 if ((request.getDest().equals(virtualAddressDO.getParentPath()) || request.getDest().indexOf((virtualAddressDO.getParentPath().equals("/") ? virtualAddressDO.getParentPath() : virtualAddressDO.getParentPath() + "/") + virtualAddressDO.getFileName()) == 0)) {
                     if (request.getOpera().equals("copyOK")) {
-                        panResult.error("不能将文件复制到自身或其子文件夹中");
+                        return RestAPIResultDTO.Error("不能将文件复制到自身或其子文件夹中");
                     } else {
-                        panResult.error("不能将文件移动到自身或其子文件夹中");
+                        return RestAPIResultDTO.Error("不能将文件移动到自身或其子文件夹中");
                     }
-                    return panResult;
                 }
                 if (!copyOrMoveFile(virtualAddressDO, request.getDest(), request.getOpera())) {
-                    panResult.error("容量不足无法操作");
-                    return panResult;
+                    return RestAPIResultDTO.Error("容量不足无法操作");
                 }
             } else {
                 if ((request.getDest().equals(virtualAddressDO.getParentPath()) || request.getDest().indexOf((virtualAddressDO.getParentPath().equals("/") ? virtualAddressDO.getParentPath() : virtualAddressDO.getParentPath() + "/") + virtualAddressDO.getFileName()) == 0)) {
                     if (request.getOpera().equals("copyOK")) {
-                        panResult.error("不能将文件夹复制到自身或其子文件夹中");
+                        return RestAPIResultDTO.Error("不能将文件夹复制到自身或其子文件夹中");
                     } else {
-                        panResult.error("不能将文件夹移动到自身或其子文件夹中");
+                        return RestAPIResultDTO.Error("不能将文件夹移动到自身或其子文件夹中");
                     }
-                    return panResult;
                 }
                 if (!copyOrMoveDirFile(virtualAddressDO, request.getDest(), request.getOpera())) {
-                    panResult.error("容量不足无法操作");
-                    return panResult;
+                    return RestAPIResultDTO.Error("容量不足无法操作");
                 }
             }
         }
-        panResult.success(null);
-        panResult.setDataCode("200");
-        return panResult;
+        return RestAPIResultDTO.Success("成功");
     }
 
     @Override
-    public RestAPIResult<Integer> createVirtualAddressHandle(CreateVirtualAddressRequest request) {
-        RestAPIResult<Integer> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<Integer> createVirtualAddressHandle(CreateVirtualAddressRequest request) {
         String pre = request.getFileName().substring(0, request.getFileName().lastIndexOf("."));
         String suffix = request.getFileName().substring(request.getFileName().lastIndexOf("."));
         Integer count = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getFileName());
@@ -361,7 +346,6 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
             capacity.setUsedCapacity(capacity.getUsedCapacity() + virtualAddressDO.getFileSize());
             capacityDao.updateCapacity(capacity);
         }
-        panResult.success(result);
-        return panResult;
+        return RestAPIResultDTO.Success(result, "成功");
     }
 }

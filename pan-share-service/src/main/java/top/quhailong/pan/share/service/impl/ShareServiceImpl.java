@@ -3,7 +3,9 @@ package top.quhailong.pan.share.service.impl;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.quhailong.pan.enums.ResultCodeEnum;
 import top.quhailong.pan.request.*;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 import top.quhailong.pan.response.ShareDTO;
 import top.quhailong.pan.response.UserInfoDTO;
 import top.quhailong.pan.response.VirtualAddressDTO;
@@ -17,7 +19,6 @@ import top.quhailong.pan.share.service.IShareService;
 import top.quhailong.pan.utils.BeanUtils;
 import top.quhailong.pan.utils.IDUtils;
 import top.quhailong.pan.utils.JSONUtils;
-import top.quhailong.pan.utils.RestAPIResult;
 
 import java.util.*;
 
@@ -33,8 +34,7 @@ public class ShareServiceImpl implements IShareService {
     private ShareMapDao shareMapDao;
 
     @Override
-    public RestAPIResult<String> shareHandle(ShareRequest request) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> shareHandle(ShareRequest request) {
         List<String> vidList = JSONUtils.parseObject(request.getVids(), List.class);
         if (vidList == null) {
             return null;
@@ -94,13 +94,11 @@ public class ShareServiceImpl implements IShareService {
             shareMapDao.saveShareMap(shareMapDO);
         }
         if (request.getFlag().equals("public")) {
-            panResult.success("null");
-            panResult.setRespData(shareId);
+            return RestAPIResultDTO.Success(shareId, "成功");
         } else if (request.getFlag().equals("private")) {
-            panResult.success("null");
-            panResult.setRespData(shareId + "," + shareDO.getSharePassword());
+            return RestAPIResultDTO.Success(shareId + "," + shareDO.getSharePassword(), "成功");
         }
-        return panResult;
+        return RestAPIResultDTO.Error(null, ResultCodeEnum.PARAMATER_ERROR);
     }
 
     /**
@@ -110,8 +108,7 @@ public class ShareServiceImpl implements IShareService {
      * @date: 2019/9/26
      */
     @Override
-    public RestAPIResult<String> shareListHandle(ShareListRequest request) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<Map<String, Object>> shareListHandle(ShareListRequest request) {
         PageHelper.startPage(request.getPage(), 100);
         if (request.getDesc().equals(1)) {
             PageHelper.orderBy(request.getOrder() + " desc");
@@ -125,12 +122,9 @@ public class ShareServiceImpl implements IShareService {
             for (ShareDO shareDO : shareDOList) {
                 map.put(i++ + "", JSONUtils.toJSONString(shareDO));
             }
-            panResult.setRespMap(map);
-            panResult.setRespData("200");
-            return panResult;
+            return RestAPIResultDTO.Success(map);
         } else {
-            panResult.success(null);
-            return panResult;
+            return RestAPIResultDTO.Success("成功");
         }
     }
 
@@ -141,13 +135,11 @@ public class ShareServiceImpl implements IShareService {
      * @date: 2019/9/26
      */
     @Override
-    public RestAPIResult<String> unShareHandle(String uid, String shareIds) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> unShareHandle(String uid, String shareIds) {
         List<String> shareIdList = JSONUtils.parseObject(shareIds, List.class);
         shareDao.removeShareByShareIdList(uid, shareIdList);
         shareMapDao.removeShareMapByShareIdList(shareIdList);
-        panResult.success(null);
-        return panResult;
+        return RestAPIResultDTO.Success("取消分享成功");
     }
 
     /**
@@ -157,21 +149,19 @@ public class ShareServiceImpl implements IShareService {
      * @date: 2019/9/26
      */
     @Override
-    public RestAPIResult<String> getShareUserHandle(String shareId) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<Map<String, Object>> getShareUserHandle(String shareId) {
+        RestAPIResultDTO<String> panResult = new RestAPIResultDTO<>();
         ShareDTO ShareDTO = new ShareDTO();
         ShareDO shareDO = shareDao.getShareByShareId(shareId);
         if (shareDO == null) {
-            return panResult;
+            return RestAPIResultDTO.Success(null);
         }
         BeanUtils.copyPropertiesIgnoreNull(shareDO, ShareDTO);
         UserInfoDTO userInfoDTO = userRemote.getUserInfo(shareDO.getUserId()).getRespData();
         Map<String, Object> map = new HashMap<>();
         map.put("userinfo", JSONUtils.toJSONString(userInfoDTO));
         map.put("share", JSONUtils.toJSONString(ShareDTO));
-        panResult.setRespMap(map);
-        panResult.setRespData("success");
-        return panResult;
+        return RestAPIResultDTO.Success(map);
     }
 
     /**
@@ -181,8 +171,7 @@ public class ShareServiceImpl implements IShareService {
      * @date: 2019/9/26
      */
     @Override
-    public RestAPIResult<String> saveShareHandle(SaveShareRequest request) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> saveShareHandle(SaveShareRequest request) {
         if (verifyLock(request.getLockPassword(), request.getShareId())) {
             List<ShareMapDO> shareMapDOList = shareMapDao.listShareMapByShareId(request.getShareId());
             if (shareMapDOList != null && shareMapDOList.size() > 0) {
@@ -198,21 +187,17 @@ public class ShareServiceImpl implements IShareService {
                     createVirtualAddressRequest.setFid(virtualAddressDTO.getFileId());
                     Integer result = coreRemote.createVirtualAddress(createVirtualAddressRequest).getRespData();
                     if (result.equals(0)) {
-                        panResult.error("保存失败，容量不足");
-                        return panResult;
+                        return RestAPIResultDTO.Error("保存失败，容量不足");
                     }
                 }
                 ShareDO shareDO = shareDao.getShareByShareId(request.getShareId());
                 shareDO.setSaveCount(shareDO.getSaveCount() + 1);
                 shareDao.updateShare(shareDO);
-                panResult.success(null);
-                return panResult;
+                return RestAPIResultDTO.Success("成功");
             }
-            panResult.error("分享失效");
-            return panResult;
+            return RestAPIResultDTO.Error("分享失效");
         }
-        panResult.error("提取密码不正确");
-        return panResult;
+        return RestAPIResultDTO.Error("提取密码不正确");
     }
 
     /**
@@ -238,21 +223,15 @@ public class ShareServiceImpl implements IShareService {
      * @date: 2019/9/26
      */
     @Override
-    public RestAPIResult<String> checkLockHandle(String shareId) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> checkLockHandle(String shareId) {
         ShareDO shareDO = shareDao.getShareByShareId(shareId);
         if (shareDO != null) {
             if (shareDO.getLockWhether().equals(1)) {
-                panResult.success(null);
-                panResult.setRespData("Lock");
-                return panResult;
+                return RestAPIResultDTO.Success("Lock", "成功");
             }
-            panResult.success(null);
-            panResult.setRespData("unLock");
-            return panResult;
+            return RestAPIResultDTO.Success("unLock", "成功");
         }
-        panResult.error();
-        return panResult;
+        return RestAPIResultDTO.Error("分享信息不存在");
     }
 
     /**
@@ -262,16 +241,12 @@ public class ShareServiceImpl implements IShareService {
      * @date: 2019/9/26
      */
     @Override
-    public RestAPIResult<String> verifykLockHandle(String lockPassword, String shareId) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> verifykLockHandle(String lockPassword, String shareId) {
         if (verifyLock(lockPassword, shareId)) {
-            panResult.success(null);
-            panResult.setRespData("200");
+            return RestAPIResultDTO.Success("成功");
         } else {
-            panResult.error();
-            panResult.setRespData("500");
+            return RestAPIResultDTO.Error("失败");
         }
-        return panResult;
     }
 
     /**
@@ -281,8 +256,7 @@ public class ShareServiceImpl implements IShareService {
      * @date: 2019/9/26
      */
     @Override
-    public RestAPIResult<String> getVinfoHandle(String shareId, String lockPassword) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<Map<String, Object>> getVinfoHandle(String shareId, String lockPassword) {
         Map<String, Object> map = new HashMap<>();
         if (verifyLock(lockPassword, shareId)) {
             List<ShareMapDO> shareMapDOList = shareMapDao.listShareMapByShareId(shareId);
@@ -295,11 +269,9 @@ public class ShareServiceImpl implements IShareService {
             }
             ShareDO shareDO = shareDao.getShareByShareId(shareId);
             map.put("uid", shareDO.getUserId());
-            panResult.setRespMap(map);
-            return panResult;
+            return RestAPIResultDTO.Success(map);
         }
-        panResult.error();
-        return panResult;
+        return RestAPIResultDTO.Error("密码验证失败");
     }
 
     /**

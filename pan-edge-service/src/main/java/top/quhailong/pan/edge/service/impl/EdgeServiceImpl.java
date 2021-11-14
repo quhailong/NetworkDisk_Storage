@@ -6,7 +6,7 @@ import top.quhailong.pan.constant.RedisConstants;
 import top.quhailong.pan.edge.service.IEdgeService;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 import top.quhailong.pan.utils.RSAUtils;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -25,40 +25,32 @@ public class EdgeServiceImpl implements IEdgeService {
     private RedisUtil redisUtil;
 
     @Override
-    public RestAPIResult<String> regCheckPwdHandle(String password, String RSAKey) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> regCheckPwdHandle(String password, String RSAKey) {
         try {
             password = RSAUtils.decryptDataOnJava(password, RSAKey);
         } catch (Exception e) {
-            panResult.error("fail");
-            return panResult;
+            return RestAPIResultDTO.Error("fail");
         }
         if (!(password.length() < 6 || password.length() > 14)) {
             if (!Pattern.compile("^[\\u4E00-\\u9FA5]+$").matcher(password).matches() && !password.contains(" ")) {
-                panResult.success(null);
-                return panResult;
+                return RestAPIResultDTO.Success(null);
             } else {
-                panResult.error("支持数字，大小写字母和标点符号，不允许有空格");
-                return panResult;
+                return RestAPIResultDTO.Error("支持数字，大小写字母和标点符号，不允许有空格");
             }
         } else {
-            panResult.error("密码长度为6~14个字符");
-            return panResult;
+            return RestAPIResultDTO.Error("密码长度为6~14个字符");
         }
     }
 
     @Override
-    public RestAPIResult<String> getPublicKeyHandle() throws Exception {
-        RestAPIResult<String> panResult = new RestAPIResult<String>();
+    public RestAPIResultDTO<Map<String, Object>> getPublicKeyHandle() throws Exception {
         Map<String, Object> keyMap = RSAUtils.genKeyPair();
         String publicKey = RSAUtils.getPublicKey(keyMap);
         String privateKey = RSAUtils.getPrivateKey(keyMap);
         Map<String, Object> map = new HashMap<>();
         map.put("publicKey", publicKey);
         map.put("RSAKey", privateKey);
-        panResult.setRespMap(map);
-        panResult.setRespData("sucess");
-        return panResult;
+        return RestAPIResultDTO.Success(map);
     }
 
     /**

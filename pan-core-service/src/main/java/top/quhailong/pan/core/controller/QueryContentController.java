@@ -13,11 +13,12 @@ import top.quhailong.pan.request.ListFileRequest;
 import top.quhailong.pan.request.ListFolderRequest;
 import top.quhailong.pan.request.SearchFileRequest;
 import top.quhailong.pan.response.VirtualAddressDTO;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 /**
  * 查询服务
@@ -42,12 +43,12 @@ public class QueryContentController {
      */
     //@RequestMapping(value = "list", method = { RequestMethod.POST })
     @RequestMapping(value = "listfile", method = RequestMethod.GET)
-    public RestAPIResult<String> listFile(ListFileRequest request) throws UnsupportedEncodingException {
+    public RestAPIResultDTO<Map<String, Object>> listFile(ListFileRequest request) throws UnsupportedEncodingException {
         logger.info("查询文件列表请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("查询文件列表数据处理开始,request:{}", request);
-        RestAPIResult<String> result = queryContentService.listFileHandle(request);
+        RestAPIResultDTO<Map<String, Object>> result = queryContentService.listFileHandle(request);
         logger.info("查询文件列表数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("查询文件列表调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -62,12 +63,12 @@ public class QueryContentController {
      */
     //@RequestMapping(value = "folderList", method = {RequestMethod.POST})
     @RequestMapping(value = "listfolder", method = RequestMethod.GET)
-    public RestAPIResult<String> listFolder(ListFolderRequest request) throws Exception {
+    public RestAPIResultDTO<Map<String, Object>> listFolder(ListFolderRequest request) throws Exception {
         logger.info("展示文件夹列表请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("展示文件夹列表数据处理开始,request:{}", request);
-        RestAPIResult<String> result = queryContentService.listFolderHandle(request);
+        RestAPIResultDTO<Map<String, Object>> result = queryContentService.listFolderHandle(request);
         logger.info("展示文件夹列表数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("展示文件夹列表调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -82,12 +83,12 @@ public class QueryContentController {
      */
     //@RequestMapping(value = "search", method = {RequestMethod.POST})
     @RequestMapping(value = "searchfile", method = RequestMethod.GET)
-    public RestAPIResult<String> searchFile(SearchFileRequest request) {
+    public RestAPIResultDTO<Map<String, Object>> searchFile(SearchFileRequest request) {
         logger.info("搜索文件请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("搜索文件数据处理开始,request:{}", request);
-        RestAPIResult<String> result = queryContentService.searchFileHandle(request);
+        RestAPIResultDTO<Map<String, Object>> result = queryContentService.searchFileHandle(request);
         logger.info("搜索文件数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("搜索文件调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -101,12 +102,12 @@ public class QueryContentController {
      * @date: 2019/9/25
      */
     @RequestMapping(value = "checkdirwhether", method = RequestMethod.GET)
-    public RestAPIResult<Integer> checkDirWhether(CheckDirWhetherRequest request) {
+    public RestAPIResultDTO<Integer> checkDirWhether(CheckDirWhetherRequest request) {
         logger.info("查询文件夹是否存在请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("查询文件夹是否存在数据处理开始,request:{}", request);
-        RestAPIResult<Integer> result = queryContentService.checkDirWhetherHandle(request);
+        RestAPIResultDTO<Integer> result = queryContentService.checkDirWhetherHandle(request);
         logger.info("查询文件夹是否存在数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("查询文件夹是否存在调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -120,12 +121,12 @@ public class QueryContentController {
      * @date: 2019/9/25
      */
     @RequestMapping(value = "getfilenamebyvid", method = RequestMethod.GET)
-    public RestAPIResult<String> getFileNameByVid(String vid, String uid) {
+    public RestAPIResultDTO<String> getFileNameByVid(String vid, String uid) {
         logger.info("根据虚拟地址ID获取文件名称请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("根据虚拟地址ID获取文件名称数据处理开始,vid:{}", vid);
-        RestAPIResult<String> result = queryContentService.getFileNameByVidHandle(vid, uid);
+        RestAPIResultDTO<String> result = queryContentService.getFileNameByVidHandle(vid, uid);
         logger.info("根据虚拟地址ID获取文件名称数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("根据虚拟地址ID获取文件名称调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -139,12 +140,12 @@ public class QueryContentController {
      * @date: 2019/9/25
      */
     @RequestMapping(value = "getvirtualaddress", method = RequestMethod.GET)
-    public RestAPIResult<VirtualAddressDTO> getVirtualaddress(String vid, String uid) {
+    public RestAPIResultDTO<VirtualAddressDTO> getVirtualaddress(String vid, String uid) {
         logger.info("根据虚拟地址ID获取实体请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("根据虚拟地址ID获取实体数据处理开始,vid:{}", vid);
-        RestAPIResult<VirtualAddressDTO> result = queryContentService.getVirtualaddressHandle(vid, uid);
+        RestAPIResultDTO<VirtualAddressDTO> result = queryContentService.getVirtualaddressHandle(vid, uid);
         logger.info("根据虚拟地址ID获取实体数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("根据虚拟地址ID获取实体调用时间,millies:{}", stopWatch.getTotalTimeMillis());

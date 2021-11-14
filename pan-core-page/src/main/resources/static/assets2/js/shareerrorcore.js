@@ -70,7 +70,7 @@ function changePwd() {
                                 contentType:'application/json;charset=UTF-8',
                                 dataType: "json",
                                 success: function (h) {
-                                    if (h.dataCode == 200) {
+                                    if (h.respCode === 1) {
                                         alert("修改成功");
                                         location.href = "http://localhost:8097/"
                                     }
@@ -145,7 +145,7 @@ function uploadPic() {
                         crossDomain: true,
                         dataType: "json",
                         success: function (h) {
-                            if (h.dataCode == 200) {
+                            if (h.respCode === 1) {
                                 alert("上传成功");
                                 loadImg();
                                 $("#uploadPic").modal("close")
@@ -193,7 +193,7 @@ function loadFolder(b, c) {
             crossDomain: true,
             dataType: "json",
             success: function (e) {
-                var d = e.respMap;
+                var d = e.respData;
                 folderMap.set(b, d);
                 if (b == "/") {
                     showFolder(d, $(".treeview-root"))
@@ -284,7 +284,7 @@ function save(a, b) {
                                 crossDomain: true,
                                 dataType: "json",
                                 success: function (e) {
-                                    if (e.respData == "200") {
+                                    if (e.respCode === 1) {
                                         saveShare(a, b, d)
                                     } else {
                                         alert("验证失败");
@@ -363,7 +363,7 @@ function downloadShare(a) {
                                 crossDomain: true,
                                 dataType: "json",
                                 success: function (e) {
-                                    if (e.respData == "200") {
+                                    if (e.respCode === 1) {
                                         download(a, c)
                                     } else {
                                         alert("验证失败");

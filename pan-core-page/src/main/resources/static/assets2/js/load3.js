@@ -63,8 +63,8 @@ $(document).ready(
 						if (!$(this).hasClass("input-focus")) {
 							$(this).addClass("input-focus");
 							$.get("http://passport.727pan.cn/cgi/getPublickKey", function(data) {
-								$("#publicKey").val(data.respMap.publicKey);
-								$("#RSAKey").val(data.respMap.RSAKey);
+								$("#publicKey").val(data.respData.publicKey);
+								$("#RSAKey").val(data.respData.RSAKey);
 							});
 						}
 					});

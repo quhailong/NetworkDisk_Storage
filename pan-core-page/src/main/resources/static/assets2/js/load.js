@@ -107,7 +107,7 @@ $(document).ready(function () {
                         crossDomain: true,
                         dataType: "json",
                         success: function (data) {
-                            if (data.respData == "200") {
+                            if (data.respCode === 1) {
                                 $(".QxJxtg").removeClass("cazEfA");
                                 flashContent()
                             } else {
@@ -182,7 +182,7 @@ $(document).ready(function () {
                                                 crossDomain: true,
                                                 dataType: "json",
                                                 success: function (data) {
-                                                    if (data.respCode == 200) {
+                                                    if (data.respCode === 1) {
                                                         alert("修改成功");
                                                         flashContent();
                                                         $(".QxJxtg").removeClass("cazEfA");
@@ -199,7 +199,7 @@ $(document).ready(function () {
                                         }
                                     })
                                 } else {
-                                    if (data.respCode == 200) {
+                                    if (data.respCode === 1) {
                                         alert("修改成功");
                                         flashContent();
                                         $(".QxJxtg").removeClass("cazEfA");
@@ -322,7 +322,7 @@ $(document).ready(function () {
                     crossDomain: true,
                     dataType: "json",
                     success: function (data) {
-                        if (data.dataCode == 200) {
+                        if (data.respCode === 1) {
                             alert("删除成功");
                             flashContent();
                             $(".QxJxtg").removeClass("cazEfA");
@@ -358,8 +358,8 @@ $(document).ready(function () {
         if (!$(this).hasClass("input-focus")) {
             $(this).addClass("input-focus");
             $.get("http://localhost:8095/api/edge/getpublickey", function(data){
-                $("#publicKey").val(data.respMap.publicKey);
-                $("#RSAKey").val(data.respMap.RSAKey);
+                $("#publicKey").val(data.respData.publicKey);
+                $("#RSAKey").val(data.respData.RSAKey);
             });
         }
     });

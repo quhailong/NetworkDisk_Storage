@@ -4,7 +4,9 @@ import top.quhailong.pan.request.CopyOrMoveFileRequest;
 import top.quhailong.pan.request.CreateDirRequest;
 import top.quhailong.pan.request.CreateVirtualAddressRequest;
 import top.quhailong.pan.request.RenameFileOrDirRequest;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
+
+import java.util.Map;
 
 public interface IUpdateContentService {
     /**
@@ -13,7 +15,7 @@ public interface IUpdateContentService {
      * @author: quhailong
      * @date: 2019/9/24
      */
-    RestAPIResult<String> renameFileOrDirHandle(RenameFileOrDirRequest request);
+    RestAPIResultDTO<String> renameFileOrDirHandle(RenameFileOrDirRequest request);
 
     /**
      * 删除文件数据处理
@@ -21,7 +23,7 @@ public interface IUpdateContentService {
      * @author: quhailong
      * @date: 2019/9/24
      */
-    RestAPIResult<String> deleteFileHandle(String vids);
+    RestAPIResultDTO<String> deleteFileHandle(String vids);
 
 
     /**
@@ -30,7 +32,7 @@ public interface IUpdateContentService {
      * @author: quhailong
      * @date: 2019/9/24
      */
-    RestAPIResult<String> createDirHandle(CreateDirRequest request);
+    RestAPIResultDTO<Map<String, Object>> createDirHandle(CreateDirRequest request);
 
     /**
      * 复制或移动文件数据处理
@@ -38,7 +40,7 @@ public interface IUpdateContentService {
      * @author: quhailong
      * @date: 2021/10/29
      */
-    RestAPIResult<String> copyOrMoveFileHandle(CopyOrMoveFileRequest request);
+    RestAPIResultDTO<String> copyOrMoveFileHandle(CopyOrMoveFileRequest request);
 
     /**
      * 创建虚拟地址数据处理
@@ -46,5 +48,5 @@ public interface IUpdateContentService {
      * @author: quhailong
      * @date: 2021/10/29
      */
-    RestAPIResult<Integer> createVirtualAddressHandle(CreateVirtualAddressRequest request);
+    RestAPIResultDTO<Integer> createVirtualAddressHandle(CreateVirtualAddressRequest request);
 }

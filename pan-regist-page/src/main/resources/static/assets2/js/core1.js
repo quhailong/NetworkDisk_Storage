@@ -151,8 +151,8 @@
 			crossDomain : true,
 			dataType : "json", //指定服务器返回的数据类型
 			success : function(data) {
-				historyMap.set(location.href, data.respMap);
-				showContent(data.respMap);
+				historyMap.set(location.href, data.respData);
+				showContent(data.respData);
 			}
 		});
 	}
@@ -222,7 +222,7 @@
 			crossDomain : true,
 			dataType : "json", //指定服务器返回的数据类型
 			success : function(data) {
-				showContent1(data.respMap,page);
+				showContent1(data.respData,page);
 			}
 		});
 	}
@@ -734,7 +734,7 @@
 										  crossDomain : true,
 										  dataType : "json", //指定服务器返回的数据类型
 										  success : function(data) {
-											  if(data.dataCode == 200){
+											  if(data.respCode === 1){
 												  alert("修改成功");
 												  location.href = "http://localhost:8082/";
 											  }
@@ -807,7 +807,7 @@
 						  crossDomain : true,
 						  dataType : "json", //指定服务器返回的数据类型
 						  success : function(data) {
-							  if(data.dataCode == 200){
+							  if(data.respCode === 1){
 								  alert("上传成功");
 								  loadImg();
 								  $('#uploadPic').modal('close');

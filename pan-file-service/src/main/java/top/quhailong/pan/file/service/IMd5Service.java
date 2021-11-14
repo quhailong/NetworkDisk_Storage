@@ -1,6 +1,6 @@
 package top.quhailong.pan.file.service;
 
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 public interface IMd5Service {
     /**
@@ -9,5 +9,5 @@ public interface IMd5Service {
      * @author: quhailong
      * @date: 2021/11/1
      */
-    RestAPIResult<String> md5CheckHandle(String fid, String md5);
+    RestAPIResultDTO<String> md5CheckHandle(String fid, String md5);
 }

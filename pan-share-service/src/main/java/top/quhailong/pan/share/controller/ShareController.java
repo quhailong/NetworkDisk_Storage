@@ -10,10 +10,11 @@ import top.quhailong.pan.request.SaveShareRequest;
 import top.quhailong.pan.request.ShareListRequest;
 import top.quhailong.pan.request.ShareRequest;
 import top.quhailong.pan.share.service.IShareService;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 public class ShareController {
@@ -30,12 +31,12 @@ public class ShareController {
      * @date: 2019/9/26
      */
     @RequestMapping(value = "share", method = RequestMethod.POST)
-    public RestAPIResult<String> share(@RequestBody ShareRequest request) {
+    public RestAPIResultDTO<String> share(@RequestBody ShareRequest request) {
         logger.info("分享文件请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("分享文件数据处理开始,request:{}", request);
-        RestAPIResult<String> result = shareService.shareHandle(request);
+        RestAPIResultDTO<String> result = shareService.shareHandle(request);
         logger.info("分享文件数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("分享文件调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -50,12 +51,12 @@ public class ShareController {
      */
     //@RequestMapping(value = "shareList", method = {RequestMethod.POST})
     @RequestMapping(value = "sharelist", method = RequestMethod.GET)
-    public RestAPIResult<String> shareList(ShareListRequest request) {
+    public RestAPIResultDTO<Map<String, Object>> shareList(ShareListRequest request) {
         logger.info("获取分享列表请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("获取分享列表数据处理开始,request:{}", request);
-        RestAPIResult<String> result = shareService.shareListHandle(request);
+        RestAPIResultDTO<Map<String, Object>> result = shareService.shareListHandle(request);
         logger.info("获取分享列表数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("获取分享列表调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -70,12 +71,12 @@ public class ShareController {
      */
     //@RequestMapping(value = "unShare", method = {RequestMethod.POST})
     @RequestMapping(value = "unshare", method = RequestMethod.GET)
-    public RestAPIResult<String> unShare(String uid, String vids) {
+    public RestAPIResultDTO<String> unShare(String uid, String vids) {
         logger.info("取消分享请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("取消分享数据处理开始,vids:{}", vids);
-        RestAPIResult<String> result = shareService.unShareHandle(uid, vids);
+        RestAPIResultDTO<String> result = shareService.unShareHandle(uid, vids);
         logger.info("取消分享数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("取消分享调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -90,12 +91,12 @@ public class ShareController {
      */
     //@RequestMapping(value = "getShareUser", method = {RequestMethod.POST})
     @RequestMapping(value = "getshareuser", method = RequestMethod.GET)
-    public RestAPIResult<String> getShareUser(String shareId) {
+    public RestAPIResultDTO<Map<String, Object>> getShareUser(String shareId) {
         logger.info("获取分享用户信息请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("获取分享用户信息数据处理开始,shareId:{}", shareId);
-        RestAPIResult<String> result = shareService.getShareUserHandle(shareId);
+        RestAPIResultDTO<Map<String, Object>> result = shareService.getShareUserHandle(shareId);
         logger.info("获取分享用户信息数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("获取分享用户信息调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -110,12 +111,12 @@ public class ShareController {
      */
     //@RequestMapping(value = "saveShare", method = {RequestMethod.POST})
     @RequestMapping(value = "saveshare", method = RequestMethod.POST)
-    public RestAPIResult<String> saveShare(@RequestBody SaveShareRequest request) {
+    public RestAPIResultDTO<String> saveShare(@RequestBody SaveShareRequest request) {
         logger.info("保存分享请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("保存分享数据处理开始,request:{}", request);
-        RestAPIResult<String> result = shareService.saveShareHandle(request);
+        RestAPIResultDTO<String> result = shareService.saveShareHandle(request);
         logger.info("保存分享数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("保存分享调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -130,12 +131,12 @@ public class ShareController {
      */
     //@RequestMapping(value = "checkLock", method = {RequestMethod.POST})
     @RequestMapping(value = "checklock", method = RequestMethod.GET)
-    public RestAPIResult<String> checkLock(@RequestParam("shareId") String shareId) {
+    public RestAPIResultDTO<String> checkLock(@RequestParam("shareId") String shareId) {
         logger.info("查询分享是否带密码请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("查询分享是否带密码数据处理开始,shareId:{}", shareId);
-        RestAPIResult<String> result = shareService.checkLockHandle(shareId);
+        RestAPIResultDTO<String> result = shareService.checkLockHandle(shareId);
         logger.info("查询分享是否带密码数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("查询分享是否带密码调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -150,12 +151,12 @@ public class ShareController {
      */
     //@RequestMapping(value = "verifykLock", method = {RequestMethod.POST})
     @RequestMapping(value = "verifyklock", method = RequestMethod.GET)
-    public RestAPIResult<String> verifykLock(@RequestParam("lockPassword") String lockPassword, @RequestParam("shareId") String shareId) {
+    public RestAPIResultDTO<String> verifykLock(@RequestParam("lockPassword") String lockPassword, @RequestParam("shareId") String shareId) {
         logger.info("验证分享密码请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("验证分享密码数据处理开始,shareId:{}", shareId);
-        RestAPIResult<String> result = shareService.verifykLockHandle(lockPassword, shareId);
+        RestAPIResultDTO<String> result = shareService.verifykLockHandle(lockPassword, shareId);
         logger.info("验证分享密码数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("验证分享密码调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -170,12 +171,12 @@ public class ShareController {
      */
     //@RequestMapping(value = "getVinfo", method = {RequestMethod.POST})
     @RequestMapping(value = "getvinfo", method = RequestMethod.GET)
-    public RestAPIResult<String> getUid(@RequestParam("shareId") String shareId, @RequestParam("lockPassword") String lockPassword) {
+    public RestAPIResultDTO<Map<String, Object>> getVinfo(@RequestParam("shareId") String shareId, @RequestParam("lockPassword") String lockPassword) {
         logger.info("获取分享虚拟地址信息请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("获取分享虚拟地址信息数据处理开始,shareId:{}", shareId);
-        RestAPIResult<String> result = shareService.getVinfoHandle(shareId, lockPassword);
+        RestAPIResultDTO<Map<String, Object>> result = shareService.getVinfoHandle(shareId, lockPassword);
         logger.info("获取分享虚拟地址信息数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("获取分享虚拟地址信息调用时间,millies:{}", stopWatch.getTotalTimeMillis());

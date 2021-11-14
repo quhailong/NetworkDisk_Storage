@@ -436,13 +436,13 @@ function abced(){
 			  crossDomain : true,
 			  dataType : "json", //指定服务器返回的数据类型
 			  success : function(data) {
-				  if(data.respData == "200"){
+				  if(data.respCode === 1){
 					 $("[class='QAfdwP tvPMvPb']").append("<li id='new' class='fufHyA gObdAzb ' style='width:10%;'><span class='text'>所在目录</span><span class='xEuDywb'></span><span class='icon aHEytd icon-up'></span><span class='icon sFxCFbb icon-downtitle'></span></li>");
 					 $("[class='fufHyA gObdAzb MCGAxG']").css("width","13%");
 					 $("[class='QAfdwP tvPMvPb'] li").addClass("BEPxaPb");
 					 $("[class='QAfdwP tvPMvPb'] li").removeClass("MCGAxG JFaAINb");
 					 $("[class='QAfdwP tvPMvPb'] li").unbind("click");
-					 showContent3(data.respMap,page);
+					 showContent3(data.respData,page);
 				  }
 			  },
 			  error:function(){
@@ -467,7 +467,7 @@ function abced(){
 			  crossDomain : true,
 			  dataType : "json", //指定服务器返回的数据类型
 			  success : function(data) {
-				  if(data.respData == "200"){
+				  if(data.respData === 1){
 					 $("[class='QAfdwP tvPMvPb']").append("<li id='new' class='fufHyA gObdAzb ' style='width:10%;'><span class='text'>所在目录</span><span class='xEuDywb'></span><span class='icon aHEytd icon-up'></span><span class='icon sFxCFbb icon-downtitle'></span></li>");
 					 $("[class='fufHyA gObdAzb MCGAxG']").css("width","13%");
 					 $("[class='QAfdwP tvPMvPb'] li").addClass("BEPxaPb");
@@ -475,8 +475,8 @@ function abced(){
 					 $("[class='QAfdwP tvPMvPb'] li").unbind("click");
 					 var query = location.href.split("#/")[0];
 					 history.pushState(null, "", query + "#/search?key=" + key);
-					 historyMap.set(location.href,data.respMap);
-					 showContent2(data.respMap);
+					 historyMap.set(location.href,data.respData);
+					 showContent2(data.respData);
 				  }
 			  },
 			  error:function(){
@@ -537,8 +537,8 @@ function abced(){
 			crossDomain : true,
 			dataType : "json", //指定服务器返回的数据类型
 			success : function(data) {
-				historyMap.set(location.href, data.respMap);
-				showContent(data.respMap);
+				historyMap.set(location.href, data.respData);
+				showContent(data.respData);
 			}
 		});
 	}
@@ -595,8 +595,8 @@ function abced(){
 			crossDomain : true,
 			dataType : "json", //指定服务器返回的数据类型
 			success : function(data) {
-				//historyMap.set(location.href, data.respMap);
-				showContent1(data.respMap,page);
+				//historyMap.set(location.href, data.respData);
+				showContent1(data.respData,page);
 			}
 		});
 	}
@@ -928,7 +928,7 @@ function abced(){
 				crossDomain : true,
 				dataType : "json", //指定服务器返回的数据类型
 				success : function(data) {
-					var content = data.respMap;
+					var content = data.respData;
 					folderMap.set(parentPath,content);
 					if(parentPath == "/"){
 						showFolder(content,$(".treeview-root"));
@@ -1017,7 +1017,7 @@ function abced(){
 			crossDomain : true,
 			dataType : "json", //指定服务器返回的数据类型
 			success : function(data) {
-				if(data.dataCode == 200){
+				if(data.respCode === 1){
 					$(".module-canvas").css("display","none");
 					$("#fileTreeDialog").css("display","none");
 					flashContent();
@@ -1110,7 +1110,7 @@ function abced(){
 										  crossDomain : true,
 										  dataType : "json", //指定服务器返回的数据类型
 										  success : function(data) {
-											  if(data.dataCode == 200){
+											  if(data.respCode === 1){
 												  alert("修改成功");
 												  location.href = "http://localhost:8082/";
 											  }
@@ -1183,7 +1183,7 @@ function abced(){
 						  crossDomain : true,
 						  dataType : "json", //指定服务器返回的数据类型
 						  success : function(data) {
-							  if(data.dataCode == 200){
+							  if(data.respCode === 1){
 								  alert("上传成功");
 								  loadImg();
 								  $('#uploadPic').modal('close');

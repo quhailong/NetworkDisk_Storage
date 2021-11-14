@@ -12,9 +12,9 @@ import top.quhailong.pan.request.CheckDirWhetherRequest;
 import top.quhailong.pan.request.ListFileRequest;
 import top.quhailong.pan.request.ListFolderRequest;
 import top.quhailong.pan.request.SearchFileRequest;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 import top.quhailong.pan.response.VirtualAddressDTO;
 import top.quhailong.pan.utils.JSONUtils;
-import top.quhailong.pan.utils.RestAPIResult;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -29,8 +29,7 @@ public class QueryContentServiceImpl implements IQueryContentService {
     private VirtualAddressDao virtualAddressDao;
 
     @Override
-    public RestAPIResult<String> listFileHandle(ListFileRequest request) throws UnsupportedEncodingException {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<Map<String, Object>> listFileHandle(ListFileRequest request) throws UnsupportedEncodingException {
         String path = request.getPath();
         if (request.getPath() != null) {
             path = URLDecoder.decode(path, "UTF-8");
@@ -76,18 +75,14 @@ public class QueryContentServiceImpl implements IQueryContentService {
             for (VirtualAddressDO virtualAddressDO : virtualAddressDOList) {
                 map.put(i++ + "", JSONUtils.toJSONString(virtualAddressDO));
             }
-            panResult.setRespMap(map);
-            panResult.setRespData("200");
-            return panResult;
+            return RestAPIResultDTO.Success(map);
         } else {
-            panResult.success(null);
-            return panResult;
+            return RestAPIResultDTO.Success(null);
         }
     }
 
     @Override
-    public RestAPIResult<String> listFolderHandle(ListFolderRequest request) throws UnsupportedEncodingException {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<Map<String, Object>> listFolderHandle(ListFolderRequest request) throws UnsupportedEncodingException {
         String parentPath = request.getParentPath();
         if (parentPath != null) {
             parentPath = URLDecoder.decode(parentPath, "UTF-8");
@@ -118,12 +113,9 @@ public class QueryContentServiceImpl implements IQueryContentService {
                 for (FolderInfo folderInfo : folderInfos) {
                     map.put(i++ + "", JSONUtils.toJSONString(folderInfo));
                 }
-                panResult.setRespMap(map);
-                panResult.setRespData("200");
-                return panResult;
+                return RestAPIResultDTO.Success(map);
             } else {
-                panResult.success(null);
-                return panResult;
+                return RestAPIResultDTO.Success(null);
             }
         } else {
             return null;
@@ -131,8 +123,7 @@ public class QueryContentServiceImpl implements IQueryContentService {
     }
 
     @Override
-    public RestAPIResult<String> searchFileHandle(SearchFileRequest request) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<Map<String, Object>> searchFileHandle(SearchFileRequest request) {
         PageHelper.startPage(request.getPage(), 100);
         PageHelper.orderBy("dir_whether desc," + request.getOrder() + " desc");
         List<VirtualAddressDO> virtualAddressDOList = virtualAddressDao.listVirtualAddressLikeFileName(request.getUid(), request.getKey());
@@ -142,38 +133,29 @@ public class QueryContentServiceImpl implements IQueryContentService {
             for (VirtualAddressDO virtualAddressDO : virtualAddressDOList) {
                 map.put(i++ + "", JSONUtils.toJSONString(virtualAddressDO));
             }
-            panResult.setRespMap(map);
-            panResult.setRespData("200");
-            return panResult;
+            return RestAPIResultDTO.Success(map);
         } else {
-            panResult.setRespData("200");
-            return panResult;
+            return RestAPIResultDTO.Success(null);
         }
     }
 
     @Override
-    public RestAPIResult<Integer> checkDirWhetherHandle(CheckDirWhetherRequest request) {
+    public RestAPIResultDTO<Integer> checkDirWhetherHandle(CheckDirWhetherRequest request) {
         Integer count = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getDirName());
-        RestAPIResult<Integer> panResult = new RestAPIResult<>();
-        panResult.success(count);
-        return panResult;
+        return RestAPIResultDTO.Success(count, "成功");
     }
 
     @Override
-    public RestAPIResult<String> getFileNameByVidHandle(String vid, String uid) {
+    public RestAPIResultDTO<String> getFileNameByVidHandle(String vid, String uid) {
         VirtualAddressDO virtualAddressDO = virtualAddressDao.getVirtualAddress(vid);
-        RestAPIResult<String> panResult = new RestAPIResult<>();
-        panResult.success(virtualAddressDO.getFileName());
-        return panResult;
+        return RestAPIResultDTO.Success(virtualAddressDO.getFileName(), "成功");
     }
 
     @Override
-    public RestAPIResult<VirtualAddressDTO> getVirtualaddressHandle(String vid, String uid) {
-        RestAPIResult<VirtualAddressDTO> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<VirtualAddressDTO> getVirtualaddressHandle(String vid, String uid) {
         VirtualAddressDTO virtualaddressDTO = new VirtualAddressDTO();
         VirtualAddressDO virtualAddressDO = virtualAddressDao.getVirtualAddress(vid);
         BeanUtils.copyProperties(virtualAddressDO, virtualaddressDTO);
-        panResult.success(virtualaddressDTO);
-        return panResult;
+        return RestAPIResultDTO.Success(virtualaddressDTO);
     }
 }
