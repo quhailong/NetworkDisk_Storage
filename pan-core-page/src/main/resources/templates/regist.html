@@ -266,7 +266,7 @@
 				crossDomain : true,
 				dataType : "json", //指定服务器返回的数据类型
 				success : function(data) {
-					if (data.respCode==0) {
+					if (data.respCode===0) {
 						$("#TANGRAM__PSP_3__passwordError").html(
 								data.respMsg);
 						return false;

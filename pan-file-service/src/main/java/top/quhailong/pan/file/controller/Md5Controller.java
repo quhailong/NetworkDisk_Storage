@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import top.quhailong.pan.file.service.IMd5Service;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -35,12 +35,12 @@ public class Md5Controller {
      */
     //@RequestMapping(value = "md5check" , method = { RequestMethod.POST })
     @RequestMapping(value = "md5check", method = RequestMethod.GET)
-    public RestAPIResult<String> md5Check(String fid, String md5) {
+    public RestAPIResultDTO<String> md5Check(String fid, String md5) {
         logger.info("Md5校验服务请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("Md5校验服务数据处理开始,md5:{}", md5);
-        RestAPIResult<String> result = md5Provider.md5CheckHandle(fid, md5);
+        RestAPIResultDTO<String> result = md5Provider.md5CheckHandle(fid, md5);
         logger.info("Md5校验服务数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("Md5校验服务调用时间,millies:{}", stopWatch.getTotalTimeMillis());

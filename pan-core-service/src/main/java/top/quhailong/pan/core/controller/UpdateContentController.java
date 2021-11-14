@@ -13,10 +13,11 @@ import top.quhailong.pan.request.CopyOrMoveFileRequest;
 import top.quhailong.pan.request.CreateDirRequest;
 import top.quhailong.pan.request.CreateVirtualAddressRequest;
 import top.quhailong.pan.request.RenameFileOrDirRequest;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 更新服务
@@ -40,12 +41,12 @@ public class UpdateContentController {
      */
     //@RequestMapping(value = "rename", method = { RequestMethod.POST })
     @RequestMapping(value = "renamefileordir", method = RequestMethod.PUT)
-    public RestAPIResult<String> renameFileOrDir(@RequestBody RenameFileOrDirRequest request) {
+    public RestAPIResultDTO<String> renameFileOrDir(@RequestBody RenameFileOrDirRequest request) {
         logger.info("文件或文件夹重命名请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("文件或文件夹重命名数据处理开始,request:{}", request);
-        RestAPIResult<String> result = updateContentService.renameFileOrDirHandle(request);
+        RestAPIResultDTO<String> result = updateContentService.renameFileOrDirHandle(request);
         logger.info("文件或文件夹重命名数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("文件或文件夹重命名调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -60,12 +61,12 @@ public class UpdateContentController {
      */
     //@RequestMapping(value = "del", method = { RequestMethod.POST })
     @RequestMapping(value = "deletefile", method = RequestMethod.DELETE)
-    public RestAPIResult<String> deleteFile(String uid, String vids) throws Exception {
+    public RestAPIResultDTO<String> deleteFile(String uid, String vids) throws Exception {
         logger.info("删除文件请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("删除文件数据处理开始,vids:{}", vids);
-        RestAPIResult<String> result = updateContentService.deleteFileHandle(vids);
+        RestAPIResultDTO<String> result = updateContentService.deleteFileHandle(vids);
         logger.info("删除文件数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("删除文件调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -80,12 +81,12 @@ public class UpdateContentController {
      */
     //@RequestMapping("/createDir")
     @RequestMapping(value = "createdir", method = RequestMethod.POST)
-    public RestAPIResult<String> createDir(@RequestBody CreateDirRequest request) {
+    public RestAPIResultDTO<Map<String, Object>> createDir(@RequestBody CreateDirRequest request) {
         logger.info("创建文件夹请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("创建文件夹数据处理开始,request:{}", request);
-        RestAPIResult<String> result = updateContentService.createDirHandle(request);
+        RestAPIResultDTO<Map<String, Object>> result = updateContentService.createDirHandle(request);
         logger.info("创建文件夹数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("创建文件夹调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -100,12 +101,12 @@ public class UpdateContentController {
      */
     //@RequestMapping(value = "filemanager", method = { RequestMethod.POST })
     @RequestMapping(value = "copyormovefile", method = RequestMethod.PUT)
-    public RestAPIResult<String> copyOrMoveFile(@RequestBody CopyOrMoveFileRequest request) {
+    public RestAPIResultDTO<String> copyOrMoveFile(@RequestBody CopyOrMoveFileRequest request) {
         logger.info("文件复制或移动请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("文件复制或移动数据处理开始,request:{}", request);
-        RestAPIResult<String> result = updateContentService.copyOrMoveFileHandle(request);
+        RestAPIResultDTO<String> result = updateContentService.copyOrMoveFileHandle(request);
         logger.info("文件复制或移动数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("文件复制或移动调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -119,12 +120,12 @@ public class UpdateContentController {
      * @date: 2019/9/25
      */
     @RequestMapping(value = "createvirtualaddress", method = RequestMethod.POST)
-    public RestAPIResult<Integer> createVirtualAddress(@RequestBody CreateVirtualAddressRequest request) {
+    public RestAPIResultDTO<Integer> createVirtualAddress(@RequestBody CreateVirtualAddressRequest request) {
         logger.info("创建文件请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("创建文件数据处理开始,request:{}", request);
-        RestAPIResult<Integer> result = updateContentService.createVirtualAddressHandle(request);
+        RestAPIResultDTO<Integer> result = updateContentService.createVirtualAddressHandle(request);
         logger.info("创建文件数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("创建文件调用时间,millies:{}", stopWatch.getTotalTimeMillis());

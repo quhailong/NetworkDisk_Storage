@@ -1,8 +1,9 @@
 package top.quhailong.pan.edge.service;
 
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 public interface IEdgeService {
     /**
@@ -11,7 +12,7 @@ public interface IEdgeService {
      * @author: quhailong
      * @date: 2019/9/26
      */
-    RestAPIResult<String> regCheckPwdHandle(String password, String RSAKey);
+    RestAPIResultDTO<String> regCheckPwdHandle(String password, String RSAKey);
 
     /**
      * 生成公钥数据处理
@@ -19,7 +20,7 @@ public interface IEdgeService {
      * @author: quhailong
      * @date: 2021/10/31
      */
-    RestAPIResult<String> getPublicKeyHandle() throws Exception;
+    RestAPIResultDTO<Map<String, Object>> getPublicKeyHandle() throws Exception;
 
     /**
      * 生成验证码数据处理

@@ -2,7 +2,6 @@ package top.quhailong.pan.core.gateway.filter;
 
 import com.alibaba.fastjson.JSON;
 import io.jsonwebtoken.Claims;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -16,10 +15,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 import top.quhailong.pan.response.UserInfoDTO;
 import top.quhailong.pan.utils.JSONUtils;
 import top.quhailong.pan.utils.JWTUtils;
-import top.quhailong.pan.utils.RestAPIResult;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -37,13 +36,14 @@ import java.util.List;
 public class TokenFilter implements GlobalFilter, Ordered {
     @Value("${filter-url}")
     private String filterUrl;
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String uri = request.getURI().getPath();
         List<String> uriList = Arrays.asList(filterUrl.split(","));
-        for (String filterUrl:uriList) {
-            if(uri.contains(filterUrl)){
+        for (String filterUrl : uriList) {
+            if (uri.contains(filterUrl)) {
                 return verifyToken(exchange, chain);
             }
         }
@@ -64,9 +64,7 @@ public class TokenFilter implements GlobalFilter, Ordered {
         } catch (Exception e) {
             ServerHttpResponse response = exchange.getResponse();
             response.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
-            RestAPIResult restAPIResult = new RestAPIResult();
-            restAPIResult.error("token验证失败");
-            DataBuffer dataBuffer = response.bufferFactory().wrap(JSON.toJSONString(restAPIResult).getBytes());
+            DataBuffer dataBuffer = response.bufferFactory().wrap(JSON.toJSONString(RestAPIResultDTO.Error("token验证失败")).getBytes());
             return response.writeWith(Flux.just(dataBuffer));
         }
     }

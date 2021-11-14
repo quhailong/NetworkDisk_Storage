@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import top.quhailong.pan.edge.service.ISendSmsService;
 import top.quhailong.pan.request.SendSmsRequest;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -31,12 +31,12 @@ public class SendSmsController {
      */
     //@RequestMapping("/api/sendSms")
     @RequestMapping(value = "sendSms", method = RequestMethod.POST)
-    public RestAPIResult<String> sendSms(@RequestBody SendSmsRequest request) {
+    public RestAPIResultDTO<String> sendSms(@RequestBody SendSmsRequest request) {
         logger.info("发送短信请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("发送短信数据处理开始");
-        RestAPIResult<String> result = sendSmsService.sendSmsHandle(request);
+        RestAPIResultDTO<String> result = sendSmsService.sendSmsHandle(request);
         logger.info("发送短信数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("发送短信调用时间,millies:{}", stopWatch.getTotalTimeMillis());

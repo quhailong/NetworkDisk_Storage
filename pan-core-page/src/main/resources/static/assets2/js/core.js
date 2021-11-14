@@ -482,13 +482,13 @@ function loadContent3(b, c) {
         xhrFields: {withCredentials: true},
         crossDomain: true,
         success: function (d) {
-            if (d.respData == "200") {
+            if (d.respCode === 1) {
                 $("[class='QAfdwP tvPMvPb']").append("<li id='new' class='fufHyA gObdAzb ' style='width:10%;'><span class='text'>所在目录</span><span class='xEuDywb'></span><span class='icon aHEytd icon-up'></span><span class='icon sFxCFbb icon-downtitle'></span></li>");
                 $("[class='fufHyA gObdAzb MCGAxG']").css("width", "13%");
                 $("[class='QAfdwP tvPMvPb'] li").addClass("BEPxaPb");
                 $("[class='QAfdwP tvPMvPb'] li").removeClass("MCGAxG JFaAINb");
                 $("[class='QAfdwP tvPMvPb'] li").unbind("click");
-                showContent3(d.respMap, c)
+                showContent3(d.respData, c)
             }
         },
         error: function () {
@@ -505,7 +505,7 @@ function loadContent2(b) {
         xhrFields: {withCredentials: true},
         crossDomain: true,
         success: function (d) {
-            if (d.respData == "200") {
+            if (d.respCode === 1) {
                 $("[class='QAfdwP tvPMvPb']").append("<li id='new' class='fufHyA gObdAzb ' style='width:10%;'><span class='text'>所在目录</span><span class='xEuDywb'></span><span class='icon aHEytd icon-up'></span><span class='icon sFxCFbb icon-downtitle'></span></li>");
                 $("[class='fufHyA gObdAzb MCGAxG']").css("width", "13%");
                 $("[class='QAfdwP tvPMvPb'] li").addClass("BEPxaPb");
@@ -513,8 +513,8 @@ function loadContent2(b) {
                 $("[class='QAfdwP tvPMvPb'] li").unbind("click");
                 var c = location.href.split("#/")[0];
                 history.pushState(null, "", c + "#/search?key=" + b);
-                historyMap.set(location.href, d.respMap);
-                showContent2(d.respMap)
+                historyMap.set(location.href, d.respData);
+                showContent2(d.respData)
             }
         },
         error: function () {
@@ -573,8 +573,8 @@ function loadContent() {
         xhrFields: {withCredentials: true},
         crossDomain: true,
         success: function (m) {
-            historyMap.set(location.href, m.respMap);
-            showContent(m.respMap)
+            historyMap.set(location.href, m.respData);
+            showContent(m.respData)
         }
     })
 }
@@ -628,7 +628,7 @@ function loadContent1(h) {
         xhrFields: {withCredentials: true},
         crossDomain: true,
         success: function (n) {
-            showContent1(n.respMap, h)
+            showContent1(n.respData, h)
         }
     })
 }
@@ -969,7 +969,7 @@ function loadFolder(c, d) {
             crossDomain: true,
             dataType: "json",
             success: function (f) {
-                var e = f.respMap;
+                var e = f.respData;
                 folderMap.set(c, e);
                 if (c == "/") {
                     showFolder(e, $(".treeview-root"))
@@ -1054,7 +1054,7 @@ function copyAndMove(id, chooseNum, dest) {
         crossDomain: true,
         dataType: "json",
         success: function (data) {
-            if (data.dataCode == 200) {
+            if (data.respCode === 1) {
                 $(".module-canvas").css("display", "none");
                 $("#fileTreeDialog").css("display", "none");
                 flashContent();
@@ -1127,7 +1127,7 @@ function changePwd() {
                     crossDomain: true,
                     dataType: "json",
                     success: function (h) {
-                        if (h.respCode == 0) {
+                        if (h.respCode === 0) {
                             $(".am-modal-prompt-input").val("");
                             alert(h.respMsg)
                         } else {
@@ -1145,7 +1145,7 @@ function changePwd() {
                                 contentType:'application/json;charset=UTF-8',
                                 dataType: "json",
                                 success: function (j) {
-                                    if (j.dataCode == 200) {
+                                    if (j.respCode === 1) {
                                         alert("修改成功");
                                         location.href = "http://localhost:8097/"
                                     }
@@ -1157,6 +1157,9 @@ function changePwd() {
                         }
                     }
                 })
+            } else if(g != e){
+                $(".am-modal-prompt-input").val("");
+                alert("新密码和确认密码必须相同");
             }
         }, onCancel: function () {
             $(".am-modal-prompt-input").val("");
@@ -1220,7 +1223,7 @@ function uploadPic() {
                         crossDomain: true,
                         dataType: "json",
                         success: function (j) {
-                            if (j.dataCode == 200) {
+                            if (j.respCode == 1) {
                                 alert("上传成功");
                                 loadImg();
                                 $("#uploadPic").modal("close")

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.quhailong.pan.core.service.ICapacityService;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -36,12 +36,12 @@ public class CapacityController {
      */
     //@RequestMapping(value = "use", method = {RequestMethod.POST})
     @RequestMapping(value = "usecapacity", method = RequestMethod.GET)
-    public RestAPIResult<String> useCapacity(String uid) {
+    public RestAPIResultDTO<String> useCapacity(String uid) {
         logger.info("查询使用容量请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("查询使用容量数据处理开始,uid:{}", uid);
-        RestAPIResult<String> result = capacityService.useCapacityHandle(uid);
+        RestAPIResultDTO<String> result = capacityService.useCapacityHandle(uid);
         logger.info("查询使用容量数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("查询使用容量调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -55,12 +55,12 @@ public class CapacityController {
      * @date: 2019/9/25
      */
     @RequestMapping(value = "initcapacity", method = RequestMethod.POST)
-    public RestAPIResult<Integer> initCapacity(@RequestParam("userId") String userId) {
+    public RestAPIResultDTO<Integer> initCapacity(@RequestParam("userId") String userId) {
         logger.info("初始化容量请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("初始化容量数据处理开始,userId:{}", userId);
-        RestAPIResult<Integer> result = capacityService.initCapacityHandle(userId);
+        RestAPIResultDTO<Integer> result = capacityService.initCapacityHandle(userId);
         logger.info("初始化容量数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("初始化容量调用时间,millies:{}", stopWatch.getTotalTimeMillis());

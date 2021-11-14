@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import top.quhailong.pan.constant.RedisConstants;
+import top.quhailong.pan.enums.ResultCodeEnum;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
 import top.quhailong.pan.request.ForgetPhoneSendRequest;
 import top.quhailong.pan.request.ModifyPassRequest;
 import top.quhailong.pan.request.SendSmsRequest;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 import top.quhailong.pan.user.dao.UserInfoDao;
 import top.quhailong.pan.user.entity.UserInfoDO;
 import top.quhailong.pan.user.remote.EdgeRemote;
@@ -38,15 +40,13 @@ public class PasswordServiceImpl implements PasswordService {
     private String templateId;
 
     @Override
-    public RestAPIResult<String> forgetPhoneSendHandle(ForgetPhoneSendRequest request) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> forgetPhoneSendHandle(ForgetPhoneSendRequest request) {
         if (request.getVcodestr() != null && request.getVerfyCode() != null && request.getUsername() != null) {
             if (redisUtil.hasKey(String.format(RedisConstants.VERFIYCODE, request.getVcodestr()))) {
                 if (request.getVerfyCode().equalsIgnoreCase(redisUtil.get(String.format(RedisConstants.VERFIYCODE, request.getVcodestr())))) {
                     UserInfoDO userInfoDO = userInfoDao.getUserInfoByPassport(request.getUsername());
                     if (userInfoDO != null && userInfoDO.getPhone() == null) {
-                        panResult.error("手机号码不存在");
-                        return panResult;
+                        return RestAPIResultDTO.Error("手机号码不存在");
                     }
                     Integer sixNum = (int) ((Math.random() * 9 + 1) * 100000);
                     String param = sixNum.toString();
@@ -60,56 +60,44 @@ public class PasswordServiceImpl implements PasswordService {
                     sendSmsRequest.setTemplateid(templateId);
                     sendSmsRequest.setToken(authToken);
                     sendSmsRequest.setUid(uid);
-                    RestAPIResult<String> result = edgeRemote.sendSms(sendSmsRequest);
+                    RestAPIResultDTO<String> result = edgeRemote.sendSms(sendSmsRequest);
                     redisUtil.setEx(String.format(RedisConstants.SMSForget, userInfoDO.getPhone()), param, 120, TimeUnit.SECONDS);
                     redisUtil.delete(String.format(RedisConstants.VERFIYCODE, request.getVcodestr()));
                     if (result.getRespMsg().equals("0")) {
-                        panResult.error("发送短信失败");
-                        return panResult;
+                        return RestAPIResultDTO.Error("发送短信失败");
                     }
-                    panResult.success(null);
-                    return panResult;
+                    return RestAPIResultDTO.Success("短信发送成功");
                 } else {
-                    panResult.error("验证码错误");
-                    return panResult;
+                    return RestAPIResultDTO.Error("验证码错误");
                 }
             } else {
-                panResult.error("验证码错误");
-                return panResult;
+                return RestAPIResultDTO.Error("验证码错误");
             }
         } else {
-            panResult.error("别瞎捷豹改参数");
-            return panResult;
+            return RestAPIResultDTO.Error(null, ResultCodeEnum.PARAMATER_ERROR);
         }
     }
 
     @Override
-    public RestAPIResult<String> checkPhoneSendHandle(String username) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> checkPhoneSendHandle(String username) {
         UserInfoDO userInfoDO = userInfoDao.getUserInfoByPassport(username);
         String userPhone = userInfoDO.getPhone();
         if (userPhone == null) {
-            panResult.setRespCode(144);
-            panResult.setRespData(null);
-            return panResult;
+            return RestAPIResultDTO.Error("用户已存在",144);
         } else {
-            panResult.success(null);
-            return panResult;
+            return RestAPIResultDTO.Success("用户可用");
         }
     }
 
     @Override
-    public RestAPIResult<String> modifyPassHandle(ModifyPassRequest request) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> modifyPassHandle(ModifyPassRequest request) {
         UserInfoDO userInfoDO = userInfoDao.getUserInfoByPassport(request.getUsername());
         if (userInfoDO == null) {
-            panResult.error("用户信息不存在");
-            return panResult;
+            return RestAPIResultDTO.Error("用户信息不存在");
         }
         String phoneNum = userInfoDO.getPhone();
         if (phoneNum == null) {
-            panResult.error("手机号码不存在");
-            return panResult;
+            return RestAPIResultDTO.Error("手机号码不存在");
         }
 
         if (redisUtil.hasKey(String.format(RedisConstants.SMSForget, phoneNum)) && redisUtil.get(String.format(RedisConstants.SMSForget, phoneNum)).equals(request.getVerifyCode())) {
@@ -124,15 +112,12 @@ public class PasswordServiceImpl implements PasswordService {
                 String accessToken = JWTUtils.createJWT(IDUtils.showNextId(new Random().nextInt(30)).toString(), JSONUtils.toJSONString(userInfoDO), 12 * 60 * 60 * 1000);
                 CookieUtils.addCookie("token", accessToken);
                 CookieUtils.addCookie("uid", userInfoDO.getUserId());
-                panResult.success(null);
-                return panResult;
+                return RestAPIResultDTO.Success("修改密码成功");
             } catch (Exception e) {
-                panResult.error("存入数据库发生错误");
-                return panResult;
+                return RestAPIResultDTO.Error("存入数据库发生错误");
             }
         } else {
-            panResult.error("验证码错误");
-            return panResult;
+            return RestAPIResultDTO.Error("验证码错误");
         }
     }
 }

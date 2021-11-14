@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import top.quhailong.pan.constant.RedisConstants;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 import top.quhailong.pan.response.UserInfoDTO;
 import top.quhailong.pan.user.dao.UserInfoDao;
 import top.quhailong.pan.user.entity.UserInfoDO;
@@ -23,8 +24,7 @@ public class PassportServiceImpl implements PassportService {
     private RedisUtil redisUtil;
 
     @Override
-    public RestAPIResult<String> loginHandle(String username, String password, String RSAKey) throws Exception {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> loginHandle(String username, String password, String RSAKey) throws Exception {
         password = RSAUtils.decryptDataOnJava(password, RSAKey);
         UserInfoDO userInfoDO = userInfoDao.getUserInfoByPassport(username);
         if (userInfoDO != null) {
@@ -34,39 +34,32 @@ public class PassportServiceImpl implements PassportService {
 
                 CookieUtils.addCookie("token", accessToken);
                 CookieUtils.addCookie("uid", userInfoDO.getUserId());
-                panResult.success(null);
-                return panResult;
+                return RestAPIResultDTO.Success("登录成功");
             }
         }
-        panResult.error("用户信息不存在");
-        return panResult;
+        return RestAPIResultDTO.Error("用户信息不存在");
     }
 
     @Override
-    public RestAPIResult<String> logoutHandle(String token) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> logoutHandle(String token) {
         if (!StringUtils.isEmpty(token)) {
             JWTUtils.parseJWT(token, "nimadetou".getBytes());
             CookieUtils.removeCookie("token");
             CookieUtils.removeCookie("uid");
             redisUtil.setEx(String.format(RedisConstants.LOGOUT, token), token, 60 * 60 * 24 * 365, TimeUnit.SECONDS);
-            panResult.success(null);
-            return panResult;
+            return RestAPIResultDTO.Success("退出成功");
         } else {
-            panResult.error("token不能为空");
-            return panResult;
+            return RestAPIResultDTO.Error("token不能为空");
         }
     }
 
     @Override
-    public RestAPIResult<UserInfoDTO> getUserInfoHandle(String userId) {
-        RestAPIResult<UserInfoDTO> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<UserInfoDTO> getUserInfoHandle(String userId) {
         UserInfoDTO userInfoDTO = new UserInfoDTO();
         UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserId(userId);
         if (userInfoDO != null) {
             BeanUtils.copyProperties(userInfoDO, userInfoDTO);
         }
-        panResult.success(userInfoDTO);
-        return panResult;
+        return RestAPIResultDTO.Success(userInfoDTO);
     }
 }

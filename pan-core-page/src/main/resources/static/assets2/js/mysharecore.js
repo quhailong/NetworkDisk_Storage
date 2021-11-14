@@ -185,8 +185,8 @@ function loadContent() {
         crossDomain: true,
         dataType: "json",
         success: function (c) {
-            historyMap.set(location.href, c.respMap);
-            showContent(c.respMap)
+            historyMap.set(location.href, c.respData);
+            showContent(c.respData)
         }
     })
 }
@@ -250,7 +250,7 @@ function loadContent1(b) {
         crossDomain: true,
         dataType: "json",
         success: function (d) {
-            showContent1(d.respMap, b)
+            showContent1(d.respData, b)
         }
     })
 }
@@ -668,7 +668,7 @@ function changePwd() {
                     crossDomain: true,
                     dataType: "json",
                     success: function (g) {
-                        if (g.respCode == 0) {
+                        if (g.respCode === 0) {
                             $(".am-modal-prompt-input").val("");
                             alert(g.respMsg)
                         } else {
@@ -686,7 +686,7 @@ function changePwd() {
                                 contentType:'application/json;charset=UTF-8',
                                 dataType: "json",
                                 success: function (h) {
-                                    if (h.dataCode == 200) {
+                                    if (h.respCode === 1) {
                                         alert("修改成功");
                                         location.href = "http://localhost:8097/"
                                     }
@@ -761,7 +761,7 @@ function uploadPic() {
                         crossDomain: true,
                         dataType: "json",
                         success: function (h) {
-                            if (h.dataCode == 200) {
+                            if (h.respCode === 1) {
                                 alert("上传成功");
                                 loadImg();
                                 $("#uploadPic").modal("close")

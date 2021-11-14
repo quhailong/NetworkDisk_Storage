@@ -4,7 +4,9 @@ import top.quhailong.pan.request.AddShareViewCountRequest;
 import top.quhailong.pan.request.SaveShareRequest;
 import top.quhailong.pan.request.ShareListRequest;
 import top.quhailong.pan.request.ShareRequest;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
+
+import java.util.Map;
 
 public interface IShareService {
     /**
@@ -13,7 +15,7 @@ public interface IShareService {
      * @author: quhailong
      * @date: 2021/11/1
      */
-    RestAPIResult<String> shareHandle(ShareRequest request);
+    RestAPIResultDTO<String> shareHandle(ShareRequest request);
 
     /**
      * 分享列表数据处理
@@ -21,7 +23,7 @@ public interface IShareService {
      * @author: quhailong
      * @date: 2019/9/26
      */
-    RestAPIResult<String> shareListHandle(ShareListRequest request);
+    RestAPIResultDTO<Map<String, Object>> shareListHandle(ShareListRequest request);
 
     /**
      * 取消分享数据处理
@@ -29,7 +31,7 @@ public interface IShareService {
      * @author: quhailong
      * @date: 2019/9/26
      */
-    RestAPIResult<String> unShareHandle(String uid, String shareIds);
+    RestAPIResultDTO<String> unShareHandle(String uid, String shareIds);
 
     /**
      * 获取分享用户信息数据处理
@@ -37,7 +39,7 @@ public interface IShareService {
      * @author: quhailong
      * @date: 2019/9/26
      */
-    RestAPIResult<String> getShareUserHandle(String shareId);
+    RestAPIResultDTO<Map<String, Object>> getShareUserHandle(String shareId);
 
     /**
      * 保存分享数据处理
@@ -45,7 +47,7 @@ public interface IShareService {
      * @author: quhailong
      * @date: 2019/9/26
      */
-    RestAPIResult<String> saveShareHandle(SaveShareRequest request);
+    RestAPIResultDTO<String> saveShareHandle(SaveShareRequest request);
 
     /**
      * 查询分享是否带密码数据处理
@@ -53,7 +55,7 @@ public interface IShareService {
      * @author: quhailong
      * @date: 2019/9/26
      */
-    RestAPIResult<String> checkLockHandle(String shareId);
+    RestAPIResultDTO<String> checkLockHandle(String shareId);
 
     /**
      * 验证分享密码数据处理
@@ -61,7 +63,7 @@ public interface IShareService {
      * @author: quhailong
      * @date: 2019/9/26
      */
-    RestAPIResult<String> verifykLockHandle(String lockPassword, String shareId);
+    RestAPIResultDTO<String> verifykLockHandle(String lockPassword, String shareId);
 
     /**
      * 根据分享ID获取虚拟地址ID数据处理
@@ -69,7 +71,7 @@ public interface IShareService {
      * @author: quhailong
      * @date: 2019/9/26
      */
-    RestAPIResult<String> getVinfoHandle(String shareId, String lockPassword);
+    RestAPIResultDTO<Map<String, Object>> getVinfoHandle(String shareId, String lockPassword);
 
     /**
      * 增加分享访问量数据处理

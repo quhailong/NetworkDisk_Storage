@@ -11,7 +11,7 @@ import top.quhailong.pan.file.utils.FastDFSClient;
 import top.quhailong.pan.file.utils.FileUtils;
 import top.quhailong.pan.response.VirtualAddressDTO;
 import top.quhailong.pan.utils.JSONUtils;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -168,9 +168,9 @@ public class DownloadServiceImpl implements IDownloadService {
      */
     @Override
     public void downloadShareHandle(String lockPassword, String shareId, HttpServletResponse res) throws IOException {
-        RestAPIResult<String> apiResult = shareRemote.getUid(shareId, lockPassword);
+        RestAPIResultDTO<Map<String, Object>> apiResult = shareRemote.getVinfo(shareId, lockPassword);
         if (apiResult.getRespCode() == 1) {
-            Map<String, Object> respMap = apiResult.getRespMap();
+            Map<String, Object> respMap = apiResult.getRespData();
             List<String> vidList = (List<String>) respMap.get("vid");
             String uid = respMap.get("uid").toString();
             download(uid, vidList, res);

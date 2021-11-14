@@ -6,7 +6,7 @@ import top.quhailong.pan.constant.RedisConstants;
 import top.quhailong.pan.file.dao.FileDao;
 import top.quhailong.pan.file.service.IMd5Service;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,15 +18,13 @@ public class Md5ServiceImpl implements IMd5Service {
     private FileDao fileDao;
 
     @Override
-    public RestAPIResult<String> md5CheckHandle(String fid, String md5) {
-        RestAPIResult<String> panResult = new RestAPIResult<>();
+    public RestAPIResultDTO<String> md5CheckHandle(String fid, String md5) {
         redisUtil.setEx(String.format(RedisConstants.FILE_MD5, fid), md5, 259200, TimeUnit.SECONDS);
         Integer count = fileDao.checkMd5Whether(md5);
         if (count > 0) {
-            panResult.success(null);
+            return RestAPIResultDTO.Success("成功");
         } else {
-            panResult.error();
+            return RestAPIResultDTO.Error("失败");
         }
-        return panResult;
     }
 }

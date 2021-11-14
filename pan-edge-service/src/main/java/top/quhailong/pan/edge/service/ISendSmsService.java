@@ -1,7 +1,7 @@
 package top.quhailong.pan.edge.service;
 
 import top.quhailong.pan.request.SendSmsRequest;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 public interface ISendSmsService {
     /**
@@ -10,6 +10,6 @@ public interface ISendSmsService {
      * @author: quhailong
      * @date: 2019/9/26
      */
-    RestAPIResult<String> sendSmsHandle(SendSmsRequest request);
+    RestAPIResultDTO<String> sendSmsHandle(SendSmsRequest request);
 
 }

@@ -82,7 +82,7 @@
 										  crossDomain : true,
 										  dataType : "json", //指定服务器返回的数据类型
 										  success : function(data) {
-											  if(data.dataCode == 200){
+											  if(data.respCode === 1){
 												  alert("修改成功");
 												  location.href = "http://localhost:8082/";
 											  }
@@ -155,7 +155,7 @@
 						  crossDomain : true,
 						  dataType : "json", //指定服务器返回的数据类型
 						  success : function(data) {
-							  if(data.dataCode == 200){
+							  if(data.respCode === 1){
 								  alert("上传成功");
 								  loadImg();
 								  $('#uploadPic').modal('close');
@@ -214,7 +214,7 @@
 				crossDomain : true,
 				dataType : "json", //指定服务器返回的数据类型
 				success : function(data) {
-					var content = data.respMap;
+					var content = data.respData;
 					folderMap.set(parentPath,content);
 					if(parentPath == "/"){
 						showFolder(content,$(".treeview-root"));
@@ -315,7 +315,7 @@
 						  			crossDomain : true,
 						  			dataType : "json", //指定服务器返回的数据类型
 						  			success : function(data) {
-						  				if(data.respData == "200"){
+						  				if(data.respCode === 1){
 						  					saveShare(ShareId,dest,lockPassword);
 						  				}else{
 						  					alert("验证失败");
@@ -413,7 +413,7 @@
 						  			crossDomain : true,
 						  			dataType : "json", //指定服务器返回的数据类型
 						  			success : function(data) {
-						  				if(data.respData == "200"){
+						  				if(data.respCode === 1){
 						  					download(ShareId,lockPassword);
 						  				}else{
 						  					alert("验证失败");

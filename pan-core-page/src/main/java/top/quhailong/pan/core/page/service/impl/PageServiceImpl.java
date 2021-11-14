@@ -18,7 +18,7 @@ import top.quhailong.pan.response.UserInfoDTO;
 import top.quhailong.pan.utils.CookieUtils;
 import top.quhailong.pan.utils.HttpClientUtils;
 import top.quhailong.pan.utils.JSONUtils;
-import top.quhailong.pan.utils.RestAPIResult;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import java.util.Date;
 import java.util.Map;
@@ -121,8 +121,8 @@ public class PageServiceImpl implements IPageService {
                     UserInfoDTO userInfoDTO = tokenAnalysisUtils.tokenAnalysis(token);
                     String getShareUserUrl = "http://localhost:8095/api/share/getshareuser?shareId=" + shareId;
                     String resultString = HttpClientUtils.HttpGet(getShareUserUrl);
-                    RestAPIResult restAPIResult = JSONUtils.parseObject(resultString, RestAPIResult.class);
-                    Map<String, Object> map = restAPIResult.getRespMap();
+                    RestAPIResultDTO restAPIResultDTO = JSONUtils.parseObject(resultString, RestAPIResultDTO.class);
+                    Map<String, Object> map = (Map<String, Object>) restAPIResultDTO.getRespData();
                     UserInfoDTO shareUserInfoDTO = JSONUtils.parseObject((String) map.get("userinfo"), UserInfoDTO.class);
                     if (shareUserInfoDTO == null) {
                         model.addAttribute("name", userInfoDTO.getUserName());
