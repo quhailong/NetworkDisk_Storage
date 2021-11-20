@@ -46,7 +46,7 @@ pan-framework---框架组件抽取
 1. 先在windows或linux平台安装nacos2.0.3，导入nacos_config.zip（nacos具体使用请百度）
 2. 将项目resources目录下bootstrap.yml文件中的nacos服务地址账号密码改成自己的。
 3. 将pan.sql导入到你的数据库中
-4. pan-common和pan-framework需要install（pan-common先），之后启动其他模块（无顺序）  
+4. pan-parent、pan-common和pan-framework需要install（按照顺序），之后启动其他模块（无顺序）  
 5. 短信参数配置在nacos配置user-service里（云之讯平台）
 http://localhost:8097/为主界面，数据库sql脚本和nacos配置均在工程根目录。  
 系统默认账户名：quhailong，密码123456

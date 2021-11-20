@@ -5,7 +5,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>pan-spring-boot-starter-redis</module>
-        <module>pan-spring-boot-starter-web</module>
+        <!--<module>pan-spring-boot-starter-web</module>-->
     </modules>
     <parent>
         <groupId>top.quhailong.pan.parent</groupId>
