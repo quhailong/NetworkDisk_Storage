@@ -35,20 +35,6 @@
         <nacos-client.version>2.0.3</nacos-client.version>
     </properties>
 
-    <modules>
-        <module>../pan-common</module>
-        <module>../pan-service-api</module>
-        <module>../pan-edge-service</module>
-        <module>../pan-file-service</module>
-        <module>../pan-user-service</module>
-        <module>../pan-core-page</module>
-        <module>../pan-core-service</module>
-        <module>../pan-regist-page</module>
-        <module>../pan-share-service</module>
-        <module>../pan-core-gateway</module>
-        <module>../pan-file-gateway</module>
-    </modules>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
