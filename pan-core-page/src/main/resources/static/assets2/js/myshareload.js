@@ -70,9 +70,13 @@ $(document).ready(function () {
     $("#newPassword").focus(function () {
         if (!$(this).hasClass("input-focus")) {
             $(this).addClass("input-focus");
-            $.get("http://localhost:8095/api/edge/getpublickey", function(data){
-                $("#publicKey").val(data.respData.publicKey);
-                $("#RSAKey").val(data.respData.RSAKey);
+            $.get(CORE_GATEWAY_URL + "/api/edge/getpublickey", function (data) {
+                if (data.respCode === 1) {
+                    $("#publicKey").val(data.respData.publicKey);
+                    $("#RSAKey").val(data.respData.RSAKey);
+                } else {
+                    alert(data.respMsg);
+                }
             });
         }
     });

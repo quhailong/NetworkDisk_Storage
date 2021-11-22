@@ -18,15 +18,15 @@ function exit() {
     $("#my-confirm").modal({
         closeViaDimmer: 0, onConfirm: function (b) {
             $.ajax({
-                url: "http://localhost:8095/api/user/logout?token=" + $.cookie("token"),
+                url: CORE_GATEWAY_URL + "/api/user/logout?token=" + $.cookie("token"),
                 type: "GET",
                 xhrFields: {withCredentials: true},
                 crossDomain: true,
-                success: function (c) {
-                    if (c.respCode == 1) {
-                        location.href = "http://localhost:8097/"
+                success: function (data) {
+                    if (data.respCode === 1) {
+                        location.href = CORE_PAGE_URL
                     } else {
-                        alert(c.respMsg)
+                        alert(data.respMsg)
                     }
                 }
             })
@@ -45,19 +45,19 @@ function changePwd() {
                 e.setPublicKey($("#publicKey").val());
                 var c = e.encrypt(f);
                 $.ajax({
-                    url: "http://localhost:8095/api/edge/regcheckpwd",
+                    url: CORE_GATEWAY_URL + "/api/edge/regcheckpwd",
                     type: "post",
                     data: {"password": c, "RSAKey": $("#RSAKey").val()},
                     xhrFields: {withCredentials: true},
                     crossDomain: true,
                     dataType: "json",
-                    success: function (g) {
-                        if (g.respCode == 0) {
+                    success: function (data) {
+                        if (data.respCode === 0) {
                             $(".am-modal-prompt-input").val("");
-                            alert(g.respMsg)
+                            alert(data.respMsg)
                         } else {
                             $.ajax({
-                                url: "http://localhost:8095/api/user/changepwd",
+                                url: CORE_GATEWAY_URL + "/api/user/changepwd",
                                 type: "post",
                                 data: JSON.stringify({
                                     "token": $.cookie("token"),
@@ -67,16 +67,16 @@ function changePwd() {
                                 }),
                                 xhrFields: {withCredentials: true},
                                 crossDomain: true,
-                                contentType:'application/json;charset=UTF-8',
+                                contentType: 'application/json;charset=UTF-8',
                                 dataType: "json",
-                                success: function (h) {
-                                    if (h.respCode === 1) {
-                                        alert("修改成功");
-                                        location.href = "http://localhost:8097/"
+                                success: function (data) {
+                                    if (data.respCode === 1) {
+                                        alert(data.respMsg);
+                                        location.href = CORE_PAGE_URL
                                     }
                                 },
-                                error: function () {
-                                    alert("服务器错误")
+                                error: function (data) {
+                                    alert(data.respMsg)
                                 }
                             })
                         }
@@ -135,7 +135,7 @@ function uploadPic() {
                     f.append("uid", $.cookie("uid"));
                     f.append("file", d);
                     $.ajax({
-                        url: "http://localhost:8095/api/user/uploadpic",
+                        url: CORE_GATEWAY_URL + "/api/user/uploadpic",
                         type: "post",
                         contentType: false,
                         data: f,
@@ -144,17 +144,17 @@ function uploadPic() {
                         xhrFields: {withCredentials: true},
                         crossDomain: true,
                         dataType: "json",
-                        success: function (h) {
-                            if (h.respCode === 1) {
-                                alert("上传成功");
+                        success: function (data) {
+                            if (data.respCode === 1) {
+                                alert(data.respMsg);
                                 loadImg();
                                 $("#uploadPic").modal("close")
                             } else {
-                                alert("服务器错误")
+                                alert(data.respMsg)
                             }
                         },
-                        error: function () {
-                            alert("服务器错误")
+                        error: function (data) {
+                            alert(data.respMsg)
                         }
                     })
                 }
@@ -170,14 +170,19 @@ function uploadPic() {
 
 function loadImg() {
     $.ajax({
-        url: "http://localhost:8095/api/user/loadimg?uid=" + $.cookie("uid"),
+        url: CORE_GATEWAY_URL + "/api/user/loadimg?uid=" + $.cookie("uid"),
         type: "GET",
         xhrFields: {withCredentials: true},
         crossDomain: true,
-        success: function (b) {
-            $(".user-photo").css("background-image", "url(http://192.168.93.128/" + b.respData + ")")
+        success: function (data) {
+            if (data.respCode === 1) {
+                $(".user-photo").css("background-image", "url(" + FILE_URL + "/" + data.respData + ")")
+            } else {
+                alert(data.respMsg);
+            }
         },
-        error: function () {
+        error: function (data) {
+            alert(data.respMsg);
         }
     })
 }
@@ -186,19 +191,23 @@ function loadFolder(b, c) {
     var a = folderMap.get(b);
     if (a == null) {
         $.ajax({
-            url: "http://localhost:8095/api/core/listfolder",
+            url: CORE_GATEWAY_URL + "/api/core/listfolder",
             type: "get",
             data: {"uid": $.cookie("uid"), "parentPath": b,},
             xhrFields: {withCredentials: true},
             crossDomain: true,
             dataType: "json",
-            success: function (e) {
-                var d = e.respData;
-                folderMap.set(b, d);
-                if (b == "/") {
-                    showFolder(d, $(".treeview-root"))
+            success: function (data) {
+                if (data.respCode === 1) {
+                    var d = data.respData;
+                    folderMap.set(b, d);
+                    if (b == "/") {
+                        showFolder(d, $(".treeview-root"))
+                    } else {
+                        showFolder(d, c)
+                    }
                 } else {
-                    showFolder(d, c)
+                    alert(data.respMsg)
                 }
             }
         })
@@ -264,36 +273,36 @@ function showFolder(content, obj) {
 
 function save(a, b) {
     $.ajax({
-        url: "http://localhost:8095/api/share/checklock",
+        url: CORE_GATEWAY_URL + "/api/share/checklock",
         type: "get",
         data: {"shareId": a},
         xhrFields: {withCredentials: true},
         crossDomain: true,
         dataType: "json",
-        success: function (c) {
-            if (c.respCode != 0) {
-                if (c.respData == "Lock") {
+        success: function (data) {
+            if (data.respCode === 1) {
+                if (data.respData === "Lock") {
                     $("#Lock1").modal({
                         closeViaDimmer: 0, onConfirm: function (f) {
                             var d = $("input[name='LockPassword1']").val();
                             $.ajax({
-                                url: "http://localhost:8095/api/share/verifyklock",
+                                url: CORE_GATEWAY_URL + "/api/share/verifyklock",
                                 type: "get",
                                 data: {"shareId": a, "lockPassword": d},
                                 xhrFields: {withCredentials: true},
                                 crossDomain: true,
                                 dataType: "json",
-                                success: function (e) {
-                                    if (e.respCode === 1) {
+                                success: function (data) {
+                                    if (data.respCode === 1) {
                                         saveShare(a, b, d)
                                     } else {
                                         alert("验证失败");
                                         $("input[name='LockPassword1']").val("")
                                     }
                                 },
-                                error: function () {
+                                error: function (data) {
                                     $("input[name='LockPassword1']").val("");
-                                    alert("服务器错误，操作失败")
+                                    alert(data.respMsg)
                                 }
                             })
                         }, onCancel: function (d) {
@@ -304,75 +313,75 @@ function save(a, b) {
                 }
             } else {
                 $("input[name='LockPassword1']").val("");
-                alert("参数不正确")
+                alert(data.respMsg)
             }
         },
-        error: function () {
+        error: function (data) {
             $("input[name='LockPassword1']").val("");
-            alert("服务器错误，操作失败")
+            alert(data.respMsg)
         }
     })
 }
 
 function saveShare(b, c, a) {
     $.ajax({
-        url: "http://localhost:8095/api/share/saveshare",
+        url: CORE_GATEWAY_URL + "/api/share/saveshare",
         type: "post",
         data: JSON.stringify({"uid": $.cookie("uid"), "shareId": b, "dest": c, "lockPassword": a}),
         xhrFields: {withCredentials: true},
-        contentType:'application/json;charset=UTF-8',
+        contentType: 'application/json;charset=UTF-8',
         crossDomain: true,
         dataType: "json",
-        success: function (d) {
-            if (d.respCode == 1) {
-                alert("保存成功");
+        success: function (data) {
+            if (data.respCode === 1) {
+                alert(data.respMsg);
                 $("input[name='LockPassword1']").val("");
                 $("#fileTreeDialog").css("display", "none");
                 $(".module-canvas").css("display", "none")
             } else {
                 $("input[name='LockPassword1']").val("");
-                alert(d.respMsg)
+                alert(data.respMsg)
             }
         },
-        error: function () {
+        error: function (data) {
             $("input[name='LockPassword1']").val("");
-            alert("服务器错误，操作失败")
+            alert(data.respMsg)
         }
     })
 }
 
 function downloadShare(a) {
     $.ajax({
-        url: "http://localhost:8095/api/share/checklock",
+        url: CORE_GATEWAY_URL + "/api/share/checklock",
         type: "get",
-        data: { "shareId": a},
+        data: {"shareId": a},
         xhrFields: {withCredentials: true},
         crossDomain: true,
         dataType: "json",
-        success: function (b) {
-            if (b.respCode != 0) {
-                if (b.respData == "Lock") {
+        success: function (data) {
+            if (data.respCode === 1) {
+                if (data.respData === "Lock") {
                     $("#Lock").modal({
                         closeViaDimmer: 0, onConfirm: function (d) {
                             var c = $("input[name='LockPassword']").val();
                             $.ajax({
-                                url: "http://localhost:8095/api/share/verifyklock",
+                                url: CORE_GATEWAY_URL + "/api/share/verifyklock",
                                 type: "get",
                                 data: {"shareId": a, "lockPassword": c},
                                 xhrFields: {withCredentials: true},
                                 crossDomain: true,
                                 dataType: "json",
-                                success: function (e) {
-                                    if (e.respCode === 1) {
+                                success: function (data) {
+                                    if (data.respCode === 1) {
                                         download(a, c)
                                     } else {
-                                        alert("验证失败");
+                                        alert(data.respMsg);
                                         $("input[name='LockPassword']").val("")
                                     }
                                 },
-                                error: function () {
+                                error: function (data) {
                                     $("input[name='LockPassword']").val("");
-                                    alert("服务器错误，操作失败")
+                                    alert(data.respMsg)
                                 }
                             })
                         }, onCancel: function (c) {
@@ -383,12 +392,12 @@ function downloadShare(a) {
                 }
             } else {
                 $("input[name='LockPassword']").val("");
-                alert("参数不正确")
+                alert(data.respMsg)
             }
         },
-        error: function () {
+        error: function (data) {
             $("input[name='LockPassword']").val("");
-            alert("服务器错误，操作失败")
+            alert(data.respMsg)
         }
     })
 }
@@ -397,7 +406,7 @@ function download(d, c) {
     var e = $("<form id='abc'>");
     e.attr("style", "display:none");
     e.attr("method", "get");
-    e.attr("action", "http://localhost:8096/api/file/downloadshare");
+    e.attr("action", CORE_FILE_GATEWAY_URL + "/api/file/downloadshare");
     var b = $("<input>");
     b.attr("type", "hidden");
     b.attr("name", "shareId");

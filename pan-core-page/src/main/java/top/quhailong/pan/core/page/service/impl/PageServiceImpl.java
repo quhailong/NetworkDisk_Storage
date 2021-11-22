@@ -5,6 +5,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -12,14 +13,17 @@ import top.quhailong.pan.constant.RedisConstants;
 import top.quhailong.pan.core.page.service.IPageService;
 import top.quhailong.pan.core.page.utils.TokenAnalysisUtils;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
-import top.quhailong.pan.request.AddShareViewCountRequest;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 import top.quhailong.pan.response.ShareDTO;
 import top.quhailong.pan.response.UserInfoDTO;
 import top.quhailong.pan.utils.CookieUtils;
 import top.quhailong.pan.utils.HttpClientUtils;
 import top.quhailong.pan.utils.JSONUtils;
-import top.quhailong.pan.request.base.RestAPIResultDTO;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
@@ -48,7 +52,7 @@ public class PageServiceImpl implements IPageService {
         if (StringUtils.isEmpty(token)) {
             return "login";
         } else {
-            return "redirect:http://localhost:8097/disk/home";
+            return "redirect:/disk/home";
         }
     }
 
@@ -72,7 +76,7 @@ public class PageServiceImpl implements IPageService {
                 }
             } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException exception) {
                 exception.printStackTrace();
-                return "user";
+                return "login";
             }
         }
         return "login";
@@ -98,7 +102,7 @@ public class PageServiceImpl implements IPageService {
                 }
             } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException exception) {
                 exception.printStackTrace();
-                return "user";
+                return "login";
             }
         }
         return "login";
@@ -118,8 +122,33 @@ public class PageServiceImpl implements IPageService {
                 if (redisUtil.hasKey(String.format(RedisConstants.LOGOUT, token))) {
                     return "login";
                 } else {
+                    String coreGatewayUrl = "";
                     UserInfoDTO userInfoDTO = tokenAnalysisUtils.tokenAnalysis(token);
-                    String getShareUserUrl = "http://localhost:8095/api/share/getshareuser?shareId=" + shareId;
+                    ClassPathResource classPathResource = new ClassPathResource("static/assets2/js/config.js");
+                    File file = classPathResource.getFile();
+                    BufferedReader reader = null;
+                    try {
+                        System.out.println("以行为单位读取文件内容，一次读一行");
+                        reader = new BufferedReader(new FileReader(file));
+                        String tempString;
+                        while ((tempString = reader.readLine()) != null) {
+                            if(tempString.contains("CORE_GATEWAY_URL")){
+                                coreGatewayUrl = tempString.substring(tempString.indexOf("= \"") + 3,tempString.length()-1);
+                            }
+                        }
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (reader != null) {
+                            try {
+                                reader.close();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    }
+                    String getShareUserUrl = coreGatewayUrl + "/api/share/getshareuser?shareId=" + shareId;
                     String resultString = HttpClientUtils.HttpGet(getShareUserUrl);
                     RestAPIResultDTO restAPIResultDTO = JSONUtils.parseObject(resultString, RestAPIResultDTO.class);
                     Map<String, Object> map = (Map<String, Object>) restAPIResultDTO.getRespData();
@@ -142,16 +171,12 @@ public class PageServiceImpl implements IPageService {
                     } else {
                         model.addAttribute("shareName", shareDTO.getTheme() + "文件");
                     }
-                    String addShareViewCountUrl = "http://localhost:8095/api/share/addshareview";
-                    AddShareViewCountRequest addShareViewCountRequest = new AddShareViewCountRequest();
-                    addShareViewCountRequest.setShareId(shareId);
-                    HttpClientUtils.httpPostWithJSON(addShareViewCountUrl, JSONUtils.toJSONString(addShareViewCountRequest));
                     model.addAttribute("shareId", shareDTO.getShareId());
                     return "s";
                 }
-            } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException exception) {
+            } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException | IOException exception) {
                 exception.printStackTrace();
-                return "user";
+                return "login";
             }
         }
         return "login";

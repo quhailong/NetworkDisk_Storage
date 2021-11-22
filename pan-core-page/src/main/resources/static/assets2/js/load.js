@@ -78,7 +78,7 @@ $(document).ready(function () {
         auto: true,
         multi: true,
         removeTimeout: 999999999,
-        url: "http://localhost:8096/api/file/uploadfile",
+        url: CORE_FILE_GATEWAY_URL + "/api/file/uploadfile",
         onUploadStart: function () {
             $("#web-uploader").css("display", "block")
         },
@@ -95,14 +95,14 @@ $(document).ready(function () {
                 var inputText = $("#GHJDI1").val();
                 if (inputText.length < 20 && inputText.match(/^[a-zA-Z0-9\u4e00-\u9fa5_]+$/) != null) {
                     $.ajax({
-                        url: "http://localhost:8095/api/core/createdir",
+                        url: CORE_GATEWAY_URL + "/api/core/createdir",
                         type: "post",
                         data: JSON.stringify({
                             "uid": $.cookie("uid"),
                             "dirName": inputText,
-                            "parentPath": location.href.split("path=")[1]
+                            "parentPath": decodeURIComponent(location.href.split("path=")[1])
                         }),
-                        contentType:'application/json;charset=UTF-8',
+                        contentType: 'application/json;charset=UTF-8',
                         xhrFields: {withCredentials: true},
                         crossDomain: true,
                         dataType: "json",
@@ -111,12 +111,12 @@ $(document).ready(function () {
                                 $(".QxJxtg").removeClass("cazEfA");
                                 flashContent()
                             } else {
-                                alert("创建文件夹出现问题，创建失败")
+                                alert(data.respMsg)
                             }
                             $(".am-modal-prompt-input").val("")
                         },
-                        error: function () {
-                            alert("服务器错误，创建文件夹失败");
+                        error: function (data) {
+                            alert(data.respMsg);
                             $(".am-modal-prompt-input").val("")
                         }
                     })
@@ -152,7 +152,7 @@ $(document).ready(function () {
                 } else {
                     if (inputText.length < 50 && inputText.match(/^[a-zA-Z0-9\u4e00-\u9fa5_()]+$/) != null) {
                         $.ajax({
-                            url: "http://localhost:8095/api/core/renamefileordir",
+                            url: CORE_GATEWAY_URL + "/api/core/renamefileordir",
                             type: "put",
                             data: JSON.stringify({
                                 "uid": $.cookie("uid"),
@@ -160,38 +160,38 @@ $(document).ready(function () {
                                 "parentPath": location.href.split("path=")[1],
                                 "vid": vid
                             }),
-                            contentType:'application/json;charset=UTF-8',
+                            contentType: 'application/json;charset=UTF-8',
                             xhrFields: {withCredentials: true},
                             crossDomain: true,
                             dataType: "json",
                             success: function (data) {
-                                if (data.respCode == 203) {
+                                if (data.respCode === 50000) {
                                     $("#my-confirm1").modal({
                                         closeViaDimmer: 0, onConfirm: function (options) {
                                             $.ajax({
-                                                url: "http://localhost:8095/api/renamefileordir",
+                                                url: CORE_GATEWAY_URL + "/api/core/renamefileordir",
                                                 type: "put",
                                                 data: JSON.stringify({
                                                     "uid": $.cookie("uid"),
                                                     "newName": inputText,
-                                                    "vid": vid,
+                                                    "vid": eval($.parseJSON(content[chooseNum])).uuid,
                                                     "flag": "force"
                                                 }),
-                                                contentType:'application/json;charset=UTF-8',
+                                                contentType: 'application/json;charset=UTF-8',
                                                 xhrFields: {withCredentials: true},
                                                 crossDomain: true,
                                                 dataType: "json",
                                                 success: function (data) {
                                                     if (data.respCode === 1) {
-                                                        alert("修改成功");
+                                                        alert(data.respMsg);
                                                         flashContent();
                                                         $(".QxJxtg").removeClass("cazEfA");
                                                         $(".tcuLAu").css("display", "inline-block");
                                                         $(".QDDOQB").css("display", "none")
                                                     }
                                                 },
-                                                error: function () {
-                                                    alert("服务器错误，重命名失败");
+                                                error: function (data) {
+                                                    alert(data.respMsg);
                                                     $(".am-modal-prompt-input").val("")
                                                 }
                                             })
@@ -200,13 +200,13 @@ $(document).ready(function () {
                                     })
                                 } else {
                                     if (data.respCode === 1) {
-                                        alert("修改成功");
+                                        alert(data.respMsg);
                                         flashContent();
                                         $(".QxJxtg").removeClass("cazEfA");
                                         $(".tcuLAu").css("display", "inline-block");
                                         $(".QDDOQB").css("display", "none")
                                     } else {
-                                        alert("修改文件名出现问题，操作失败")
+                                        alert(data.respMsg)
                                     }
                                 }
                                 $(".am-modal-prompt-input").val("")
@@ -315,7 +315,7 @@ $(document).ready(function () {
                     vids.push(contentVal.uuid)
                 }
                 $.ajax({
-                    url: "http://localhost:8095/api/core/deletefile",
+                    url: CORE_GATEWAY_URL + "/api/core/deletefile",
                     type: "delete",
                     data: {"uid": $.cookie("uid"), "vids": JSON.stringify(vids)},
                     xhrFields: {withCredentials: true},
@@ -323,7 +323,7 @@ $(document).ready(function () {
                     dataType: "json",
                     success: function (data) {
                         if (data.respCode === 1) {
-                            alert("删除成功");
+                            alert(data.respMsg);
                             flashContent();
                             $(".QxJxtg").removeClass("cazEfA");
                             $(".tcuLAu").css("display", "inline-block");
@@ -331,8 +331,8 @@ $(document).ready(function () {
                             $("#filename").removeClass("EzubGg")
                         }
                     },
-                    error: function () {
-                        alert("服务器错误，删除失败")
+                    error: function (data) {
+                        alert(data.respMsg)
                     }
                 })
             }, onCancel: function () {
@@ -357,9 +357,13 @@ $(document).ready(function () {
     $("#newPassword").focus(function () {
         if (!$(this).hasClass("input-focus")) {
             $(this).addClass("input-focus");
-            $.get("http://localhost:8095/api/edge/getpublickey", function(data){
-                $("#publicKey").val(data.respData.publicKey);
-                $("#RSAKey").val(data.respData.RSAKey);
+            $.get(CORE_GATEWAY_URL + "/api/edge/getpublickey", function (data) {
+                if (data.respCode === 1) {
+                    $("#publicKey").val(data.respData.publicKey);
+                    $("#RSAKey").val(data.respData.RSAKey);
+                } else {
+                    alert(data.respMsg)
+                }
             });
         }
     });
@@ -384,6 +388,6 @@ $(document).ready(function () {
         createShare(chooseNum)
     });
     $("#sharePage").click(function () {
-        location.href = "http://localhost:8097/share/manage"
+        location.href = CORE_PAGE_URL + "/share/manage"
     })
 });
