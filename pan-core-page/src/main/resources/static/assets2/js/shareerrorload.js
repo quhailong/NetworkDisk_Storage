@@ -74,7 +74,7 @@ $(document).ready(function () {
     $("#newPassword").focus(function () {
         if (!$(this).hasClass("input-focus")) {
             $(this).addClass("input-focus");
-            $.get("http://localhost:8095/api/edge/getpublickey", function(data){
+            $.get(CORE_GATEWAY_URL + "/api/edge/getpublickey", function(data){
                 $("#publicKey").val(data.respData.publicKey);
                 $("#RSAKey").val(data.respData.RSAKey);
             });

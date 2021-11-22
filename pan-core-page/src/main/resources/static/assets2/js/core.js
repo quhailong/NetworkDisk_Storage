@@ -77,22 +77,24 @@ function abced() {
 
 function loadCapacity() {
     $.ajax({
-        url: "http://localhost:8095/api/core/usecapacity?uid=" + $.cookie("uid"),
+        url: CORE_GATEWAY_URL + "/api/core/usecapacity?uid=" + $.cookie("uid"),
         type: "get",
         xhrFields: {withCredentials: true},
         crossDomain: true,
         success: function (data) {
-            if (data.respCode == 1) {
+            if (data.respCode === 1) {
                 var useJson = eval($.parseJSON(data.respData));
                 var percent = ((useJson.usedCapacity / useJson.totalCapacity) * 100).toFixed(4) + "%";
                 $(".remainingSpaceUi_span").css("width", percent);
                 var size = bytesToSize(useJson.usedCapacity);
                 $(".bold").html(size);
                 $("#used").val(useJson.usedCapacity)
+            } else {
+                alert(data.respMsg)
             }
         },
-        error: function () {
-            alert("服务器错误，搜索失败")
+        error: function (data) {
+            alert(data.respMsg)
         }
     })
 }
@@ -399,7 +401,7 @@ function showContent3(content, page) {
         var contentVal = eval($.parseJSON(content[key]));
         if (contentVal.updateTime != null) {
             var mm = new Date(contentVal.updateTime);
-            var date = mm.getFullYear() + "-" + ((mm.getMonth() + 1) >=10 ? (mm.getMonth() + 1) : "0" + (mm.getMonth() + 1)) + "-" + (mm.getDate() < 10 ? "0" + mm.getDate() : mm.getDate()) + " " + (mm.getHours() < 10 ? "0" + mm.getHours() : mm.getHours()) + ":" + (mm.getMinutes() < 10 ? "0" + mm.getMinutes() : mm.getMinutes())
+            var date = mm.getFullYear() + "-" + ((mm.getMonth() + 1) >= 10 ? (mm.getMonth() + 1) : "0" + (mm.getMonth() + 1)) + "-" + (mm.getDate() < 10 ? "0" + mm.getDate() : mm.getDate()) + " " + (mm.getHours() < 10 ? "0" + mm.getHours() : mm.getHours()) + ":" + (mm.getMinutes() < 10 ? "0" + mm.getMinutes() : mm.getMinutes())
         } else {
             var date = "-"
         }
@@ -477,22 +479,24 @@ function showContent3(content, page) {
 
 function loadContent3(b, c) {
     $.ajax({
-        url: "http://localhost:8095/api/core/searchfile?uid=" + $.cookie("uid") + "&key=" + b + "&page=" + c + "&order=update_time",
+        url: CORE_GATEWAY_URL + "/api/core/searchfile?uid=" + $.cookie("uid") + "&key=" + b + "&page=" + c + "&order=update_time",
         type: "get",
         xhrFields: {withCredentials: true},
         crossDomain: true,
-        success: function (d) {
-            if (d.respCode === 1) {
+        success: function (data) {
+            if (data.respCode === 1) {
                 $("[class='QAfdwP tvPMvPb']").append("<li id='new' class='fufHyA gObdAzb ' style='width:10%;'><span class='text'>所在目录</span><span class='xEuDywb'></span><span class='icon aHEytd icon-up'></span><span class='icon sFxCFbb icon-downtitle'></span></li>");
                 $("[class='fufHyA gObdAzb MCGAxG']").css("width", "13%");
                 $("[class='QAfdwP tvPMvPb'] li").addClass("BEPxaPb");
                 $("[class='QAfdwP tvPMvPb'] li").removeClass("MCGAxG JFaAINb");
                 $("[class='QAfdwP tvPMvPb'] li").unbind("click");
-                showContent3(d.respData, c)
+                showContent3(data.respData, c)
+            } else {
+                alert(data.respMsg);
             }
         },
-        error: function () {
-            alert("服务器错误，搜索失败")
+        error: function (data) {
+            alert(data.respMsg)
         }
     })
 }
@@ -500,12 +504,12 @@ function loadContent3(b, c) {
 function loadContent2(b) {
     $(".vdAfKMb").empty();
     $.ajax({
-        url: "http://localhost:8095/api/core/searchfile?uid=" + $.cookie("uid") + "&key=" + b + "&page=" + 1 + "&order=update_time",
+        url: CORE_GATEWAY_URL + "/api/core/searchfile?uid=" + $.cookie("uid") + "&key=" + b + "&page=" + 1 + "&order=update_time",
         type: "get",
         xhrFields: {withCredentials: true},
         crossDomain: true,
-        success: function (d) {
-            if (d.respCode === 1) {
+        success: function (data) {
+            if (data.respCode === 1) {
                 $("[class='QAfdwP tvPMvPb']").append("<li id='new' class='fufHyA gObdAzb ' style='width:10%;'><span class='text'>所在目录</span><span class='xEuDywb'></span><span class='icon aHEytd icon-up'></span><span class='icon sFxCFbb icon-downtitle'></span></li>");
                 $("[class='fufHyA gObdAzb MCGAxG']").css("width", "13%");
                 $("[class='QAfdwP tvPMvPb'] li").addClass("BEPxaPb");
@@ -513,12 +517,14 @@ function loadContent2(b) {
                 $("[class='QAfdwP tvPMvPb'] li").unbind("click");
                 var c = location.href.split("#/")[0];
                 history.pushState(null, "", c + "#/search?key=" + b);
-                historyMap.set(location.href, d.respData);
-                showContent2(d.respData)
+                historyMap.set(location.href, data.respData);
+                showContent2(data.respData)
+            } else {
+                alert(data.respMsg)
             }
         },
-        error: function () {
-            alert("服务器错误，搜索失败")
+        error: function (data) {
+            alert(data.respMsg)
         }
     })
 }
@@ -560,7 +566,7 @@ function loadContent() {
         g = 0
     }
     $.ajax({
-        url: "http://localhost:8095/api/core/listfile",
+        url: CORE_GATEWAY_URL + "/api/core/listfile",
         type: "get",
         data: {
             "uid": $.cookie("uid"),
@@ -572,9 +578,16 @@ function loadContent() {
         },
         xhrFields: {withCredentials: true},
         crossDomain: true,
-        success: function (m) {
-            historyMap.set(location.href, m.respData);
-            showContent(m.respData)
+        success: function (data) {
+            if (data.respCode === 1) {
+                historyMap.set(location.href, data.respData);
+                showContent(data.respData)
+            } else {
+                alert(data.respMsg);
+            }
+        },
+        error: function (data) {
+            alert(data.respMsg)
         }
     })
 }
@@ -615,7 +628,7 @@ function loadContent1(h) {
         g = 0
     }
     $.ajax({
-        url: "http://localhost:8095/api/core/listfile",
+        url: CORE_GATEWAY_URL + "/api/core/listfile",
         type: "get",
         data: {
             "uid": $.cookie("uid"),
@@ -627,8 +640,15 @@ function loadContent1(h) {
         },
         xhrFields: {withCredentials: true},
         crossDomain: true,
-        success: function (n) {
-            showContent1(n.respData, h)
+        success: function (data) {
+            if (data.respCode === 1) {
+                showContent1(data.respData, h)
+            } else {
+                alert(data.respMsg)
+            }
+        },
+        error: function (data) {
+            alert(data.respMsg);
         }
     })
 }
@@ -941,19 +961,20 @@ function exit() {
     $("#my-confirm").modal({
         closeViaDimmer: 0, onConfirm: function (b) {
             $.ajax({
-                url: "http://localhost:8095/api/user/logout?token=" + $.cookie("token"),
+                url: CORE_GATEWAY_URL + "/api/user/logout?token=" + $.cookie("token"),
                 type: "GET",
                 xhrFields: {withCredentials: true},
                 crossDomain: true,
-                success: function (c) {
-                    if (c.respCode == 1) {
-                        location.href = "http://localhost:8097/"
+                success: function (data) {
+                    if (data.respCode === 1) {
+                        location.href = CORE_PAGE_URL
                     } else {
-                        alert(c.respMsg)
+                        alert(data.respMsg)
                     }
                 }
             })
         }, onCancel: function () {
+
         }
     })
 }
@@ -962,20 +983,27 @@ function loadFolder(c, d) {
     var b = folderMap.get(c);
     if (b == null) {
         $.ajax({
-            url: "http://localhost:8095/api/core/listfolder",
+            url: CORE_GATEWAY_URL + "/api/core/listfolder",
             type: "get",
             data: {"uid": $.cookie("uid"), "parentPath": c,},
             xhrFields: {withCredentials: true},
             crossDomain: true,
             dataType: "json",
-            success: function (f) {
-                var e = f.respData;
-                folderMap.set(c, e);
-                if (c == "/") {
-                    showFolder(e, $(".treeview-root"))
+            success: function (data) {
+                if (data.respCode === 1) {
+                    var e = data.respData;
+                    folderMap.set(c, e);
+                    if (c == "/") {
+                        showFolder(e, $(".treeview-root"))
+                    } else {
+                        showFolder(e, d)
+                    }
                 } else {
-                    showFolder(e, d)
+                    alert(data.respMsg);
                 }
+            },
+            error: function (data) {
+                alert(data.respMsg)
             }
         })
     } else {
@@ -1046,11 +1074,11 @@ function copyAndMove(id, chooseNum, dest) {
         vids.push(contentVal.uuid)
     }
     $.ajax({
-        url: "http://localhost:8095/api/core/copyormovefile",
+        url: CORE_GATEWAY_URL + "/api/core/copyormovefile",
         type: "put",
         data: JSON.stringify({"uid": $.cookie("uid"), "vids": JSON.stringify(vids), "opera": id, "dest": dest}),
         xhrFields: {withCredentials: true},
-        contentType:'application/json;charset=UTF-8',
+        contentType: 'application/json;charset=UTF-8',
         crossDomain: true,
         dataType: "json",
         success: function (data) {
@@ -1060,7 +1088,7 @@ function copyAndMove(id, chooseNum, dest) {
                 flashContent();
                 $(".QxJxtg").removeClass("cazEfA");
                 $(".EzubGg").removeClass("EzubGg");
-                alert("操作成功")
+                alert(data.respMsg)
             } else {
                 $(".QxJxtg").removeClass("cazEfA");
                 $(".EzubGg").removeClass("EzubGg");
@@ -1071,10 +1099,10 @@ function copyAndMove(id, chooseNum, dest) {
             $(".tcuLAu").css("display", "inline-block");
             $(".QDDOQB").css("display", "none")
         },
-        error: function () {
+        error: function (data) {
             $(".module-canvas").css("display", "none");
             $("#fileTreeDialog").css("display", "none");
-            alert("服务器错误，操作失败")
+            alert(data.respMsg)
         }
     })
 }
@@ -1089,7 +1117,7 @@ function download(chooseNum) {
     var form = $("<form id=" + index + ">");
     form.attr("style", "display:none");
     form.attr("method", "get");
-    form.attr("action", "http://localhost:8096/api/file/download");
+    form.attr("action", CORE_FILE_GATEWAY_URL + "/api/file/download");
     var input1 = $("<input>");
     input1.attr("type", "hidden");
     input1.attr("name", "vids");
@@ -1120,19 +1148,19 @@ function changePwd() {
                 f.setPublicKey($("#publicKey").val());
                 var d = f.encrypt(g);
                 $.ajax({
-                    url: "http://localhost:8095/api/edge/regcheckpwd",
+                    url: CORE_GATEWAY_URL + "/api/edge/regcheckpwd",
                     type: "post",
                     data: {"password": d, "RSAKey": $("#RSAKey").val()},
                     xhrFields: {withCredentials: true},
                     crossDomain: true,
                     dataType: "json",
-                    success: function (h) {
-                        if (h.respCode === 0) {
+                    success: function (data) {
+                        if (data.respCode === 0) {
                             $(".am-modal-prompt-input").val("");
-                            alert(h.respMsg)
+                            alert(data.respMsg)
                         } else {
                             $.ajax({
-                                url: "http://localhost:8095/api/user/changepwd",
+                                url: CORE_GATEWAY_URL + "/api/user/changepwd",
                                 type: "post",
                                 data: JSON.stringify({
                                     "token": $.cookie("token"),
@@ -1142,22 +1170,24 @@ function changePwd() {
                                 }),
                                 xhrFields: {withCredentials: true},
                                 crossDomain: true,
-                                contentType:'application/json;charset=UTF-8',
+                                contentType: 'application/json;charset=UTF-8',
                                 dataType: "json",
-                                success: function (j) {
-                                    if (j.respCode === 1) {
-                                        alert("修改成功");
-                                        location.href = "http://localhost:8097/"
+                                success: function (data) {
+                                    if (data.respCode === 1) {
+                                        alert(data.respMsg);
+                                        location.href = CORE_PAGE_URL
+                                    } else {
+                                        alert(data.respMsg)
                                     }
                                 },
-                                error: function () {
-                                    alert("服务器错误")
+                                error: function (data) {
+                                    alert(data.respMsg)
                                 }
                             })
                         }
                     }
                 })
-            } else if(g != e){
+            } else if (g != e) {
                 $(".am-modal-prompt-input").val("");
                 alert("新密码和确认密码必须相同");
             }
@@ -1213,7 +1243,7 @@ function uploadPic() {
                     g.append("uid", $.cookie("uid"));
                     g.append("file", e);
                     $.ajax({
-                        url: "http://localhost:8095/api/user/uploadpic",
+                        url: CORE_GATEWAY_URL + "/api/user/uploadpic",
                         type: "post",
                         contentType: false,
                         data: g,
@@ -1222,17 +1252,17 @@ function uploadPic() {
                         xhrFields: {withCredentials: true},
                         crossDomain: true,
                         dataType: "json",
-                        success: function (j) {
-                            if (j.respCode == 1) {
-                                alert("上传成功");
+                        success: function (data) {
+                            if (data.respCode === 1) {
+                                alert(data.respMsg);
                                 loadImg();
                                 $("#uploadPic").modal("close")
                             } else {
-                                alert("服务器错误")
+                                alert(data.respMsg)
                             }
                         },
-                        error: function () {
-                            alert("服务器错误")
+                        error: function (data) {
+                            alert(data.respMsg)
                         }
                     })
                 }
@@ -1248,14 +1278,19 @@ function uploadPic() {
 
 function loadImg() {
     $.ajax({
-        url: "http://localhost:8095/api/user/loadimg?uid=" + $.cookie("uid"),
+        url: CORE_GATEWAY_URL + "/api/user/loadimg?uid=" + $.cookie("uid"),
         type: "GET",
         xhrFields: {withCredentials: true},
         crossDomain: true,
-        success: function (b) {
-            $(".user-photo").css("background-image", "url(http://192.168.93.128/" + b.respData + ")")
+        success: function (data) {
+            if (data.respCode === 1) {
+                $(".user-photo").css("background-image", "url(" + FILE_URL + "/" + data.respData + ")")
+            } else {
+                alert(data.respMsg)
+            }
         },
-        error: function () {
+        error: function (data) {
+            alert(data.respMsg)
         }
     })
 }
@@ -1269,9 +1304,9 @@ function createShare(chooseNum) {
     }
     var flag = $("input[name='share-method']:checked").val();
     $.ajax({
-        url: "http://localhost:8095/api/share/share",
+        url: CORE_GATEWAY_URL + "/api/share/share",
         type: "post",
-        contentType:'application/json;charset=UTF-8',
+        contentType: 'application/json;charset=UTF-8',
         data: JSON.stringify({
             "uid": $.cookie("uid"),
             "vids": JSON.stringify(vids),
@@ -1282,24 +1317,28 @@ function createShare(chooseNum) {
         crossDomain: true,
         dataType: "json",
         success: function (data) {
-            if (data.respData.indexOf(",") > -1) {
-                $(".share-validity-tip").css("right", "150px");
-                $(".create-link").addClass("private-link has-create");
-                $("#createShare").css("display", "none");
-                $("#cel").children("span").children("span").html("关闭");
-                $(".share-url").val("http://localhost:8097/s/" + data.respData.substring(0, data.respData.lastIndexOf(",")));
-                $(".share-password").val(data.respData.substring(data.respData.lastIndexOf(",") + 1, data.respData.length));
-                $(".copyPrivate").val("http://localhost:8097/s/" + (data.respData.substring(0, data.respData.lastIndexOf(","))) + " 提取密码:" + data.respData.substring(data.respData.lastIndexOf(",") + 1, data.respData.length))
+            if (data.respCode === 1) {
+                if (data.respData.indexOf(",") > -1) {
+                    $(".share-validity-tip").css("right", "150px");
+                    $(".create-link").addClass("private-link has-create");
+                    $("#createShare").css("display", "none");
+                    $("#cel").children("span").children("span").html("关闭");
+                    $(".share-url").val(CORE_PAGE_URL + "/s/" + data.respData.substring(0, data.respData.lastIndexOf(",")));
+                    $(".share-password").val(data.respData.substring(data.respData.lastIndexOf(",") + 1, data.respData.length));
+                    $(".copyPrivate").val(CORE_PAGE_URL + "/s/" + (data.respData.substring(0, data.respData.lastIndexOf(","))) + " 提取密码:" + data.respData.substring(data.respData.lastIndexOf(",") + 1, data.respData.length))
+                } else {
+                    $(".share-validity-tip").css("right", "115px");
+                    $(".create-link").addClass("public-link has-create");
+                    $("#createShare").css("display", "none");
+                    $("#cel").children("span").children("span").html("关闭");
+                    $(".share-url").val(CORE_PAGE_URL + "/s/" + data.respData)
+                }
             } else {
-                $(".share-validity-tip").css("right", "115px");
-                $(".create-link").addClass("public-link has-create");
-                $("#createShare").css("display", "none");
-                $("#cel").children("span").children("span").html("关闭");
-                $(".share-url").val("http://localhost:8097/s/" + data.respData)
+                alert(data.respMsg);
             }
         },
-        error: function () {
-            alert("服务器错误")
+        error: function (data) {
+            alert(data.respMsg)
         }
     })
 };
