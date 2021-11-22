@@ -1,11 +1,11 @@
 var REGIST = {
     checkInput: function () {
-        checkPhone("a");
-        if ($("#TANGRAM__PSP_3__phoneError").text() == "") {
-            checkUsername("a");
-            if ($("#TANGRAM__PSP_3__userNameError").text() == "") {
-                checkPassword("a");
-                if ($("#TANGRAM__PSP_3__passwordError").text() == "") {
+        checkPhone();
+        if ($("#TANGRAM__PSP_3__phoneError").text() === "") {
+            checkUsername();
+            if ($("#TANGRAM__PSP_3__userNameError").text() === "") {
+                checkPassword();
+                if ($("#TANGRAM__PSP_3__passwordError").text() === "") {
                     return true;
                 }
             }
@@ -25,19 +25,18 @@ var REGIST = {
             "pid": $("#pid").val()
         }
         $.ajax({
-            url: "http://localhost:8095/api/user/regphone",
+            url: CORE_GATEWAY_URL + "/api/user/regphone",
             type: "post",
-            data:  JSON.stringify(user),
-			contentType:'application/json;charset=UTF-8',
+            data: JSON.stringify(user),
+            contentType: 'application/json;charset=UTF-8',
             xhrFields: {
                 withCredentials: true
             },
             crossDomain: true,
             dataType: "json", //指定服务器返回的数据类型
             success: function (data) {
-                if (data.respCode == 1) {
-                    location.href = "http://localhost:8097/disk/home";
-                    //window.location.reload();
+                if (data.respCode === 1) {
+                    location.href = CORE_PAGE_URL + "/disk/home";
                 } else {
                     alert(data.respMsg);
                 }
@@ -65,23 +64,23 @@ $(function () {
     $("#TANGRAM__PSP_3__verifyCodeSend").click(
         function () {
             checkPhone("b");
-            if (!$("#TANGRAM__PSP_3__phoneError").text() == "" || $("#inputPhone").val() == "") {
-                if ($("#inputPhone").val() == "") {
+            if (!$("#TANGRAM__PSP_3__phoneError").text() === "" || $("#inputPhone").val() === "") {
+                if ($("#inputPhone").val() === "") {
                     $("#TANGRAM__PSP_3__phoneError").text("请输入手机号");
                 }
             } else {
                 $.ajax({
-                    url: "http://localhost:8095/api/user/regphonesend",
+                    url: CORE_GATEWAY_URL + "/api/user/regphonesend",
                     type: "post",
                     data: JSON.stringify({"phoneNum": $("#inputPhone").val()}),
-					contentType:'application/json;charset=UTF-8',
+                    contentType: 'application/json;charset=UTF-8',
                     xhrFields: {
                         withCredentials: true
                     },
                     crossDomain: true,
                     dataType: "json", //指定服务器返回的数据类型
                     success: function (data) {
-                        if (data.respCode == 1) {
+                        if (data.respCode === 1) {
                             $("#vcodestr").val(data.respData);
                             $("#checkImg").attr('src', getImg(data.respData));
                             $("#verfiCode").val("");
@@ -105,17 +104,17 @@ $(function () {
         var phoneNum = $("#inputPhone").val();
         var vcodestr = $("#vcodestr").val();
         $.ajax({
-            url: "http://localhost:8095/api/user/regphonesend",
+            url: CORE_GATEWAY_URL + "/api/user/regphonesend",
             type: "post",
             data: JSON.stringify({"phoneNum": phoneNum, "verfyCode": VerfyCode, "vcodestr": vcodestr}),
-			contentType:'application/json;charset=UTF-8',
+            contentType: 'application/json;charset=UTF-8',
             xhrFields: {
                 withCredentials: true
             },
             crossDomain: true,
             dataType: "json", //指定服务器返回的数据类型
             success: function (data) {
-                if (data.respCode == 1) {
+                if (data.respCode === 1) {
                     $("#dialog").dialog("close");
                     new invokeSettime("#TANGRAM__PSP_3__verifyCodeSend");
                 } else {
@@ -129,7 +128,7 @@ $(function () {
     $("#TANGRAM__PSP_4__password").focus(function () {
         if (!$(this).hasClass("input-focus")) {
             $(this).addClass("input-focus");
-            $.get("http://localhost:8095/api/edge/getpublickey", function (data) {
+            $.get(CORE_GATEWAY_URL + "/api/edge/getpublickey", function (data) {
                 $("#publicKey").val(data.respData.publicKey);
                 $("#RSAKey").val(data.respData.RSAKey);
             });
@@ -140,13 +139,13 @@ $(function () {
     });
     //校验表格
     $("#inputUsername").bind("blur", function () {
-        checkUsername("b");
+        checkUsername();
     });
     $("#inputPhone").bind("blur", function () {
-        checkPhone("b");
+        checkPhone();
     });
     $("#TANGRAM__PSP_4__password").bind("blur", function () {
-        checkPassword("b");
+        checkPassword();
     });
 });
 
@@ -156,7 +155,7 @@ function invokeSettime(obj) {
     settime(obj);
 
     function settime(obj) {
-        if (countdown == 0) {
+        if (countdown === 0) {
             $(obj).attr("disabled", false);
             $(obj).val("获取验证码");
             countdown = 60;
@@ -172,107 +171,51 @@ function invokeSettime(obj) {
     }
 }
 
-function checkUsername(flag) {
-    if ($("#registForm input[name='username']").val() != "") {
-        /*$.ajax({
-            url: "http://localhost:8095/api/user/regcheckusername",
-            type: "post",
-            data: {"username": $("#registForm input[name='username']").val()},
-            xhrFields: {
-                withCredentials: true
-            },
-            crossDomain: true,
-            dataType: "json", //指定服务器返回的数据类型
-            success: function (data) {
-                if (data.respCode == 0) {
-                    $("#TANGRAM__PSP_3__userNameError").html(
-                        data.respMsg);
-                    return false;
-                } else {
-                    $("#TANGRAM__PSP_3__userNameError").html("");
-                    return true;
-                }
+function checkUsername() {
+    if ($("#registForm input[name='username']").val() !== "") {
+        $.get(CORE_GATEWAY_URL + "/api/user/regcheckusername?userName=" + $("#registForm input[name='username']").val(), function (data) {
+            if (data.respCode == 0) {
+                $("#TANGRAM__PSP_3__userNameError").html(
+                    data.respMsg);
+                return false;
+            } else {
+                $("#TANGRAM__PSP_3__userNameError").html("");
+                return true;
             }
-        });*/
-		$.get("http://localhost:8095/api/user/regcheckusername?userName=" + $("#registForm input[name='username']").val(), function(data) {
-			if (data.respCode == 0) {
-				$("#TANGRAM__PSP_3__userNameError").html(
-					data.respMsg);
-				return false;
-			} else {
-				$("#TANGRAM__PSP_3__userNameError").html("");
-				return true;
-			}
-		});
+        });
     } else {
-        if (flag == "a") {
-            $("#TANGRAM__PSP_3__userNameError").html("请输入用户名");
-            return false;
-        } else {
-            $("#TANGRAM__PSP_3__userNameError").html("");
-            return false;
-        }
+        $("#TANGRAM__PSP_3__userNameError").html("请输入用户名");
+        return false;
     }
 }
 
-function checkPhone(flag) {
-    if ($("#inputPhone").val() != "") {
-        /*$.ajax({
-            url : "http://localhost:8095/api/user/regcheckphone",
-            type : "post",
-            data : { "phoneNum" : $("#inputPhone").val()},
-            xhrFields : {
-                withCredentials : true
-            },
-            crossDomain : true,
-            dataType : "json", //指定服务器返回的数据类型
-            success : function(data) {
-                if (data.respCode==0) {
-                    $("#TANGRAM__PSP_3__phoneError").html(
-                            data.respMsg);
-                    return false;
-                }else if(data.respCode==144){
-                    $("#inputPhone").val("");
-                    alert("该手机号已被注册，请更换");
-                }
-                    else{
-                    $("#TANGRAM__PSP_3__phoneError").html("");
-                    return true;
-                }
-            }
-        });*/
-        $.get("http://localhost:8095/api/user/regcheckphone?phoneNum=" + $("#inputPhone").val(), function (data) {
-            if (data.respCode == 0) {
+function checkPhone() {
+    if ($("#inputPhone").val() !== "") {
+        $.get(CORE_GATEWAY_URL + "/api/user/regcheckphone?phoneNum=" + $("#inputPhone").val(), function (data) {
+            if (data.respCode === 0) {
                 $("#TANGRAM__PSP_3__phoneError").html(
                     data.respMsg);
                 return false;
-            } else if (data.respCode == 144) {
-                $("#inputPhone").val("");
-                alert("该手机号已被注册，请更换");
             } else {
                 $("#TANGRAM__PSP_3__phoneError").html("");
                 return true;
             }
         });
     } else {
-        if (flag == "a") {
-            $("#TANGRAM__PSP_3__phoneError").html("请输入手机号");
-            return false;
-        }
-        $("#TANGRAM__PSP_3__phoneError").html("");
+        $("#TANGRAM__PSP_3__phoneError").html("请输入手机号");
         return false;
     }
 
 }
 
-function checkPassword(flag) {
+function checkPassword() {
     var password = $("#registForm input[name='password']").val();
-    if (password != "") {
+    if (password !== "") {
         var encrypt = new JSEncrypt();
         encrypt.setPublicKey($("#publicKey").val());
         var passwordEnc = encrypt.encrypt(password);
         $.ajax({
-            url: "http://localhost:8095/api/edge/regcheckpwd",
+            url: CORE_GATEWAY_URL + "/api/edge/regcheckpwd",
             type: "post",
             data: {
                 "password": passwordEnc,
@@ -284,7 +227,7 @@ function checkPassword(flag) {
             crossDomain: true,
             dataType: "json", //指定服务器返回的数据类型
             success: function (data) {
-                if (data.respCode == 0) {
+                if (data.respCode === 0) {
                     $("#TANGRAM__PSP_3__passwordError").html(
                         data.respMsg);
                     return false;
@@ -295,44 +238,23 @@ function checkPassword(flag) {
             }
         });
     } else {
-        if (flag == "a") {
-            $("#TANGRAM__PSP_3__passwordError").html("请输入密码");
-            return false;
-        }
-        $("#TANGRAM__PSP_3__passwordError").html("");
+        $("#TANGRAM__PSP_3__passwordError").html("请输入密码");
         return false;
     }
 }
 
 // 更换验证码
 function getImg(a) {
-    $("#checkImg").attr('src', "http://localhost:8095/api/edge/getverfyimg/" + a);
+    $("#checkImg").attr('src', CORE_GATEWAY_URL + "/api/edge/getverfyimg/" + a);
 }
 
 function change() {
-    /*$.ajax({
-        url : "http://localhost:8095/api/edge/regsmscodestr",
-        type : "post",
-        xhrFields : {
-            withCredentials : true
-        },
-        crossDomain : true,
-        dataType : "json", //指定服务器返回的数据类型
-        success : function(data) {
-            if (data.respCode==1) {
-                $("#vcodestr").val(data.respData);
-                $("#checkImg").attr('src',getImg(data.respData));
-            } else {
-    alert("服务器错误");
-            }
-        }
-    });*/
-    $.get("http://localhost:8095/api/edge/regsmscodestr", function (data) {
-        if (data.respCode == 1) {
+    $.get(CORE_GATEWAY_URL + "/api/edge/regsmscodestr", function (data) {
+        if (data.respCode === 1) {
             $("#vcodestr").val(data.respData);
             $("#checkImg").attr('src', getImg(data.respData));
         } else {
-            alert("服务器错误");
+            alert(data.respMsg);
         }
     });
 }
