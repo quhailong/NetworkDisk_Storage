@@ -50,6 +50,15 @@ pan-framework---框架组件抽取
 5. 短信参数配置在nacos配置user-service里（云之讯平台）
 http://localhost:8097/为主界面，数据库sql脚本和nacos配置均在工程根目录。  
 系统默认账户名：quhailong，密码123456
+6. 修改pan-regist-page项目中的src/main/resources/static/js/config.js文件  
+- CORE_GATEWAY_URL为pan-core-gateway的url和端口
+- CORE_PAGE_URL为pan-core-page的url和端口
+7. 修改pan-regist-page项目中的src/main/resources/static/assets2/js/config.js文件
+- CORE_GATEWAY_URL为pan-core-gateway的url和端口
+- CORE_FILE_GATEWAY_URL为pan-file-gateway的url和端口
+- CORE_PAGE_URL为pan-core-page的url和端口
+- REGIST_PAGE_URL为pan-regist-page的url和端口
+- FILE_URL为fastdfs的nginx(映射文件)，一般为80端口
 >注意：每个项目中的resources文件夹需要IDEA识别出来，否则不能读取配置文件  
 ![Alt text](./9.png)
 ## 系统部分截图
