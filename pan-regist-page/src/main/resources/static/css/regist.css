@@ -81,7 +81,7 @@ a {
     display: block;
     float: left;
     height: 42px;
-    width: 65px;
+    width: 100px;
     margin-right: 10px;
     line-height: 42px;
     font-size: 14px;
@@ -146,7 +146,6 @@ a {
     font-size: 14px;
 }
 .tang-pass-reg .pass-item-error {
-    float: left;
     position: relative;
     width: 250px;
     top: 6px;
