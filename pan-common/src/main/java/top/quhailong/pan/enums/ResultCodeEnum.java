@@ -6,6 +6,7 @@ public enum ResultCodeEnum {
     FORBIDDEN(403, "拒绝访问", "拒绝访问"),
     UNAVAILABLE(503, "服务不可用", "连不上服务"),
     SERVICE_EXCEPTION(0, "服务错误", "服务内部异常"),
+    FILE_OR_DIR_REPEAT_NAME(50000, "有重名", "文件或文件夹有重名"),
     IDEMPOTENT_LOCK_ERROR(99999, "请勿重复提交", "重复提交幂等锁");
 
 
