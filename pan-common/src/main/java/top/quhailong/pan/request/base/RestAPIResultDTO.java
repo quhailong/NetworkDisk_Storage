@@ -36,7 +36,7 @@ public class RestAPIResultDTO<T> extends AbstractAPIResultDTO<T> {
     public static AbstractAPIResultDTO Error() {
         AbstractAPIResultDTO abstractApiResultDTO = new AbstractAPIResultDTO<>();
         abstractApiResultDTO.setRespCode(ResultCodeEnum.SERVICE_EXCEPTION.getCode());
-        abstractApiResultDTO.setRespMsg(ResultCodeEnum.SERVICE_EXCEPTION.getDesc());
+        abstractApiResultDTO.setRespMsg(ResultCodeEnum.SERVICE_EXCEPTION.getMessage());
         abstractApiResultDTO.setRespData(false);
         return abstractApiResultDTO;
     }
@@ -50,7 +50,7 @@ public class RestAPIResultDTO<T> extends AbstractAPIResultDTO<T> {
     public static <T> RestAPIResultDTO<T> Success(T t) {
         RestAPIResultDTO<T> restAPIResultDTO = new RestAPIResultDTO<>();
         restAPIResultDTO.setRespCode(ResultCodeEnum.SUCCESS.getCode());
-        restAPIResultDTO.setRespMsg(ResultCodeEnum.SUCCESS.getDesc());
+        restAPIResultDTO.setRespMsg(ResultCodeEnum.SUCCESS.getMessage());
         restAPIResultDTO.setRespData(t);
         return restAPIResultDTO;
     }
@@ -93,7 +93,7 @@ public class RestAPIResultDTO<T> extends AbstractAPIResultDTO<T> {
     public static <T> RestAPIResultDTO<T> Error(T t, ResultCodeEnum resultCodeEnum) {
         RestAPIResultDTO<T> restAPIResultDTO = new RestAPIResultDTO<>();
         restAPIResultDTO.setRespCode(resultCodeEnum.getCode());
-        restAPIResultDTO.setRespMsg(resultCodeEnum.getDesc());
+        restAPIResultDTO.setRespMsg(resultCodeEnum.getMessage());
         restAPIResultDTO.setRespData(t);
         return restAPIResultDTO;
     }

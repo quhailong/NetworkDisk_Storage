@@ -23,7 +23,6 @@ import top.quhailong.pan.utils.*;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -69,7 +68,7 @@ public class RegisterServiceImpl implements RegisterService {
         if (Pattern.compile("^[1][3,4,5,7,8][0-9]{9}$").matcher(phoneNum).matches()) {
             UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserNameOrPhone(null, phoneNum);
             if (userInfoDO != null) {
-                return RestAPIResultDTO.Error("用户名已经被使用了", 144);
+                return RestAPIResultDTO.Error("手机号已经被使用了");
             }
             return RestAPIResultDTO.Success("用户名没有被使用");
         } else {
