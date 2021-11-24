@@ -1,25 +1,3 @@
-spring:
-  application: 
-    name: core-gateway
-  servlet:
-    multipart:
-      maxFileSize: 800MB
-      maxRequestSize: 800MB
-  cloud:
-    gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            # 允许携带认证信息
-            allow-credentials: true
-            # 允许跨域的源(网站域名/ip)，设置*为全部
-            allowed-origins: "*"
-            # 允许跨域请求里的head字段，设置*为全部
-            allowed-headers: "*"
-            # 允许跨域的method， 默认为GET和OPTIONS，设置*为全部
-            allowed-methods: "*"
-            # 跨域允许的有效期
-            max-age: 3600
 management:
   endpoints:
     web:
@@ -41,8 +19,31 @@ management:
   health:
     defaults:
       enabled: true
-
-    
-ribbon: 
-  ReadTimeout: 60000
-  ConnectTimeout: 60000
+feign:
+  hystrix:
+    enabled: true
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            # 允许携带认证信息
+            allow-credentials: true
+            # 允许跨域的源(网站域名/ip)，设置*为全部
+            allowed-origins: "*"
+            # 允许跨域请求里的head字段，设置*为全部
+            allowed-headers: "*"
+            # 允许跨域的method， 默认为GET和OPTIONS，设置*为全部
+            allowed-methods: "*"
+            # 跨域允许的有效期
+            max-age: 3600
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      default-filters:
+        - name: Hystrix
+          args:
+            name: fallbackcmd
+            fallbackUri: forward:/fallback
