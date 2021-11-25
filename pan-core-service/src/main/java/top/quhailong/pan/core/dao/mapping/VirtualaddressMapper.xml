@@ -214,6 +214,10 @@
     <if test="addrType != null">
       and addr_type = #{addrType,jdbcType=INTEGER}
     </if>
+    <if test="uuid != null">
+      and uuid != #{uuid,jdbcType=VARCHAR}
+    </if>
+    limit 1
   </select>
 
   <select id="getVirtualAddress" resultMap="BaseResultMap">

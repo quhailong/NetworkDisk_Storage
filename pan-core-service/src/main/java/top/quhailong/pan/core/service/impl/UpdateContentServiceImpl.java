@@ -7,6 +7,7 @@ import top.quhailong.pan.core.dao.VirtualAddressDao;
 import top.quhailong.pan.core.entity.CapacityDO;
 import top.quhailong.pan.core.entity.VirtualAddressDO;
 import top.quhailong.pan.core.service.IUpdateContentService;
+import top.quhailong.pan.enums.ResultCodeEnum;
 import top.quhailong.pan.request.CopyOrMoveFileRequest;
 import top.quhailong.pan.request.CreateDirRequest;
 import top.quhailong.pan.request.CreateVirtualAddressRequest;
@@ -33,26 +34,21 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
      */
     @Override
     public RestAPIResultDTO<String> renameFileOrDirHandle(RenameFileOrDirRequest request) {
-        RestAPIResultDTO<String> panResult = new RestAPIResultDTO<>();
         VirtualAddressDO virtualAddressDO = virtualAddressDao.getVirtualAddress(request.getVid());
         String suffix = "";
         if (virtualAddressDO.getAddrType() != 0) {
             suffix = virtualAddressDO.getFileName().substring(virtualAddressDO.getFileName().lastIndexOf("."));
         }
-        Integer count = virtualAddressDao.checkVirtualAddress(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath(), virtualAddressDO.getAddrType(), virtualAddressDO.getAddrType() != 0 ? request.getNewName() + suffix : request.getNewName());
+        Integer count = virtualAddressDao.checkVirtualAddress(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath(), virtualAddressDO.getAddrType(), virtualAddressDO.getAddrType() != 0 ? request.getNewName() + suffix : request.getNewName(), virtualAddressDO.getUuid());
         if (count == 0 || request.getFlag() != null) {
             if (virtualAddressDO.getAddrType() != 0) {
                 changeFileName(request.getNewName(), virtualAddressDO, count);
             } else {
                 changeDirFileName(request.getNewName(), virtualAddressDO, count);
             }
-            panResult.setRespCode(200);
-            panResult.setRespData("200");
-            return panResult;
+            return RestAPIResultDTO.Success("重命名成功");
         } else {
-            panResult.setRespCode(203);
-            panResult.setRespData("有重名");
-            return panResult;
+            return RestAPIResultDTO.Error(null, ResultCodeEnum.FILE_OR_DIR_REPEAT_NAME);
         }
     }
 
@@ -81,6 +77,13 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
     private void changeDirFileName(String newName, VirtualAddressDO virtualAddressDO, Integer count) {
         String oldName = virtualAddressDO.getFileName();
         if (count > 0) {
+            while (true) {
+                Integer concurrentCount = virtualAddressDao.checkVirtualAddress(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath(), virtualAddressDO.getAddrType(), newName + "(" + count + ")", virtualAddressDO.getUuid());
+                if (concurrentCount == 0) {
+                    break;
+                }
+                count++;
+            }
             virtualAddressDO.setFileName(newName + "(" + count + ")");
         } else {
             virtualAddressDO.setFileName(newName);
@@ -93,15 +96,15 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
             for (VirtualAddressDO virtualAddressLike : virtualAddressDOList) {
                 String suff;
                 String pre;
-                if (virtualAddressLike.getParentPath().equals("/")) {
+                if (virtualAddressDO.getParentPath().equals("/")) {
                     suff = virtualAddressLike.getParentPath().substring((virtualAddressDO.getParentPath() + oldName).length());
                 } else {
                     suff = virtualAddressLike.getParentPath().substring((virtualAddressDO.getParentPath() + "/" + oldName).length());
                 }
-                if (virtualAddressLike.getParentPath().equals("/")) {
-                    pre = virtualAddressLike.getParentPath() + virtualAddressDO.getFileName();
+                if (virtualAddressDO.getParentPath().equals("/")) {
+                    pre = virtualAddressDO.getParentPath() + virtualAddressDO.getFileName();
                 } else {
-                    pre = virtualAddressLike.getParentPath() + "/" + virtualAddressDO.getFileName();
+                    pre = virtualAddressDO.getParentPath() + "/" + virtualAddressDO.getFileName();
                 }
                 virtualAddressLike.setParentPath(pre + suff);
                 virtualAddressDao.updateVirtualAddress(virtualAddressLike);
@@ -128,7 +131,7 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
                 }
             }
         }
-        return RestAPIResultDTO.Success(null);
+        return RestAPIResultDTO.Success("删除成功");
     }
 
     /**
@@ -174,13 +177,20 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
         if (!Pattern.compile("^[a-zA-Z0-9\u4E00-\u9FA5_]+$").matcher(request.getDirName()).matches()) {
             return RestAPIResultDTO.Error("文件夹长度必须小于20，并且不能包含特殊字符，只能为数字、字母、中文、下划线");
         }
-        Integer count = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getDirName());
+        Integer count = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getDirName(), null);
         VirtualAddressDO virtualAddressDO = new VirtualAddressDO();
         virtualAddressDO.setAddrType(0);
         virtualAddressDO.setDirWhether(1);
         virtualAddressDO.setCreateTime(new Date());
         virtualAddressDO.setFileId(null);
         if (count > 0) {
+            while (true) {
+                Integer concurrentCount = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), 0, request.getDirName() + "(" + count + ")", null);
+                if (concurrentCount == 0) {
+                    break;
+                }
+                count++;
+            }
             virtualAddressDO.setFileName(request.getDirName() + "(" + count + ")");
         } else {
             virtualAddressDO.setFileName(request.getDirName());
@@ -207,8 +217,15 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
         String oldUuid = virtualAddressDO.getUuid();
         String pre = virtualAddressDO.getFileName().substring(0, virtualAddressDO.getFileName().lastIndexOf("."));
         String suffix = virtualAddressDO.getFileName().substring(virtualAddressDO.getFileName().lastIndexOf("."));
-        Integer count = virtualAddressDao.checkVirtualAddress(virtualAddressDO.getUserId(), dest, null, virtualAddressDO.getFileName());
+        Integer count = virtualAddressDao.checkVirtualAddress(virtualAddressDO.getUserId(), dest, null, virtualAddressDO.getFileName(), null);
         if (count > 0) {
+            while (true) {
+                Integer concurrentCount = virtualAddressDao.checkVirtualAddress(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath(), virtualAddressDO.getAddrType(), pre + "(" + count + ")" + suffix, virtualAddressDO.getUuid());
+                if (concurrentCount == 0) {
+                    break;
+                }
+                count++;
+            }
             virtualAddressDO.setFileName(pre + "(" + count + ")" + suffix);
         }
         virtualAddressDO.setUuid(IDUtils.showNextId(new Random().nextInt(30)).toString());
@@ -236,7 +253,7 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
      * @date: 2019/9/24
      */
     private boolean copyOrMoveDirFile(VirtualAddressDO virtualAddressDO, String dest, String opera) {
-        Integer count = virtualAddressDao.checkVirtualAddress(virtualAddressDO.getUserId(), dest, null, virtualAddressDO.getFileName());
+        Integer count = virtualAddressDao.checkVirtualAddress(virtualAddressDO.getUserId(), dest, null, virtualAddressDO.getFileName(), null);
         String uuid = IDUtils.showNextId(new Random().nextInt(30)).toString();
         if (opera.equals("moveOK")) {
             virtualAddressDao.removeVirtualAddress(virtualAddressDO.getUuid());
@@ -246,6 +263,13 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
         virtualAddressDONew.setCreateTime(new Date());
         virtualAddressDONew.setFileId(null);
         if (count > 0) {
+            while (true) {
+                Integer concurrentCount = virtualAddressDao.checkVirtualAddress(virtualAddressDO.getUserId(), virtualAddressDO.getParentPath(), virtualAddressDO.getAddrType(), virtualAddressDO.getFileName() + "(" + count + ")", virtualAddressDO.getUuid());
+                if (concurrentCount == 0) {
+                    break;
+                }
+                count++;
+            }
             virtualAddressDONew.setFileName(virtualAddressDO.getFileName() + "(" + count + ")");
         } else {
             virtualAddressDONew.setFileName(virtualAddressDO.getFileName());
@@ -315,16 +339,23 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
                 }
             }
         }
-        return RestAPIResultDTO.Success("成功");
+        return RestAPIResultDTO.Success("操作成功");
     }
 
     @Override
     public RestAPIResultDTO<Integer> createVirtualAddressHandle(CreateVirtualAddressRequest request) {
         String pre = request.getFileName().substring(0, request.getFileName().lastIndexOf("."));
         String suffix = request.getFileName().substring(request.getFileName().lastIndexOf("."));
-        Integer count = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getFileName());
+        Integer count = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getFileName(), null);
         VirtualAddressDO virtualAddressDO = new VirtualAddressDO();
         if (count > 0) {
+            while (true) {
+                Integer concurrentCount = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), request.getMd5() == null ? 0 : Integer.parseInt(request.getFileType()), pre + "(" + count + ")" + suffix, null);
+                if (concurrentCount == 0) {
+                    break;
+                }
+                count++;
+            }
             virtualAddressDO.setFileName(pre + "(" + count + ")" + suffix);
         } else {
             virtualAddressDO.setFileName(request.getFileName());
@@ -333,9 +364,9 @@ public class UpdateContentServiceImpl implements IUpdateContentService {
         virtualAddressDO.setFileId(request.getFid());
         virtualAddressDO.setUserId(request.getUid());
         virtualAddressDO.setFileMd5(request.getMd5());
-        virtualAddressDO.setAddrType(request.getMd5() == null ? 0 : Integer.valueOf(request.getFileType()));
+        virtualAddressDO.setAddrType(request.getMd5() == null ? 0 : Integer.parseInt(request.getFileType()));
         virtualAddressDO.setDirWhether(request.getMd5() == null ? 1 : 0);
-        virtualAddressDO.setFileSize(request.getMd5() == null ? 0 : Integer.valueOf(request.getFileSizem()));
+        virtualAddressDO.setFileSize(request.getMd5() == null ? 0 : Integer.parseInt(request.getFileSizem()));
         virtualAddressDO.setParentPath(request.getParentPath() == null ? "/" : request.getParentPath());
         virtualAddressDO.setCreateTime(new Date());
         virtualAddressDO.setUpdateTime(new Date());
