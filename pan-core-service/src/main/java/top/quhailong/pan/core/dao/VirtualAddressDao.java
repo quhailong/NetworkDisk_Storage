@@ -42,7 +42,7 @@ public interface VirtualAddressDao {
      * @author: quhailong
      * @date: 2019/9/24
      */
-    Integer checkVirtualAddress(@Param("userId") String userId, @Param("parentPath") String parentPath, @Param("addrType") Integer addrType, @Param("fileName") String fileName);
+    Integer checkVirtualAddress(@Param("userId") String userId, @Param("parentPath") String parentPath, @Param("addrType") Integer addrType, @Param("fileName") String fileName, @Param("uuid") String uuid);
 
     /**
      * 获取虚拟地址信息

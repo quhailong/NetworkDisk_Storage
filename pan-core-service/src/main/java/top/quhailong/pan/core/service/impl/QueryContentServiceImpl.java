@@ -107,7 +107,7 @@ public class QueryContentServiceImpl implements IQueryContentService {
                 }
                 folderInfos.add(folderInfo);
             }
-            if (folderInfos != null && folderInfos.size() > 0) {
+            if (folderInfos.size() > 0) {
                 Map<String, Object> map = new HashMap<>();
                 int i = 0;
                 for (FolderInfo folderInfo : folderInfos) {
@@ -141,7 +141,7 @@ public class QueryContentServiceImpl implements IQueryContentService {
 
     @Override
     public RestAPIResultDTO<Integer> checkDirWhetherHandle(CheckDirWhetherRequest request) {
-        Integer count = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getDirName());
+        Integer count = virtualAddressDao.checkVirtualAddress(request.getUid(), request.getParentPath(), null, request.getDirName(), null);
         return RestAPIResultDTO.Success(count, "成功");
     }
 
