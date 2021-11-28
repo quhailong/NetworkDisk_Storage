@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  top.quhailong.pan.framework.redis.config.PanRedisAutoConfiguration
+  top.quhailong.pan.framework.redis.config.PanRedisAutoConfiguration,\
+  top.quhailong.pan.framework.redis.core.idempotent.aop.IdempotentAopHandler
