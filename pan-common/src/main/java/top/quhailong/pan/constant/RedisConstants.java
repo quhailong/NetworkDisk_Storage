@@ -31,4 +31,8 @@ public class RedisConstants {
      * 注册短信验证码，SMS:手机号
      */
     public static final String SMS = "SMS:%s";
+    /**
+     * 幂等锁,IDEMPOTENT_LOCK:接口唯一标识:用户token
+     */
+    public static final String IDEMPOTENT_LOCK = "IDEMPOTENT_LOCK:%s:%s";
 }
