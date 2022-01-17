@@ -75,5 +75,5 @@ http://localhost:8097/为主界面，数据库sql脚本和nacos配置均在工�
 QQ：961584293  
 WX: ququhailong  
 邮箱:qhl961584293@163.com  
-如果觉得还行，就请点个赞把
+如果觉得还行，就请点个赞把  
 感谢JetBrains提供的免费License
