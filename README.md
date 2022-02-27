@@ -78,5 +78,5 @@ fastdfs配置文件在pan-file-service模块resource目录下的fdfs_client.conf
 QQ：961584293  
 WX: ququhailong  
 邮箱:qhl961584293@163.com  
-如果觉得还行，就请点个赞把
+如果觉得还行，就请点个赞把  
 感谢JetBrains提供的免费License
