@@ -43,17 +43,20 @@ pan-share-service---文件分享服务
 pan-user-service---系统用户服务  
 pan-framework---框架组件抽取  
 ## 项目运行顺序
-1. 先在windows或linux平台安装nacos2.0.3，导入nacos_config.zip（nacos具体使用请百度）
+1. 先在windows或linux平台安装nacos2.0.3，导入nacos_config.zip（nacos具体使用请百度，数据库配置和redis集群配置在common-config里面，需要将ip地址改为自己的，如果使用单机redis请修改配置中的redis节点配置参数结构）
 2. 将项目resources目录下bootstrap.yml文件中的nacos服务地址账号密码改成自己的。
 3. 将pan.sql导入到你的数据库中
 4. pan-parent、pan-common、pan-service-api和pan-framework需要install（按照顺序），之后启动其他模块（无顺序）  
 5. 短信参数配置在nacos配置user-service里（云之讯平台）
 http://localhost:8097/为主界面，数据库sql脚本和nacos配置均在工程根目录。  
 系统默认账户名：quhailong，密码123456
-6. 修改pan-regist-page项目中的src/main/resources/static/js/config.js文件  
+6. 安装fastdfs组件的maven依赖，参照https://gitee.com/fastdfs100/fastdfs-client-java  
+fastdfs组件搭建参照：https://blog.csdn.net/prcyang/article/details/89946190  
+fastdfs配置文件在pan-file-service模块resource目录下的fdfs_client.conf中
+7. 修改pan-regist-page项目中的src/main/resources/static/js/config.js文件  
 - CORE_GATEWAY_URL为pan-core-gateway的url和端口
 - CORE_PAGE_URL为pan-core-page的url和端口
-7. 修改pan-regist-page项目中的src/main/resources/static/assets2/js/config.js文件
+8.修改pan-regist-page项目中的src/main/resources/static/assets2/js/config.js文件
 - CORE_GATEWAY_URL为pan-core-gateway的url和端口
 - CORE_FILE_GATEWAY_URL为pan-file-gateway的url和端口
 - CORE_PAGE_URL为pan-core-page的url和端口
