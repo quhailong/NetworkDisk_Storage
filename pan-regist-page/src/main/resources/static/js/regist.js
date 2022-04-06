@@ -19,7 +19,7 @@ var REGIST = {
         var user = {
             "username": $("#registForm input[name='username']").val(),
             "password": passwordEnc,
-            "rsaKey": $("#RSAKey").val(),
+            "publicKey": $("#publicKey").val(),
             "verifyCode": $("#inputverifyCode").val(),
             "phoneNum": $("#inputPhone").val(),
             "pid": $("#pid").val()
@@ -129,8 +129,7 @@ $(function () {
         if (!$(this).hasClass("input-focus")) {
             $(this).addClass("input-focus");
             $.get(CORE_GATEWAY_URL + "/api/edge/getpublickey", function (data) {
-                $("#publicKey").val(data.respData.publicKey);
-                $("#RSAKey").val(data.respData.RSAKey);
+                $("#publicKey").val(data.respData);
             });
         }
     });
@@ -219,7 +218,7 @@ function checkPassword() {
             type: "post",
             data: {
                 "password": passwordEnc,
-                "RSAKey": $("#RSAKey").val()
+                "publicKey": $("#publicKey").val()
             },
             xhrFields: {
                 withCredentials: true

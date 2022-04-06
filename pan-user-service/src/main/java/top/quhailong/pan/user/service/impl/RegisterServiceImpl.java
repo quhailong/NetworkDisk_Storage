@@ -82,7 +82,8 @@ public class RegisterServiceImpl implements RegisterService {
             if (redisUtil.hasKey(String.format(RedisConstants.SMS, request.getPhoneNum())) && redisUtil.get(String.format(RedisConstants.SMS, request.getPhoneNum())).equals(request.getVerifyCode())) {
                 UserInfoDO userInfoDO = new UserInfoDO();
                 String salt = IDUtils.showNextId(new Random().nextInt(30)).toString().substring(0, 16);
-                userInfoDO.setPassword(MD5Utils.generate(RSAUtils.decryptDataOnJava(request.getPassword(), request.getRsaKey()), salt));
+                String rsaKey = redisUtil.get(request.getPublicKey());
+                userInfoDO.setPassword(MD5Utils.generate(RSAUtils.decryptDataOnJava(request.getPassword(), rsaKey), salt));
                 userInfoDO.setSalt(salt);
                 userInfoDO.setPhone(request.getPhoneNum());
                 userInfoDO.setUserName(request.getUsername());
@@ -98,6 +99,7 @@ public class RegisterServiceImpl implements RegisterService {
                         JSONUtils.toJSONString(userInfoDO), 12 * 60 * 60 * 1000);
                 CookieUtils.addCookie("token", accessToken);
                 CookieUtils.addCookie("uid", userInfoDO.getUserId());
+                redisUtil.delete(request.getPublicKey());
                 return RestAPIResultDTO.Success("注册成功");
             } else {
                 return RestAPIResultDTO.Error("验证码错误");
@@ -151,16 +153,22 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     public RestAPIResultDTO<String> changePwdHandle(ChangePwdRequest request) {
-        String newPassword = RSAUtils.decryptDataOnJava(request.getNewPassword(), request.getRsaKey());
-        UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserId(request.getUid());
-        String salt = IDUtils.showNextId(new Random().nextInt(30)).toString().substring(0, 16);
-        userInfoDO.setPassword(MD5Utils.generate(newPassword, salt));
-        userInfoDO.setSalt(salt);
-        userInfoDO.setUpdateTime(new Date());
-        userInfoDao.updateUserInfo(userInfoDO);
-        CookieUtils.removeCookie("token");
-        CookieUtils.removeCookie("uid");
-        redisUtil.setEx(String.format(RedisConstants.LOGOUT, request.getToken()), request.getToken(), 60 * 60 * 24 * 365, TimeUnit.SECONDS);
+        try {
+            String rsaKey = redisUtil.get(request.getPublicKey());
+            String newPassword = RSAUtils.decryptDataOnJava(request.getNewPassword(), rsaKey);
+            UserInfoDO userInfoDO = userInfoDao.getUserInfoByUserId(request.getUid());
+            String salt = IDUtils.showNextId(new Random().nextInt(30)).toString().substring(0, 16);
+            userInfoDO.setPassword(MD5Utils.generate(newPassword, salt));
+            userInfoDO.setSalt(salt);
+            userInfoDO.setUpdateTime(new Date());
+            userInfoDao.updateUserInfo(userInfoDO);
+            CookieUtils.removeCookie("token");
+            CookieUtils.removeCookie("uid");
+            redisUtil.setEx(String.format(RedisConstants.LOGOUT, request.getToken()), request.getToken(), 60 * 60 * 24 * 365, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            return RestAPIResultDTO.Error("修改失败");
+        }
+        redisUtil.delete(request.getPublicKey());
         return RestAPIResultDTO.Success("修改成功");
     }
 

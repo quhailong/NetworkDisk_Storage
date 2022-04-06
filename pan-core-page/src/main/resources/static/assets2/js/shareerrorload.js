@@ -75,8 +75,7 @@ $(document).ready(function () {
         if (!$(this).hasClass("input-focus")) {
             $(this).addClass("input-focus");
             $.get(CORE_GATEWAY_URL + "/api/edge/getpublickey", function(data){
-                $("#publicKey").val(data.respData.publicKey);
-                $("#RSAKey").val(data.respData.RSAKey);
+                $("#publicKey").val(data.respData);
             });
         }
     });

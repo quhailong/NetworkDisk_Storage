@@ -63,7 +63,7 @@ public class PasswordServiceImpl implements PasswordService {
                     RestAPIResultDTO<String> result = edgeRemote.sendSms(sendSmsRequest);
                     redisUtil.setEx(String.format(RedisConstants.SMSForget, userInfoDO.getPhone()), param, 120, TimeUnit.SECONDS);
                     redisUtil.delete(String.format(RedisConstants.VERFIYCODE, request.getVcodestr()));
-                    if (result.getRespMsg().equals("0")) {
+                    if (result.errorWhether()) {
                         return RestAPIResultDTO.Error("发送短信失败");
                     }
                     return RestAPIResultDTO.Success("短信发送成功");
@@ -83,7 +83,7 @@ public class PasswordServiceImpl implements PasswordService {
         UserInfoDO userInfoDO = userInfoDao.getUserInfoByPassport(username);
         String userPhone = userInfoDO.getPhone();
         if (userPhone == null) {
-            return RestAPIResultDTO.Error("用户已存在",144);
+            return RestAPIResultDTO.Error("用户已存在", 144);
         } else {
             return RestAPIResultDTO.Success("用户可用");
         }
@@ -102,7 +102,8 @@ public class PasswordServiceImpl implements PasswordService {
 
         if (redisUtil.hasKey(String.format(RedisConstants.SMSForget, phoneNum)) && redisUtil.get(String.format(RedisConstants.SMSForget, phoneNum)).equals(request.getVerifyCode())) {
             try {
-                String newPassword = RSAUtils.decryptDataOnJava(request.getPassword(), request.getRsaKey());
+                String rsaKey = redisUtil.get(request.getPublicKey());
+                String newPassword = RSAUtils.decryptDataOnJava(request.getPassword(), rsaKey);
                 String salt = IDUtils.showNextId(new Random().nextInt(30)).toString().substring(0, 16);
                 userInfoDO.setPassword(MD5Utils.generate(newPassword, salt));
                 userInfoDO.setSalt(salt);
@@ -112,6 +113,7 @@ public class PasswordServiceImpl implements PasswordService {
                 String accessToken = JWTUtils.createJWT(IDUtils.showNextId(new Random().nextInt(30)).toString(), JSONUtils.toJSONString(userInfoDO), 12 * 60 * 60 * 1000);
                 CookieUtils.addCookie("token", accessToken);
                 CookieUtils.addCookie("uid", userInfoDO.getUserId());
+                redisUtil.delete(request.getPublicKey());
                 return RestAPIResultDTO.Success("修改密码成功");
             } catch (Exception e) {
                 return RestAPIResultDTO.Error("存入数据库发生错误");

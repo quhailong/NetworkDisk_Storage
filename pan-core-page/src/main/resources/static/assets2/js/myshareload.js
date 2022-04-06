@@ -72,8 +72,7 @@ $(document).ready(function () {
             $(this).addClass("input-focus");
             $.get(CORE_GATEWAY_URL + "/api/edge/getpublickey", function (data) {
                 if (data.respCode === 1) {
-                    $("#publicKey").val(data.respData.publicKey);
-                    $("#RSAKey").val(data.respData.RSAKey);
+                    $("#publicKey").val(data.respData);
                 } else {
                     alert(data.respMsg);
                 }

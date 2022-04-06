@@ -17,9 +17,9 @@ public class SendSmsServiceImpl implements ISendSmsService {
         System.out.println("Response content is: " + jsonResult);
         SmsResult result = JSONUtils.parseObject(jsonResult, SmsResult.class);
         if (!result.getMsg().equals("OK")) {
-            return RestAPIResultDTO.Success(result.getMsg(), "成功");
+            return RestAPIResultDTO.Error("发送失败");
         }
-        return RestAPIResultDTO.Success(null);
+        return RestAPIResultDTO.Success("发送成功");
     }
 
     static AbsRestClient InstantiationRestAPI() {

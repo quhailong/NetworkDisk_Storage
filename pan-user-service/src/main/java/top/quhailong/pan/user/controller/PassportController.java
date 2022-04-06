@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import top.quhailong.pan.request.base.RestAPIResultDTO;
 import top.quhailong.pan.response.UserInfoDTO;
 import top.quhailong.pan.user.service.PassportService;
-import top.quhailong.pan.request.base.RestAPIResultDTO;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -30,12 +30,12 @@ public class PassportController {
      * @date: 2019/9/25
      */
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public RestAPIResultDTO<String> login(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("RSAKey") String RSAKey) throws Exception {
+    public RestAPIResultDTO<String> login(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("publicKey") String publicKey) throws Exception {
         logger.info("登录请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("登录数据处理开始,username:{}", username);
-        RestAPIResultDTO<String> result = passportService.loginHandle(username, password, RSAKey);
+        RestAPIResultDTO<String> result = passportService.loginHandle(username, password, publicKey);
         logger.info("登录数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("登录调用时间,millies:{}", stopWatch.getTotalTimeMillis());

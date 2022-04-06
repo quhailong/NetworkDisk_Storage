@@ -1,4 +1,5 @@
 package top.quhailong.pan.request;
+
 /**
  * 修改密码请求实体
  *
@@ -9,7 +10,7 @@ public class ChangePwdRequest {
     private String token;
     private String uid;
     private String newPassword;
-    private String rsaKey;
+    private String publicKey;
 
     public String getToken() {
         return token;
@@ -35,12 +36,12 @@ public class ChangePwdRequest {
         this.newPassword = newPassword;
     }
 
-    public String getRsaKey() {
-        return rsaKey;
+    public String getPublicKey() {
+        return publicKey;
     }
 
-    public void setRsaKey(String rsaKey) {
-        this.rsaKey = rsaKey;
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 
     @Override
@@ -49,7 +50,7 @@ public class ChangePwdRequest {
                 "token='" + token + '\'' +
                 ", uid='" + uid + '\'' +
                 ", newPassword='" + newPassword + '\'' +
-                ", rsaKey='" + rsaKey + '\'' +
+                ", publicKey='" + publicKey + '\'' +
                 '}';
     }
 }

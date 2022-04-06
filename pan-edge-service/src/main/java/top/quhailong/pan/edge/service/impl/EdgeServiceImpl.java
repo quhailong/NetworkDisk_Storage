@@ -5,15 +5,14 @@ import org.springframework.stereotype.Service;
 import top.quhailong.pan.constant.RedisConstants;
 import top.quhailong.pan.edge.service.IEdgeService;
 import top.quhailong.pan.framework.redis.core.utils.RedisUtil;
-import top.quhailong.pan.utils.RSAUtils;
 import top.quhailong.pan.request.base.RestAPIResultDTO;
+import top.quhailong.pan.utils.RSAUtils;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -25,9 +24,10 @@ public class EdgeServiceImpl implements IEdgeService {
     private RedisUtil redisUtil;
 
     @Override
-    public RestAPIResultDTO<String> regCheckPwdHandle(String password, String RSAKey) {
+    public RestAPIResultDTO<String> regCheckPwdHandle(String password, String publicKey) {
         try {
-            password = RSAUtils.decryptDataOnJava(password, RSAKey);
+            String rsaKey = redisUtil.get(publicKey);
+            password = RSAUtils.decryptDataOnJava(password, rsaKey);
         } catch (Exception e) {
             return RestAPIResultDTO.Error("fail");
         }
@@ -43,14 +43,12 @@ public class EdgeServiceImpl implements IEdgeService {
     }
 
     @Override
-    public RestAPIResultDTO<Map<String, Object>> getPublicKeyHandle() throws Exception {
+    public RestAPIResultDTO<String> getPublicKeyHandle() throws Exception {
         Map<String, Object> keyMap = RSAUtils.genKeyPair();
         String publicKey = RSAUtils.getPublicKey(keyMap);
         String privateKey = RSAUtils.getPrivateKey(keyMap);
-        Map<String, Object> map = new HashMap<>();
-        map.put("publicKey", publicKey);
-        map.put("RSAKey", privateKey);
-        return RestAPIResultDTO.Success(map);
+        redisUtil.setEx(publicKey, privateKey, 60 * 60 * 24, TimeUnit.SECONDS);
+        return RestAPIResultDTO.Success(publicKey, "获取成功");
     }
 
     /**

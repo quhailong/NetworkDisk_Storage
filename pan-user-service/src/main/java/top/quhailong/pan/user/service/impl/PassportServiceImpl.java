@@ -24,8 +24,13 @@ public class PassportServiceImpl implements PassportService {
     private RedisUtil redisUtil;
 
     @Override
-    public RestAPIResultDTO<String> loginHandle(String username, String password, String RSAKey) throws Exception {
-        password = RSAUtils.decryptDataOnJava(password, RSAKey);
+    public RestAPIResultDTO<String> loginHandle(String username, String password, String publicKey) throws Exception {
+        String rsaKey = redisUtil.get(publicKey);
+        try {
+            password = RSAUtils.decryptDataOnJava(password, rsaKey);
+        } catch (Exception e) {
+            return RestAPIResultDTO.Error("密码错误");
+        }
         UserInfoDO userInfoDO = userInfoDao.getUserInfoByPassport(username);
         if (userInfoDO != null) {
             if (MD5Utils.verify(password, userInfoDO.getPassword())) {
@@ -34,7 +39,10 @@ public class PassportServiceImpl implements PassportService {
 
                 CookieUtils.addCookie("token", accessToken);
                 CookieUtils.addCookie("uid", userInfoDO.getUserId());
+                redisUtil.delete(publicKey);
                 return RestAPIResultDTO.Success("登录成功");
+            } else {
+                return RestAPIResultDTO.Error("密码错误");
             }
         }
         return RestAPIResultDTO.Error("用户信息不存在");
