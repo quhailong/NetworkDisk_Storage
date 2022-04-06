@@ -1150,7 +1150,7 @@ function changePwd() {
                 $.ajax({
                     url: CORE_GATEWAY_URL + "/api/edge/regcheckpwd",
                     type: "post",
-                    data: {"password": d, "RSAKey": $("#RSAKey").val()},
+                    data: {"password": d, "publicKey": $("#publicKey").val()},
                     xhrFields: {withCredentials: true},
                     crossDomain: true,
                     dataType: "json",
@@ -1166,7 +1166,7 @@ function changePwd() {
                                     "token": $.cookie("token"),
                                     "newPassword": d,
                                     "uid": $.cookie("uid"),
-                                    "rsaKey": $("#RSAKey").val()
+                                    "publicKey": $("#publicKey").val()
                                 }),
                                 xhrFields: {withCredentials: true},
                                 crossDomain: true,

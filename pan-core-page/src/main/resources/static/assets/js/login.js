@@ -16,7 +16,7 @@ var LOGIN = {
 			var user = {
 				username : $("#loginForm input[name='username']").val(),
 				password : passwordEnc ,
-				RSAKey : $("#RSAKey").val()
+				publicKey : $("#publicKey").val()
 			}
 			$.ajax({
 				url : "http://localhost:8095/api/user/login",
@@ -51,8 +51,7 @@ var LOGIN = {
 			 if(!$(this).hasClass("input-focus")){
 			 $(this).addClass("input-focus");
 				$.get("http://localhost:8095/api/edge/getpublickey", function(data){
-				   $("#publicKey").val(data.respData.publicKey);
-				   $("#RSAKey").val(data.respData.RSAKey);
+				   $("#publicKey").val(data.respData);
 				  });
 			 }
 		}); 

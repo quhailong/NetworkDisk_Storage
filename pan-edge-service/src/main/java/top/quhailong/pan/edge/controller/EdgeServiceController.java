@@ -11,7 +11,6 @@ import top.quhailong.pan.request.base.RestAPIResultDTO;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -30,12 +29,12 @@ public class EdgeServiceController {
      */
     //@RequestMapping(value = "getPublickKey", method = {RequestMethod.GET})
     @RequestMapping(value = "getpublickey", method = RequestMethod.GET)
-    public RestAPIResultDTO<Map<String, Object>> getPublicKey() throws Exception {
+    public RestAPIResultDTO<String> getPublicKey() throws Exception {
         logger.info("生成公钥请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("生成公钥数据处理开始");
-        RestAPIResultDTO<Map<String, Object>> result = edgeService.getPublicKeyHandle();
+        RestAPIResultDTO<String> result = edgeService.getPublicKeyHandle();
         logger.info("生成公钥数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("生成公钥调用时间,millies:{}", stopWatch.getTotalTimeMillis());
@@ -68,12 +67,12 @@ public class EdgeServiceController {
      * @date: 2019/9/26
      */
     @RequestMapping(value = "regcheckpwd", method = RequestMethod.POST)
-    public RestAPIResultDTO<String> regCheckPwd(@RequestParam("password") String password, @RequestParam("RSAKey") String RSAKey) {
+    public RestAPIResultDTO<String> regCheckPwd(@RequestParam("password") String password, @RequestParam("publicKey") String publicKey) {
         logger.info("检查密码格式请求URL：{}", httpServletRequest.getRequestURL());
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("检查密码格式数据处理开始");
-        RestAPIResultDTO<String> result = edgeService.regCheckPwdHandle(password, RSAKey);
+        RestAPIResultDTO<String> result = edgeService.regCheckPwdHandle(password, publicKey);
         logger.info("检查密码格式数据处理结束,result:{}", result);
         stopWatch.stop();
         logger.info("检查密码格式调用时间,millies:{}", stopWatch.getTotalTimeMillis());

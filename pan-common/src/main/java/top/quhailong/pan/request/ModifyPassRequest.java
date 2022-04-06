@@ -1,4 +1,5 @@
 package top.quhailong.pan.request;
+
 /**
  * 忘记密码修改密码请求实体
  *
@@ -9,7 +10,7 @@ public class ModifyPassRequest {
     private String username;
     private String password;
     private String verifyCode;
-    private String rsaKey;
+    private String publicKey;
 
     public String getUsername() {
         return username;
@@ -35,12 +36,12 @@ public class ModifyPassRequest {
         this.verifyCode = verifyCode;
     }
 
-    public String getRsaKey() {
-        return rsaKey;
+    public String getPublicKey() {
+        return publicKey;
     }
 
-    public void setRsaKey(String rsaKey) {
-        this.rsaKey = rsaKey;
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 
     @Override
@@ -49,7 +50,7 @@ public class ModifyPassRequest {
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", verifyCode='" + verifyCode + '\'' +
-                ", rsaKey='" + rsaKey + '\'' +
+                ", publicKey='" + publicKey + '\'' +
                 '}';
     }
 }

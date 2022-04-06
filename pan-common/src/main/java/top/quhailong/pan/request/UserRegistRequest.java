@@ -1,4 +1,5 @@
 package top.quhailong.pan.request;
+
 /**
  * 用户注册请求实体
  *
@@ -10,7 +11,7 @@ public class UserRegistRequest {
     private String username;
     private String password;
     private String verifyCode;
-    private String rsaKey;
+    private String publicKey;
     private String pid;
 
     public String getPhoneNum() {
@@ -45,12 +46,12 @@ public class UserRegistRequest {
         this.verifyCode = verifyCode;
     }
 
-    public String getRsaKey() {
-        return rsaKey;
+    public String getPublicKey() {
+        return publicKey;
     }
 
-    public void setRsaKey(String rsaKey) {
-        this.rsaKey = rsaKey;
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 
     public String getPid() {
@@ -68,7 +69,7 @@ public class UserRegistRequest {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", verifyCode='" + verifyCode + '\'' +
-                ", rsaKey='" + rsaKey + '\'' +
+                ", publicKey='" + publicKey + '\'' +
                 ", pid='" + pid + '\'' +
                 '}';
     }

@@ -1,7 +1,7 @@
 package top.quhailong.pan.user.service;
 
-import top.quhailong.pan.response.UserInfoDTO;
 import top.quhailong.pan.request.base.RestAPIResultDTO;
+import top.quhailong.pan.response.UserInfoDTO;
 
 public interface PassportService {
 
@@ -12,7 +12,7 @@ public interface PassportService {
      * @author: quhailong
      * @date: 2020/8/9
      */
-    RestAPIResultDTO<String> loginHandle(String username, String password, String RSAKey) throws Exception;
+    RestAPIResultDTO<String> loginHandle(String username, String password, String publicKey) throws Exception;
 
     /**
      * 用户推出数据处理
