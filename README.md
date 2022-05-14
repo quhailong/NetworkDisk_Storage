@@ -56,7 +56,7 @@ fastdfs配置文件在pan-file-service模块resource目录下的fdfs_client.conf
 7. 修改pan-regist-page项目中的src/main/resources/static/js/config.js文件  
 - CORE_GATEWAY_URL为pan-core-gateway的url和端口
 - CORE_PAGE_URL为pan-core-page的url和端口
-8.修改pan-regist-page项目中的src/main/resources/static/assets2/js/config.js文件
+8. 修改pan-core-page项目中的src/main/resources/static/assets2/js/config.js文件
 - CORE_GATEWAY_URL为pan-core-gateway的url和端口
 - CORE_FILE_GATEWAY_URL为pan-file-gateway的url和端口
 - CORE_PAGE_URL为pan-core-page的url和端口
